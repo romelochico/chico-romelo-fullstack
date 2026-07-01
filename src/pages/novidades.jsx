@@ -18,9 +18,20 @@ export default function NovidadesPage({ novidades }) {
   return (
     <>
       <Head>
-        <title>CR | Novidades</title>
+        <title>Chico Romelo | Novidades</title>
         <meta name="description" content="Últimas notícias da Chico Romelo: prêmios, shows e novidades da banda de pop rock brasileira em Lisboa." />
+        <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://www.chicoromelo.com/novidades" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Chico Romelo — Novidades" />
+        <meta property="og:description" content="Últimas notícias da Chico Romelo: prêmios, shows e novidades da banda de pop rock brasileira em Lisboa." />
+        <meta property="og:url" content="https://www.chicoromelo.com/novidades" />
+        <meta property="og:image" content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg" />
+        <meta property="og:site_name" content="Chico Romelo" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Chico Romelo — Novidades" />
+        <meta name="twitter:description" content="Últimas notícias da Chico Romelo: prêmios, shows e novidades da banda de pop rock brasileira em Lisboa." />
+        <meta name="twitter:image" content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg" />
         <link rel="preload" as="image" href="/uploads/cris-prata-live.webp" type="image/webp" fetchPriority="high" />
       </Head>
 

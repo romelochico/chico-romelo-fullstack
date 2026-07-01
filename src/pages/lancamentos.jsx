@@ -30,9 +30,20 @@ export default function LancamentosPage() {
   return (
     <>
       <Head>
-        <title>CR | Lançamentos</title>
+        <title>Chico Romelo | Lançamentos e Discografia</title>
         <meta name="description" content="Discografia de Chico Romelo: EP, singles e todos os lançamentos. Ouça no Spotify, Apple Music e YouTube." />
+        <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://www.chicoromelo.com/lancamentos" />
+        <meta property="og:type" content="music.album" />
+        <meta property="og:title" content="Chico Romelo — Lançamentos e Discografia" />
+        <meta property="og:description" content="Discografia de Chico Romelo: EP, singles e todos os lançamentos. Ouça no Spotify, Apple Music e YouTube." />
+        <meta property="og:url" content="https://www.chicoromelo.com/lancamentos" />
+        <meta property="og:image" content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg" />
+        <meta property="og:site_name" content="Chico Romelo" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Chico Romelo — Lançamentos e Discografia" />
+        <meta name="twitter:description" content="Discografia de Chico Romelo: EP, singles e todos os lançamentos. Ouça no Spotify, Apple Music e YouTube." />
+        <meta name="twitter:image" content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg" />
         <link rel="preload" as="image" href="/uploads/_MG_2546.webp" type="image/webp" fetchPriority="high" />
       </Head>
 

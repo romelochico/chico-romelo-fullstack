@@ -25,9 +25,20 @@ export default function SobrePage() {
   return (
     <>
       <Head>
-        <title>CR | Sobre</title>
+        <title>Chico Romelo | Sobre a Banda</title>
         <meta name="description" content="Conheça a Chico Romelo: cinco músicos brasileiros e portugueses em Lisboa que misturam pop rock, MPB e ritmos latinos." />
+        <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://www.chicoromelo.com/sobre" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Chico Romelo — Sobre a Banda" />
+        <meta property="og:description" content="Conheça a Chico Romelo: cinco músicos brasileiros e portugueses em Lisboa que misturam pop rock, MPB e ritmos latinos." />
+        <meta property="og:url" content="https://www.chicoromelo.com/sobre" />
+        <meta property="og:image" content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg" />
+        <meta property="og:site_name" content="Chico Romelo" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Chico Romelo — Sobre a Banda" />
+        <meta name="twitter:description" content="Conheça a Chico Romelo: cinco músicos brasileiros e portugueses em Lisboa que misturam pop rock, MPB e ritmos latinos." />
+        <meta name="twitter:image" content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg" />
         <link rel="preload" as="image" href="/uploads/AZ4A0489.webp" type="image/webp" fetchPriority="high" />
       </Head>
 

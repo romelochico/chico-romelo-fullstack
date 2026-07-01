@@ -89,15 +89,20 @@ export default function HomePage({ novidades = [] }) {
   return (
     <>
       <Head>
-        <title>CR | Banda de Rock Brasileiro em Lisboa</title>
+        <title>Chico Romelo | Banda de Rock Brasileiro em Lisboa</title>
         <meta name="description" content="Chico Romelo é uma banda de pop rock e MPB em Lisboa. Ouça o EP de estreia e os singles no Spotify, Apple Music e YouTube." />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://www.chicoromelo.com" />
         <meta property="og:type" content="music.musician" />
         <meta property="og:title" content="Chico Romelo — Banda de Rock Brasileiro em Lisboa" />
-        <meta property="og:description" content="Chico Romelo é uma banda de pop rock e MPB em Lisboa." />
+        <meta property="og:description" content="Chico Romelo é uma banda de pop rock e MPB em Lisboa. Ouça o EP de estreia e os singles no Spotify, Apple Music e YouTube." />
         <meta property="og:url" content="https://www.chicoromelo.com" />
         <meta property="og:image" content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg" />
+        <meta property="og:site_name" content="Chico Romelo" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Chico Romelo — Banda de Rock Brasileiro em Lisboa" />
+        <meta name="twitter:description" content="Chico Romelo é uma banda de pop rock e MPB em Lisboa. Ouça o EP de estreia e os singles no Spotify, Apple Music e YouTube." />
+        <meta name="twitter:image" content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg" />
         <link rel="preload" as="image" href="/assets/logo-full.webp" type="image/webp" fetchPriority="high" />
       </Head>
 
