@@ -1,0 +1,153 @@
+import { useState } from 'react'
+import Head from 'next/head'
+import styled, { createGlobalStyle } from 'styled-components'
+import { Menu } from 'lucide-react'
+import AdminSidebar from './AdminSidebar'
+
+const AdminReset = createGlobalStyle`
+  body { background: ${({ theme }) => theme.colors.dark} !important; }
+`
+
+const Shell = styled.div`
+  display: flex;
+  min-height: 100vh;
+  background: ${({ theme }) => theme.colors.dark};
+  font-family: ${({ theme }) => theme.fonts.body};
+`
+
+/* ── Mobile top bar ───────────────────────────────────────────────── */
+
+const TopBar = styled.header`
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: ${({ theme }) => theme.colors.dark2};
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 150;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.admin}) {
+    display: flex;
+  }
+`
+
+const HamburgerBtn = styled.button`
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: ${({ theme }) => theme.colors.cream};
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s;
+
+  &:hover { background: rgba(255,255,255,0.06); }
+  svg { width: 20px; height: 20px; }
+`
+
+const TopBarLogo = styled.img`
+  height: 22px;
+  width: auto;
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+`
+
+/* spacer so TopBar right side is balanced */
+const TopBarSpacer = styled.div`width: 40px;`
+
+/* ── Main content area ────────────────────────────────────────────── */
+
+const Main = styled.main`
+  flex: 1;
+  overflow-x: hidden;
+  background: ${({ theme }) => theme.colors.dark};
+  min-width: 0;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.admin}) {
+    padding-top: 56px;
+  }
+`
+
+const Header = styled.div`
+  padding: 28px 32px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 32px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    padding: 20px 16px 16px;
+    margin-bottom: 20px;
+  }
+`
+
+const PageTitle = styled.h1`
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 28px;
+  color: ${({ theme }) => theme.colors.cream};
+  font-weight: 700;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    font-size: 22px;
+  }
+`
+
+const PageSub = styled.p`
+  font-family: ${({ theme }) => theme.fonts.body};
+  font-size: 12px;
+  color: rgba(255,255,255,0.3);
+  margin-top: 4px;
+  letter-spacing: 0.04em;
+`
+
+const Content = styled.div`
+  padding: 0 32px 40px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    padding: 0 16px 32px;
+  }
+`
+
+export default function AdminLayout({ children, title, subtitle }) {
+  const [drawerOpen, setDrawerOpen] = useState(false)
+
+  return (
+    <>
+      <Head>
+        <title>{title ? `Admin | ${title}` : 'Admin | Chico Romelo'}</title>
+      </Head>
+      <AdminReset />
+
+      {/* mobile top bar */}
+      <TopBar>
+        <HamburgerBtn onClick={() => setDrawerOpen(true)} aria-label="Abrir menu">
+          <Menu />
+        </HamburgerBtn>
+        <TopBarLogo src="/assets/logo-mobile.png" alt="Chico Romelo" />
+        <TopBarSpacer />
+      </TopBar>
+
+      <Shell>
+        <AdminSidebar isOpen={drawerOpen} onClose={() => setDrawerOpen(false)} />
+        <Main>
+          {(title || subtitle) && (
+            <Header>
+              {title && <PageTitle>{title}</PageTitle>}
+              {subtitle && <PageSub>{subtitle}</PageSub>}
+            </Header>
+          )}
+          <Content>{children}</Content>
+        </Main>
+      </Shell>
+    </>
+  )
+}

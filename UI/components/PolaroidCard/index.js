@@ -1,0 +1,1 @@
+export { PolaroidCard } from './PolaroidCard'

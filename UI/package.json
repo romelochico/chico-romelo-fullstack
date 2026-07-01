@@ -1,0 +1,12 @@
+{
+  "name": "@chico-romelo/ui",
+  "version": "1.0.0",
+  "description": "Chico Romelo Design System — tokens + components",
+  "main": "index.js",
+  "files": ["tokens", "components", "theme", "index.js"],
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "styled-components": ">=6"
+  }
+}
