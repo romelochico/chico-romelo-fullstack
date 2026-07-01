@@ -42,13 +42,19 @@ export async function middleware(request: NextRequest) {
   }
 
   // All other /admin/* routes: require auth + whitelist
-  if (pathname.startsWith('/admin')) {
+  if (pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) {
     if (!user) {
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json({ error: 'Não autenticado.' }, { status: 401 })
+      }
       return NextResponse.redirect(new URL('/admin/login', request.url))
     }
     const email = user.email?.toLowerCase() ?? ''
     if (ADMIN_WHITELIST.length > 0 && !ADMIN_WHITELIST.includes(email)) {
       await supabase.auth.signOut()
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json({ error: 'Acesso negado.' }, { status: 403 })
+      }
       return NextResponse.redirect(new URL('/admin/login', request.url))
     }
   }
@@ -57,5 +63,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/api/admin/:path*'],
 }
