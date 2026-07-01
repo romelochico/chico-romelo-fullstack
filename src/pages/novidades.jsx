@@ -73,7 +73,8 @@ export async function getStaticProps() {
 
     if (error) throw error
     return { props: { novidades: data ?? [] }, revalidate: 60 }
-  } catch {
+  } catch (e) {
+    console.error('[getStaticProps/novidades]', e)
     return { props: { novidades: [] }, revalidate: 30 }
   }
 }

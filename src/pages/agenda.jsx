@@ -102,7 +102,8 @@ export async function getStaticProps() {
 
     const { upcoming, past } = splitEvents(data ?? [])
     return { props: { upcoming, past }, revalidate: 86400 }
-  } catch {
+  } catch (e) {
+    console.error('[getStaticProps/agenda]', e)
     return { props: { upcoming: [], past: [] }, revalidate: 60 }
   }
 }
