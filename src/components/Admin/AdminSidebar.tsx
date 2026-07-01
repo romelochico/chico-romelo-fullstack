@@ -216,7 +216,7 @@ const NAV_LINKS: NavLinkDef[] = [
   { href: '/admin/novidades', label: 'Novidades', icon: Newspaper },
   { href: '/admin/releases',  label: 'Releases',  icon: Disc3 },
   { href: '/admin/media',     label: 'Imprensa',  icon: Image },
-  { href: '/admin/links',     label: 'Links',     icon: Link2 },
+  { href: '/admin/links',     label: 'Links e Credenciais', icon: Link2 },
   { href: '/admin/contatos',  label: 'Contatos',  icon: Mail },
   { href: '/admin/avaliacoes', label: 'Avaliações', icon: Star },
 ]

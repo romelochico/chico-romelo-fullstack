@@ -640,7 +640,7 @@ export default function LinksPage() {
   // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <AdminLayout title="Links & Credenciais" subtitle="Hub de links e acessos">
+    <AdminLayout title="Links e Credenciais" subtitle="Hub de links e acessos">
 
       {/* Section tabs */}
       <SectionTabs>

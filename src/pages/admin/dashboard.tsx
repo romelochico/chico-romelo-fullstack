@@ -100,6 +100,8 @@ interface DashStats {
   avalsAvg: number
   contatosTotal: number
   contatosUnread: number
+  linksCount: number
+  credsCount: number
 }
 
 export default function DashboardPage() {
@@ -113,13 +115,15 @@ export default function DashboardPage() {
   async function loadStats() {
     const supabase = createClient()
 
-    const [eventsRes, newsRes, releasesRes, showsRes, avalsRes, contatosRes] = await Promise.all([
+    const [eventsRes, newsRes, releasesRes, showsRes, avalsRes, contatosRes, linksRes, credsRes] = await Promise.all([
       supabase.from('events').select('date'),
       supabase.from('news').select('id', { count: 'exact', head: true }).eq('published', true),
       supabase.from('releases').select('type'),
       supabase.from('shows').select('id', { count: 'exact', head: true }),
       supabase.from('avaliacoes').select('nota_final'),
       supabase.from('contatos').select('read'),
+      supabase.from('links').select('id', { count: 'exact', head: true }),
+      supabase.from('credentials').select('id', { count: 'exact', head: true }),
     ])
 
     const rawEvents = (eventsRes.data ?? []) as unknown as EventRow[]
@@ -146,6 +150,8 @@ export default function DashboardPage() {
       avalsAvg: avgNota,
       contatosTotal: contatosData.length,
       contatosUnread: unreadCount,
+      linksCount: linksRes.count ?? 0,
+      credsCount: credsRes.count ?? 0,
     })
   }
 
@@ -206,8 +212,19 @@ export default function DashboardPage() {
         </CardSub>
       ) : null,
     },
-    { href: '/admin/media',    label: 'Imprensa', icon: Image,    value: null, sub: null },
-    { href: '/admin/links',    label: 'Links',    icon: Link2,    value: null, sub: null },
+    { href: '/admin/media',  label: 'Imprensa',          icon: Image,  value: null, sub: null },
+    {
+      href: '/admin/links',
+      label: 'Links e Credenciais',
+      icon: Link2,
+      value: s ? s.linksCount + s.credsCount : undefined,
+      sub: s ? (
+        <CardSub>
+          <SubStat><strong>{s.linksCount}</strong> links</SubStat>
+          <SubStat><strong>{s.credsCount}</strong> credenciais</SubStat>
+        </CardSub>
+      ) : null,
+    },
   ], [s])
 
   return (
