@@ -42,19 +42,6 @@ src/
     └── contatos.jsx      → /contatos
 ```
 
-## Assets
-
-Copie as pastas `assets/` e `uploads/` do site original para `public/`:
-
-```
-public/
-├── fonts/
-│   └── Chunq.ttf         # Copie de chico-romelo-site/uploads/Chunq.ttf
-├── assets/               # Copie de chico-romelo-site/assets/
-├── uploads/              # Copie de chico-romelo-site/uploads/ (só imagens)
-└── favicon.ico
-```
-
 ## Instalação
 
 ```bash
