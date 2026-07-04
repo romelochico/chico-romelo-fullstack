@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import styled, { keyframes } from 'styled-components'
-import { Calendar, Newspaper, Disc3, Image, Link2, MessageSquare, Star } from 'lucide-react'
+import { Calendar, Newspaper, Disc3, Image, Link2, MessageSquare, Star, Package } from 'lucide-react'
 import AdminLayout from '../../components/Admin/AdminLayout'
 import { createClient } from '../../lib/supabase/client'
 import { splitEvents } from '../../lib/events'
@@ -102,6 +102,8 @@ interface DashStats {
   contatosUnread: number
   linksCount: number
   credsCount: number
+  inventoryItems: number
+  inventoryUnits: number
 }
 
 export default function DashboardPage() {
@@ -115,7 +117,7 @@ export default function DashboardPage() {
   async function loadStats() {
     const supabase = createClient()
 
-    const [eventsRes, newsRes, releasesRes, showsRes, avalsRes, contatosRes, linksRes, credsRes] = await Promise.all([
+    const [eventsRes, newsRes, releasesRes, showsRes, avalsRes, contatosRes, linksRes, credsRes, inventoryRes] = await Promise.all([
       supabase.from('events').select('date'),
       supabase.from('news').select('id', { count: 'exact', head: true }).eq('published', true),
       supabase.from('releases').select('type'),
@@ -124,6 +126,7 @@ export default function DashboardPage() {
       supabase.from('contatos').select('read'),
       supabase.from('links').select('id', { count: 'exact', head: true }),
       supabase.from('credentials').select('id', { count: 'exact', head: true }),
+      supabase.from('inventory').select('id, quantity'),
     ])
 
     const rawEvents = (eventsRes.data ?? []) as unknown as EventRow[]
@@ -152,6 +155,8 @@ export default function DashboardPage() {
       contatosUnread: unreadCount,
       linksCount: linksRes.count ?? 0,
       credsCount: credsRes.count ?? 0,
+      inventoryItems: (inventoryRes.data ?? []).length,
+      inventoryUnits: (inventoryRes.data ?? [] as { quantity: number }[]).reduce((s: number, i: { quantity: number }) => s + (i.quantity ?? 0), 0),
     })
   }
 
@@ -212,7 +217,19 @@ export default function DashboardPage() {
         </CardSub>
       ) : null,
     },
-    { href: '/admin/media',  label: 'Imprensa',          icon: Image,  value: null, sub: null },
+    { href: '/admin/media',      label: 'Imprensa',          icon: Image,   value: null, sub: null },
+    {
+      href: '/admin/inventario',
+      label: 'Inventário',
+      icon: Package,
+      value: s ? s.inventoryUnits : undefined,
+      sub: s ? (
+        <CardSub>
+          <SubStat><strong>{s.inventoryItems}</strong> tipo{s.inventoryItems !== 1 ? 's' : ''}</SubStat>
+          <SubStat><strong>{s.inventoryUnits}</strong> unidades</SubStat>
+        </CardSub>
+      ) : null,
+    },
     {
       href: '/admin/links',
       label: 'Links e Credenciais',

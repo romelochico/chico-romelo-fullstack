@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import {
   LayoutDashboard, Calendar, Newspaper, Disc3,
-  Image, Link2, Mail, LogOut, X, Star,
+  Image, Link2, Mail, LogOut, X, Star, Package,
   type LucideIcon,
 } from 'lucide-react'
 import { createClient } from '../../lib/supabase/client'
@@ -216,8 +216,9 @@ const NAV_LINKS: NavLinkDef[] = [
   { href: '/admin/novidades', label: 'Novidades', icon: Newspaper },
   { href: '/admin/releases',  label: 'Releases',  icon: Disc3 },
   { href: '/admin/media',     label: 'Imprensa',  icon: Image },
-  { href: '/admin/links',     label: 'Links e Credenciais', icon: Link2 },
-  { href: '/admin/contatos',  label: 'Contatos',  icon: Mail },
+  { href: '/admin/links',      label: 'Links e Credenciais', icon: Link2 },
+  { href: '/admin/inventario', label: 'Inventário',          icon: Package },
+  { href: '/admin/contatos',   label: 'Contatos',            icon: Mail },
   { href: '/admin/avaliacoes', label: 'Avaliações', icon: Star },
 ]
 
