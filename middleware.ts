@@ -47,7 +47,9 @@ export async function middleware(request: NextRequest) {
       if (pathname.startsWith('/api/')) {
         return NextResponse.json({ error: 'Não autenticado.' }, { status: 401 })
       }
-      return NextResponse.redirect(new URL('/admin/login', request.url))
+      const loginUrl = new URL('/admin/login', request.url)
+      loginUrl.searchParams.set('next', pathname)
+      return NextResponse.redirect(loginUrl)
     }
     const email = user.email?.toLowerCase() ?? ''
     if (ADMIN_WHITELIST.length > 0 && !ADMIN_WHITELIST.includes(email)) {

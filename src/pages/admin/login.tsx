@@ -144,7 +144,10 @@ export default function LoginPage() {
       return
     }
 
-    router.push('/admin/dashboard')
+    const next = typeof router.query.next === 'string' && router.query.next.startsWith('/admin')
+      ? router.query.next
+      : '/admin/dashboard'
+    router.push(next)
   }
 
   return (

@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import Head from 'next/head'
 import styled, { createGlobalStyle } from 'styled-components'
 import { Menu } from 'lucide-react'
 import AdminSidebar from './AdminSidebar'
+import { createClient } from '../../lib/supabase/client'
 import type { ReactNode } from 'react'
 
 const AdminReset = createGlobalStyle`
@@ -125,7 +127,22 @@ interface AdminLayoutProps {
 }
 
 export default function AdminLayout({ children, title, subtitle }: AdminLayoutProps) {
+  const router = useRouter()
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [authed, setAuthed] = useState(false)
+
+  useEffect(() => {
+    createClient().auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        const next = encodeURIComponent(router.asPath)
+        router.replace(`/admin/login?next=${next}`)
+      } else {
+        setAuthed(true)
+      }
+    })
+  }, [router])
+
+  if (!authed) return null
 
   return (
     <>
