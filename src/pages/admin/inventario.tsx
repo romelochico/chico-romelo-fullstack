@@ -1,12 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import styled, { keyframes } from 'styled-components'
-import {
-  Plus, Pencil, Trash2, Cable, SlidersHorizontal, GitFork,
-  Volume2, Speaker, Guitar, Music2, Mic, Mic2, Headphones,
-  Laptop, Zap, Layers, Monitor, PackageOpen, ChevronDown, ChevronUp,
-} from 'lucide-react'
+import { Plus, Pencil, Trash2, PackageOpen, ChevronDown, ChevronUp } from 'lucide-react'
 import AdminLayout from '../../components/Admin/AdminLayout'
 import { createClient } from '../../lib/supabase/client'
+import { CATEGORIES } from '../../lib/inventory-categories'
+import type { CategoryDef } from '../../lib/inventory-categories'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -45,57 +43,6 @@ const C = {
   orange: '#fb923c',
 }
 
-interface CategoryDef {
-  key: string
-  label: string
-  Icon: React.ElementType
-  subcategories?: string[]
-}
-
-const CATEGORIES: CategoryDef[] = [
-  {
-    key: 'cables', label: 'Cabos', Icon: Cable,
-    subcategories: ['XLR', 'P10', 'XLR → RCA', 'P10 → XLR Fêmea', 'XLR Patch', 'Cabo de PA', 'Cabo de Força'],
-  },
-  { key: 'mixer',    label: 'Mesa Digital',   Icon: SlidersHorizontal },
-  { key: 'splitter', label: 'Splitters',       Icon: GitFork },
-  {
-    key: 'amplifier', label: 'Amplificadores', Icon: Volume2,
-    subcategories: ['Guitarra', 'Baixo'],
-  },
-  {
-    key: 'pa', label: 'PA', Icon: Speaker,
-    subcategories: ['Ativo', 'Passivo'],
-  },
-  { key: 'guitar',    label: 'Guitarras',   Icon: Guitar },
-  { key: 'bass',      label: 'Baixos',      Icon: Music2 },
-  {
-    key: 'drums', label: 'Bateria', Icon: Layers,
-    subcategories: ['Bumbo', 'Tom 1', 'Tom 2', 'Floor Tom', 'Caixa', 'Pratos', 'Hi-Hat', 'Pedal de Bumbo', 'Suporte de Prato', 'Suporte de Caixa', 'Banco'],
-  },
-  { key: 'pedalboard', label: 'Pedalboard', Icon: Zap },
-  {
-    key: 'pedals', label: 'Pedais', Icon: Zap,
-    subcategories: ['Pedal de Expressão', 'Sustain', 'Multi Efeito'],
-  },
-  { key: 'keyboard',   label: 'Teclado',    Icon: Music2 },
-  { key: 'support',    label: 'Suportes',      Icon: Monitor },
-  {
-    key: 'microphone', label: 'Microfones', Icon: Mic,
-    subcategories: ['Guitarra', 'Voz', 'Bumbo', 'OH', 'Caixa', 'Condensador'],
-  },
-  { key: 'mic_stand', label: 'Pedestais de Mic', Icon: Mic2 },
-  { key: 'pa_stand',  label: 'Suportes de PA',   Icon: PackageOpen },
-  { key: 'interface', label: 'Interface de Áudio', Icon: Headphones },
-  { key: 'computer',  label: 'Computador',         Icon: Laptop },
-  { key: 'extension', label: 'Extensões', Icon: Zap },
-  { key: 'iem',       label: 'IEM',         Icon: Headphones },
-  { key: 'iem_ammo',  label: 'Munição IEM', Icon: PackageOpen },
-  {
-    key: 'wireless', label: 'Wireless', Icon: GitFork,
-    subcategories: ['Guitarra', 'IEM'],
-  },
-]
 
 const CONDITIONS: { key: Condition; label: string; color: string }[] = [
   { key: 'good',         label: 'Bom',              color: C.green  },
@@ -105,7 +52,7 @@ const CONDITIONS: { key: Condition; label: string; color: string }[] = [
 ]
 
 function getCategoryDef(key: string): CategoryDef {
-  return CATEGORIES.find(c => c.key === key) ?? { key, label: key, Icon: PackageOpen }
+  return CATEGORIES.find(c => c.key === key) ?? { key, label: key, Icon: PackageOpen as CategoryDef['Icon'] }
 }
 
 function getCondition(key: string) {

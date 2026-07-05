@@ -24,22 +24,23 @@ const Grid = styled.div`
 `
 
 const Card = styled.div`
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.13);
+  border-radius: 12px;
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
 
   &:hover {
-    background: rgba(255,255,255,0.05);
-    border-color: rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.09);
+    border-color: rgba(200,169,110,0.35);
+    transform: translateY(-1px);
   }
 
-  svg { color: ${({ theme }) => theme.colors.sage}; width: 22px; height: 22px; }
+  svg { color: #c8a96e; width: 22px; height: 22px; }
 `
 
 const CardLabel = styled.span`
@@ -48,13 +49,13 @@ const CardLabel = styled.span`
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.3);
+  color: rgba(245,240,232,0.55);
 `
 
 const CardValue = styled.span`
   font-family: ${({ theme }) => theme.fonts.display};
   font-size: 36px;
-  color: ${({ theme }) => theme.colors.cream};
+  color: #f5f0e8;
   line-height: 1;
 `
 
@@ -62,6 +63,7 @@ const CardSub = styled.div`
   display: flex;
   gap: 12px;
   margin-top: 2px;
+  flex-wrap: wrap;
 `
 
 const spin = keyframes`to { transform: rotate(360deg); }`
@@ -70,8 +72,8 @@ const Spinner = styled.span`
   display: inline-block;
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(255,255,255,0.08);
-  border-top-color: ${({ theme }) => theme.colors.sage};
+  border: 2px solid rgba(255,255,255,0.12);
+  border-top-color: #c8a96e;
   border-radius: 50%;
   animation: ${spin} 0.7s linear infinite;
   margin: 9px 0;
@@ -80,11 +82,11 @@ const Spinner = styled.span`
 const SubStat = styled.span<{ $green?: boolean }>`
   font-family: ${({ theme }) => theme.fonts.body};
   font-size: 11px;
-  color: rgba(255,255,255,0.3);
+  color: rgba(245,240,232,0.45);
 
   strong {
     font-weight: 700;
-    color: ${({ $green, theme }) => $green ? '#4ade80' : theme.colors.cream2};
+    color: ${({ $green }) => $green ? '#4ade80' : 'rgba(245,240,232,0.85)'};
   }
 `
 
@@ -249,7 +251,9 @@ export default function DashboardPage() {
       <Grid>
         {SECTIONS.map(({ href, label, icon: Icon, value, sub }) => (
           <Card key={href} onClick={() => router.push(href)}>
-            <Icon />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Icon />
+            </div>
             <CardLabel>{label}</CardLabel>
             {value === undefined && <Spinner />}
             {value !== null && value !== undefined && <CardValue>{value}</CardValue>}

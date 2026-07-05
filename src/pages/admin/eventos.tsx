@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import styled from 'styled-components'
-import { Plus, Pencil, X, AlertTriangle } from 'lucide-react'
+import { Plus, Pencil, X, AlertTriangle, Backpack } from 'lucide-react'
 import AdminLayout from '../../components/Admin/AdminLayout'
 import { createClient } from '../../lib/supabase/client'
 import { splitEvents, toShowCardProps } from '../../lib/events'
@@ -477,6 +478,7 @@ function todayStr(): string {
 // ─── Page ──────────────────────────────────────────────────────────────────
 
 export default function AdminEventosPage() {
+  const router = useRouter()
   const [items, setItems] = useState<EventRow[]>([])
   const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState<ModalState | null>(null)
@@ -617,6 +619,7 @@ export default function AdminEventosPage() {
             : ''}
         </CardMeta>
         <CardActions>
+          <EditBtn onClick={() => router.push(`/admin/eventos/${item.id}`)} title="Ver gear do show" style={{ background: 'rgba(200,169,110,0.08)', borderColor: 'rgba(200,169,110,0.2)', color: '#c8a96e' }}><Backpack /> Gear</EditBtn>
           <EditBtn onClick={() => openEdit(item)}><Pencil /> Editar</EditBtn>
           <DeleteBtn onClick={() => openDelete(item)} title="Excluir"><X /></DeleteBtn>
         </CardActions>
