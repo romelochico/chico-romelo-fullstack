@@ -73,7 +73,8 @@ const CATEGORIES: CategoryDef[] = [
     key: 'drums', label: 'Bateria', Icon: Layers,
     subcategories: ['Bumbo', 'Tom 1', 'Tom 2', 'Floor Tom', 'Caixa', 'Pratos', 'Hi-Hat', 'Pedal de Bumbo', 'Suporte de Prato', 'Suporte de Caixa', 'Banco'],
   },
-  { key: 'pedalboard', label: 'Pedalboard',    Icon: Zap },
+  { key: 'pedalboard', label: 'Pedalboard', Icon: Zap },
+  { key: 'keyboard',   label: 'Teclado',    Icon: Music2 },
   { key: 'support',    label: 'Suportes',      Icon: Monitor },
   {
     key: 'microphone', label: 'Microfones', Icon: Mic,
