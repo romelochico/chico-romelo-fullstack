@@ -55,7 +55,7 @@ interface CategoryDef {
 const CATEGORIES: CategoryDef[] = [
   {
     key: 'cables', label: 'Cabos', Icon: Cable,
-    subcategories: ['XLR', 'P10', 'XLR → RCA', 'P10 → XLR Fêmea', 'XLR Patch'],
+    subcategories: ['XLR', 'P10', 'XLR → RCA', 'P10 → XLR Fêmea', 'XLR Patch', 'Cabo de PA', 'Cabo de Força'],
   },
   { key: 'mixer',    label: 'Mesa Digital',   Icon: SlidersHorizontal },
   { key: 'splitter', label: 'Splitters',       Icon: GitFork },
@@ -83,7 +83,9 @@ const CATEGORIES: CategoryDef[] = [
   { key: 'pa_stand',  label: 'Suportes de PA',   Icon: PackageOpen },
   { key: 'interface', label: 'Interface de Áudio', Icon: Headphones },
   { key: 'computer',  label: 'Computador',         Icon: Laptop },
-  { key: 'extension', label: 'Extensões',           Icon: Zap },
+  { key: 'extension', label: 'Extensões', Icon: Zap },
+  { key: 'iem',       label: 'IEM',       Icon: Headphones },
+  { key: 'iem_ammo',  label: 'Munição IEM', Icon: PackageOpen },
 ]
 
 const CONDITIONS: { key: Condition; label: string; color: string }[] = [
