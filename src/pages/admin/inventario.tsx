@@ -74,6 +74,10 @@ const CATEGORIES: CategoryDef[] = [
     subcategories: ['Bumbo', 'Tom 1', 'Tom 2', 'Floor Tom', 'Caixa', 'Pratos', 'Hi-Hat', 'Pedal de Bumbo', 'Suporte de Prato', 'Suporte de Caixa', 'Banco'],
   },
   { key: 'pedalboard', label: 'Pedalboard', Icon: Zap },
+  {
+    key: 'pedals', label: 'Pedais', Icon: Zap,
+    subcategories: ['Pedal de Expressão', 'Sustain', 'Multi Efeito'],
+  },
   { key: 'keyboard',   label: 'Teclado',    Icon: Music2 },
   { key: 'support',    label: 'Suportes',      Icon: Monitor },
   {
