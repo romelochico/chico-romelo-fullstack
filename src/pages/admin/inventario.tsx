@@ -85,8 +85,12 @@ const CATEGORIES: CategoryDef[] = [
   { key: 'interface', label: 'Interface de Áudio', Icon: Headphones },
   { key: 'computer',  label: 'Computador',         Icon: Laptop },
   { key: 'extension', label: 'Extensões', Icon: Zap },
-  { key: 'iem',       label: 'IEM',       Icon: Headphones },
+  { key: 'iem',       label: 'IEM',         Icon: Headphones },
   { key: 'iem_ammo',  label: 'Munição IEM', Icon: PackageOpen },
+  {
+    key: 'wireless', label: 'Wireless', Icon: GitFork,
+    subcategories: ['Guitarra', 'IEM'],
+  },
 ]
 
 const CONDITIONS: { key: Condition; label: string; color: string }[] = [
