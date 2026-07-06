@@ -192,11 +192,25 @@ const ItemRow = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 11px 16px;
+  padding: 12px 16px;
   border-bottom: 1px solid ${C.border};
   transition: background 0.1s;
   &:last-child { border-bottom: none; }
   &:hover { background: rgba(255,255,255,0.02); }
+`
+
+const ItemBody = styled.div`
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+`
+
+const ItemTopRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
 `
 
 const QtyBadge = styled.span`
@@ -208,15 +222,26 @@ const QtyBadge = styled.span`
   border-radius: 4px;
   padding: 2px 7px;
   flex-shrink: 0;
-  min-width: 24px;
+  min-width: 28px;
   text-align: center;
 `
 
 const ItemName = styled.span`
   font-family: 'Montserrat', sans-serif;
   font-size: 13px;
+  font-weight: 600;
   color: ${C.cream};
-  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
+
+const ItemMeta = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
 `
 
 const SubBadge = styled.span`
@@ -249,10 +274,10 @@ const ItemNotes = styled.span`
   font-size: 11px;
   color: ${C.dim};
   font-style: italic;
-  max-width: 200px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
 `
 
 const RowActions = styled.div`
@@ -587,10 +612,16 @@ export default function InventarioPage() {
                     return (
                       <ItemRow key={item.id}>
                         <QtyBadge>{item.quantity}×</QtyBadge>
-                        <ItemName>{item.name}</ItemName>
-                        {item.subcategory && <SubBadge>{item.subcategory}</SubBadge>}
-                        <CondBadge $color={cond.color}>{cond.label}</CondBadge>
-                        {item.notes && <ItemNotes title={item.notes}>{item.notes}</ItemNotes>}
+                        <ItemBody>
+                          <ItemTopRow>
+                            <ItemName>{item.name}</ItemName>
+                          </ItemTopRow>
+                          <ItemMeta>
+                            {item.subcategory && <SubBadge>{item.subcategory}</SubBadge>}
+                            <CondBadge $color={cond.color}>{cond.label}</CondBadge>
+                            {item.notes && <ItemNotes title={item.notes}>{item.notes}</ItemNotes>}
+                          </ItemMeta>
+                        </ItemBody>
                         <RowActions>
                           <IconBtn onClick={() => openEdit(item)} title="Editar"><Pencil /></IconBtn>
                           <IconBtn $red onClick={() => setModal({ type: 'delete', item })} title="Apagar"><Trash2 /></IconBtn>

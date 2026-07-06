@@ -13,7 +13,8 @@ const AdminReset = createGlobalStyle`
 
 const Shell = styled.div`
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   background: ${({ theme }) => theme.colors.dark};
   font-family: ${({ theme }) => theme.fonts.body};
 `
@@ -73,6 +74,7 @@ const TopBarSpacer = styled.div`width: 40px;`
 
 const Main = styled.main`
   flex: 1;
+  overflow-y: auto;
   overflow-x: hidden;
   background: ${({ theme }) => theme.colors.dark};
   min-width: 0;

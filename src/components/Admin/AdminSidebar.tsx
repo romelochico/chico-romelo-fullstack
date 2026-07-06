@@ -31,7 +31,6 @@ const Overlay = styled.div<{ $open: boolean }>`
 
 const Sidebar = styled.aside<{ $open: boolean }>`
   width: 240px;
-  min-height: 100vh;
   background: ${({ theme }) => theme.colors.dark2};
   border-right: 1px solid rgba(255,255,255,0.06);
   display: flex;
@@ -47,7 +46,6 @@ const Sidebar = styled.aside<{ $open: boolean }>`
     transform: ${({ $open }) => $open ? 'translateX(0)' : 'translateX(-100%)'};
     transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: ${({ $open }) => $open ? '4px 0 32px rgba(0,0,0,0.5)' : 'none'};
-    overflow-y: auto;
   }
 `
 
@@ -113,6 +111,7 @@ const Nav = styled.nav`
   display: flex;
   flex-direction: column;
   gap: 2px;
+  overflow-y: auto;
 `
 
 const NavItem = styled(Link)<{ $active: boolean }>`

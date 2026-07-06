@@ -17,10 +17,6 @@ const Grid = styled.div`
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.small}) {
-    grid-template-columns: 1fr;
-  }
 `
 
 const Card = styled.div`
@@ -41,6 +37,13 @@ const Card = styled.div`
   }
 
   svg { color: #c8a96e; width: 22px; height: 22px; }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    aspect-ratio: 1;
+    padding: 14px;
+    gap: 6px;
+    svg { width: 18px; height: 18px; }
+  }
 `
 
 const CardLabel = styled.span`
@@ -50,6 +53,11 @@ const CardLabel = styled.span`
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: rgba(245,240,232,0.55);
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+  }
 `
 
 const CardValue = styled.span`
@@ -57,6 +65,10 @@ const CardValue = styled.span`
   font-size: 36px;
   color: #f5f0e8;
   line-height: 1;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    font-size: 28px;
+  }
 `
 
 const CardSub = styled.div`
@@ -64,6 +76,12 @@ const CardSub = styled.div`
   gap: 12px;
   margin-top: 2px;
   flex-wrap: wrap;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 0;
+  }
 `
 
 const spin = keyframes`to { transform: rotate(360deg); }`
@@ -87,6 +105,10 @@ const SubStat = styled.span<{ $green?: boolean }>`
   strong {
     font-weight: 700;
     color: ${({ $green }) => $green ? '#4ade80' : 'rgba(245,240,232,0.85)'};
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    font-size: 10px;
   }
 `
 
