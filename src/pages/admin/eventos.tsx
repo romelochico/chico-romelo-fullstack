@@ -102,8 +102,8 @@ const List = styled.div`
 
 const Card = styled.div<{ $past?: boolean }>`
   display: flex;
-  align-items: center;
-  gap: 16px;
+  flex-direction: column;
+  gap: 10px;
   padding: 14px 16px;
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.07);
@@ -111,6 +111,19 @@ const Card = styled.div<{ $past?: boolean }>`
   transition: border-color 0.15s;
   opacity: ${p => p.$past ? 0.6 : 1};
   &:hover { border-color: rgba(255,255,255,0.13); opacity: 1; }
+`
+
+const CardTop = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 14px;
+`
+
+const CardBottom = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 2px;
 `
 
 const DateBadge = styled.div<{ $past?: boolean }>`
@@ -166,6 +179,9 @@ const EventVenue = styled.div`
   font-size: 11px;
   color: rgba(245,240,232,0.4);
   margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const TagList = styled.div`
@@ -189,10 +205,7 @@ const Tag = styled.span`
 `
 
 const CardMeta = styled.div`
-  font-family: 'Montserrat', sans-serif;
-  font-size: 10px;
-  color: rgba(245,240,232,0.25);
-  white-space: nowrap;
+  display: none;
 `
 
 const CardActions = styled.div`
@@ -200,6 +213,7 @@ const CardActions = styled.div`
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
+  margin-left: auto;
 `
 
 const EditBtn = styled.button`
@@ -255,6 +269,11 @@ const Overlay = styled.div`
   justify-content: center;
   z-index: 100;
   padding: 24px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    padding: 0;
+    align-items: stretch;
+  }
 `
 
 const ModalBox = styled.div`
@@ -267,6 +286,14 @@ const ModalBox = styled.div`
   border-radius: 12px;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    max-width: 100%;
+    max-height: 100%;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+  }
 `
 
 const ModalHeader = styled.div`
@@ -334,6 +361,10 @@ const FieldRow = styled.div<{ $cols?: string }>`
   display: grid;
   grid-template-columns: ${p => p.$cols ?? '1fr 1fr'};
   gap: 12px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    grid-template-columns: 1fr;
+  }
 `
 
 const Label = styled.label`
@@ -601,28 +632,27 @@ export default function AdminEventosPage() {
     const p = toShowCardProps(item)
     return (
       <Card $past={p.past}>
-        <DateBadge $past={p.past}>
-          {p.day && <DateDay>{p.day}</DateDay>}
-          <DateMon>{p.month}</DateMon>
-          <DateYear>{p.year}</DateYear>
-        </DateBadge>
-        <CardInfo>
-          <EventName>{item.title}</EventName>
-          <EventVenue>{item.venue} · {item.city}{item.time ? ` · ${item.time}` : ''}</EventVenue>
-          {(item.tags ?? []).length > 0 && (
-            <TagList>{item.tags?.map((t: string) => <Tag key={t}>{t}</Tag>)}</TagList>
-          )}
-        </CardInfo>
-        <CardMeta>
-          {(item as EventRow & { created_by?: string }).created_by
-            ? `por ${(item as EventRow & { created_by?: string }).created_by!.split('@')[0]}`
-            : ''}
-        </CardMeta>
-        <CardActions>
-          <EditBtn onClick={() => router.push(`/admin/eventos/${item.id}`)} title="Ver gear do show" style={{ background: 'rgba(200,169,110,0.08)', borderColor: 'rgba(200,169,110,0.2)', color: '#c8a96e' }}><Backpack /> Gear</EditBtn>
-          <EditBtn onClick={() => openEdit(item)}><Pencil /> Editar</EditBtn>
+        <CardTop>
+          <DateBadge $past={p.past}>
+            {p.day && <DateDay>{p.day}</DateDay>}
+            <DateMon>{p.month}</DateMon>
+            <DateYear>{p.year}</DateYear>
+          </DateBadge>
+          <CardInfo>
+            <EventName>{item.title}</EventName>
+            <EventVenue>{item.venue}{item.city ? ` · ${item.city}` : ''}{item.time ? ` · ${item.time}` : ''}</EventVenue>
+          </CardInfo>
           <DeleteBtn onClick={() => openDelete(item)} title="Excluir"><X /></DeleteBtn>
-        </CardActions>
+        </CardTop>
+        <CardBottom>
+          <TagList style={{ flex: 1, marginTop: 0 }}>
+            {(item.tags ?? []).map((t: string) => <Tag key={t}>{t}</Tag>)}
+          </TagList>
+          <CardActions>
+            <EditBtn onClick={() => router.push(`/admin/eventos/${item.id}`)} title="Ver gear do show" style={{ background: 'rgba(200,169,110,0.08)', borderColor: 'rgba(200,169,110,0.2)', color: '#c8a96e' }}><Backpack /> Gear</EditBtn>
+            <EditBtn onClick={() => openEdit(item)}><Pencil /> Editar</EditBtn>
+          </CardActions>
+        </CardBottom>
       </Card>
     )
   }

@@ -69,17 +69,18 @@ const AddBtn = styled.button`
 `
 
 const List = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: 1fr;
   gap: 12px;
 `
 
 const Card = styled.div`
   position: relative;
   display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  padding: 16px;
+  flex-direction: row;
+  align-items: stretch;
+  overflow: hidden;
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.07);
   border-radius: 10px;
@@ -87,19 +88,41 @@ const Card = styled.div`
   &:hover { border-color: rgba(255,255,255,0.13); }
 `
 
+const CardContent = styled.div`
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 14px 16px;
+  position: relative;
+`
+
+const CardTop = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`
+
+const CardBottom = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+`
+
 const Thumb = styled.div`
-  width: 80px;
-  height: 64px;
-  border-radius: 4px;
-  overflow: hidden;
-  background: rgba(255,255,255,0.05);
+  width: 90px;
+  align-self: stretch;
   flex-shrink: 0;
+  background: rgba(255,255,255,0.03);
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 8px;
 
-  img { width: 100%; height: 100%; object-fit: cover; }
-  svg { width: 20px; height: 20px; color: rgba(245,240,232,0.15); }
+  img { width: 100%; height: 100%; object-fit: cover; border-radius: 5px; }
+  svg { width: 22px; height: 22px; color: rgba(245,240,232,0.15); }
 `
 
 const CardInfo = styled.div`
@@ -149,10 +172,9 @@ const Unpublished = styled.span`
 `
 
 const CardActions = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
 `
 
 const EditBtn = styled.button`
@@ -174,18 +196,21 @@ const EditBtn = styled.button`
 `
 
 const DeleteBtn = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: none;
   border-radius: 5px;
-  color: rgba(245,240,232,0.3);
+  color: rgba(245,240,232,0.25);
   cursor: pointer;
   transition: all 0.15s;
-  &:hover { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.3); color: #f87171; }
+  &:hover { background: rgba(248,113,113,0.1); color: #f87171; }
   svg { width: 13px; height: 13px; }
 `
 
@@ -208,6 +233,11 @@ const Overlay = styled.div`
   justify-content: center;
   z-index: 100;
   padding: 24px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    padding: 0;
+    align-items: stretch;
+  }
 `
 
 const ModalBox = styled.div`
@@ -220,6 +250,14 @@ const ModalBox = styled.div`
   border-radius: 12px;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    max-width: 100%;
+    max-height: 100%;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+  }
 `
 
 const ModalHeader = styled.div`
@@ -288,6 +326,10 @@ const FieldRow = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    grid-template-columns: 1fr;
+  }
 `
 
 const Label = styled.label`
@@ -689,19 +731,22 @@ export default function AdminNovidadesPage() {
                 <Thumb>
                   {imgUrl ? <img src={imgUrl} alt={item.title} /> : <ImageOff />}
                 </Thumb>
-                <CardInfo>
-                  {item.strap && <TagBadge>{item.strap}</TagBadge>}
-                  <CardTitle>{item.title}</CardTitle>
-                  <CardMeta>
-                    {item.date_label ?? formatDateLabel(item.created_at)}
-                    {item.created_by && ` · por ${item.created_by}`}
-                    {!item.published && <Unpublished>não publicado</Unpublished>}
-                  </CardMeta>
-                </CardInfo>
-                <CardActions>
-                  <EditBtn onClick={() => openEdit(item)}><Pencil /> Editar</EditBtn>
+                <CardContent>
                   <DeleteBtn onClick={() => openDelete(item)} title="Excluir"><X /></DeleteBtn>
-                </CardActions>
+                  <CardActions>
+                    <EditBtn onClick={() => openEdit(item)}><Pencil /> Editar</EditBtn>
+                  </CardActions>
+                  <CardTop>
+                    {item.strap && <TagBadge>{item.strap}</TagBadge>}
+                    <CardTitle>{item.title}</CardTitle>
+                  </CardTop>
+                  <CardBottom>
+                    <CardMeta>
+                      {item.date_label ?? formatDateLabel(item.created_at)}
+                      {!item.published && <Unpublished>não publicado</Unpublished>}
+                    </CardMeta>
+                  </CardBottom>
+                </CardContent>
               </Card>
             )
           })}

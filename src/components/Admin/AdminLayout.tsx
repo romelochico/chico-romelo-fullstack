@@ -85,32 +85,32 @@ const Main = styled.main`
 `
 
 const Header = styled.div`
-  padding: 28px 32px 24px;
+  padding: 20px 32px 16px;
   border-bottom: 1px solid rgba(255,255,255,0.06);
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    padding: 20px 16px 16px;
-    margin-bottom: 20px;
+    padding: 10px 16px 8px;
+    margin-bottom: 10px;
   }
 `
 
 const PageTitle = styled.h1`
   font-family: ${({ theme }) => theme.fonts.display};
-  font-size: 28px;
+  font-size: 24px;
   color: ${({ theme }) => theme.colors.cream};
   font-weight: 700;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    font-size: 22px;
+    font-size: 18px;
   }
 `
 
 const PageSub = styled.p`
   font-family: ${({ theme }) => theme.fonts.body};
-  font-size: 12px;
+  font-size: 11px;
   color: rgba(255,255,255,0.3);
-  margin-top: 4px;
+  margin-top: 2px;
   letter-spacing: 0.04em;
 `
 
@@ -118,7 +118,7 @@ const Content = styled.div`
   padding: 0 32px 40px;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    padding: 0 16px 32px;
+    padding: 0 16px 16px;
   }
 `
 
