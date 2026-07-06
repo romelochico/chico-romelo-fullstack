@@ -33,6 +33,10 @@ export const CATEGORIES: CategoryDef[] = [
     key: 'drums', label: 'Bateria', Icon: Layers,
     subcategories: ['Bumbo', 'Tom 1', 'Tom 2', 'Floor Tom', 'Caixa', 'Pratos', 'Hi-Hat', 'Pedal de Bumbo', 'Suporte de Prato', 'Suporte de Caixa', 'Banco'],
   },
+  {
+    key: 'drums_hardware', label: 'Hardware de Bateria', Icon: Layers,
+    subcategories: ['Pedal de Bumbo', 'Banco', 'Suporte de Banco', 'Suporte de Caixa', 'Pedestal de Prato Reto', 'Pedestal de Prato Girafa', 'Pedestal de Hi-Hat', 'Clamp', 'Braço de Extensão'],
+  },
   { key: 'pedalboard', label: 'Pedalboard', Icon: Zap },
   {
     key: 'pedals', label: 'Pedais', Icon: Zap,
