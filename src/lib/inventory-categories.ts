@@ -53,7 +53,8 @@ export const CATEGORIES: CategoryDef[] = [
   { key: 'interface', label: 'Interface de Áudio', Icon: Headphones },
   { key: 'computer',  label: 'Computador',         Icon: Laptop },
   { key: 'extension', label: 'Extensões',           Icon: Zap },
-  { key: 'iem',       label: 'IEM',                 Icon: Headphones },
+  { key: 'accessories', label: 'Acessórios',         Icon: PackageOpen },
+  { key: 'iem',         label: 'IEM',               Icon: Headphones },
   { key: 'iem_ammo',  label: 'Munição IEM',         Icon: PackageOpen },
   {
     key: 'wireless', label: 'Wireless', Icon: GitFork,
