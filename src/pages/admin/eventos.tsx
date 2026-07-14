@@ -506,6 +506,14 @@ function todayStr(): string {
   return new Date().toISOString().split('T')[0]
 }
 
+function revalidateAgenda() {
+  fetch('/api/admin/revalidate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path: '/agenda' }),
+  }).catch(e => console.error('[revalidateAgenda]', e))
+}
+
 // ─── Page ──────────────────────────────────────────────────────────────────
 
 export default function AdminEventosPage() {
@@ -615,6 +623,7 @@ export default function AdminEventosPage() {
 
     closeModal()
     load()
+    revalidateAgenda()
   }
 
   async function handleDelete() {
@@ -622,6 +631,7 @@ export default function AdminEventosPage() {
     await createClient().from('events').delete().eq('id', modal.item.id)
     closeModal()
     load()
+    revalidateAgenda()
   }
 
   const { upcoming, past } = splitEvents(items)

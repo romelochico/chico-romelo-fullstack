@@ -553,6 +553,14 @@ function defaultDateLabel(): string {
   return `${PT[d.getMonth()]} · ${d.getFullYear()}`
 }
 
+function revalidateNovidades() {
+  fetch('/api/admin/revalidate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path: '/novidades' }),
+  }).catch(e => console.error('[revalidateNovidades]', e))
+}
+
 // ─── Page ──────────────────────────────────────────────────────────────────
 
 export default function AdminNovidadesPage() {
@@ -699,6 +707,7 @@ export default function AdminNovidadesPage() {
 
     closeModal()
     load()
+    revalidateNovidades()
   }
 
   async function handleDelete() {
@@ -706,6 +715,7 @@ export default function AdminNovidadesPage() {
     await createClient().from('news').delete().eq('id', modal.item.id)
     closeModal()
     load()
+    revalidateNovidades()
   }
 
   const isFormModal = modal?.type === 'add' || modal?.type === 'edit'
