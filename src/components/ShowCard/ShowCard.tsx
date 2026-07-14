@@ -26,12 +26,12 @@ export default function ShowCard({ day, month, year, name, venue, tags = [], lin
       </ShowInfo>
 
       <ShowCta>
-        {badge && <ShowBadge>{badge}</ShowBadge>}
         {link && (
           link.external
             ? <ShowLink href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</ShowLink>
             : <Link href={link.href} passHref legacyBehavior><ShowLink as="a">{link.label}</ShowLink></Link>
         )}
+        {badge && <ShowBadge>{badge}</ShowBadge>}
       </ShowCta>
     </CardRow>
   )

@@ -20,6 +20,10 @@ export const NavWrapper = styled.nav`
   letter-spacing: 0.04em;
   border-radius: 14px;
 
+  /* Never let the pill get squeezed narrower than its content — that's what
+     was causing links/logo to collapse or overflow the background. */
+  width: max-content;
+
   /* Always centered horizontally */
   left: 50%;
   transform: translateX(-50%);
@@ -31,6 +35,7 @@ export const NavWrapper = styled.nav`
   `}
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    width: auto;
     padding: 16px 18px;
     right: 10px;
     left: 10px;
@@ -62,10 +67,10 @@ export const NavLinks = styled.div`
   display: flex;
   gap: 20px;
   flex: 1;
-  min-width: 0;
+  min-width: max-content;
   justify-content: ${({ $right }) => $right ? 'flex-start' : 'flex-end'};
 
-  a { opacity: 0.9; transition: opacity 0.2s; }
+  a { opacity: 0.9; transition: opacity 0.2s; flex-shrink: 0; white-space: nowrap; }
   a:hover { opacity: 1; }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {

@@ -88,8 +88,15 @@ export const ShowTag = styled.span`
 `
 
 export const ShowCta = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+
   @media (max-width: ${({ theme }) => theme.breakpoints.small}) {
     grid-column: 2;
+    align-items: flex-start;
+    margin-top: 8px;
   }
 `
 
