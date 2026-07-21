@@ -254,6 +254,16 @@ const RemoveBtn = styled.button`
   &:hover { background: rgba(248,113,113,0.1); color: ${C.red}; }
 `
 
+const EditIconBtn = styled.button`
+  width: 28px; height: 28px;
+  border: none; border-radius: 6px; background: transparent;
+  color: ${C.dim}; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, color 0.15s;
+  svg { width: 13px; height: 13px; }
+  &:hover { background: rgba(200,169,110,0.1); color: ${C.gold}; }
+`
+
 const EmptyState = styled.div`
   text-align: center; padding: 32px 24px;
   color: ${C.dim}; font-family: 'Montserrat', sans-serif; font-size: 13px;
@@ -467,7 +477,7 @@ export default function ShowDetailPage() {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
 
   const [staff, setStaff]       = useState<StaffRow[]>([])
-  const [showStaffModal, setShowStaffModal] = useState(false)
+  const [staffModal, setStaffModal] = useState<{ type: 'add' } | { type: 'edit'; item: StaffRow } | null>(null)
   const [staffName, setStaffName] = useState('')
   const [staffRole, setStaffRole] = useState('')
 
@@ -541,19 +551,32 @@ export default function ShowDetailPage() {
     setGear(g => g.filter(x => x.id !== gearRow.id))
   }
 
-  async function addStaff() {
-    if (!staffName.trim()) return
-    const res = await fetch('/api/admin/show-staff', {
-      method: 'POST',
-      headers: await authHeaders(),
-      body: JSON.stringify({ event_id: id, name: staffName, role: staffRole }),
-    })
-    if (res.ok) {
-      const row = await res.json() as StaffRow
-      setStaff(s => [...s, row])
-      setStaffName('')
-      setStaffRole('')
+  async function saveStaff() {
+    if (!staffName.trim() || !staffModal) return
+    if (staffModal.type === 'add') {
+      const res = await fetch('/api/admin/show-staff', {
+        method: 'POST',
+        headers: await authHeaders(),
+        body: JSON.stringify({ event_id: id, name: staffName, role: staffRole }),
+      })
+      if (res.ok) {
+        const row = await res.json() as StaffRow
+        setStaff(s => [...s, row])
+      }
+    } else {
+      const res = await fetch(`/api/admin/show-staff/${staffModal.item.id}`, {
+        method: 'PUT',
+        headers: await authHeaders(),
+        body: JSON.stringify({ name: staffName, role: staffRole }),
+      })
+      if (res.ok) {
+        const row = await res.json() as StaffRow
+        setStaff(s => s.map(x => x.id === row.id ? row : x))
+      }
     }
+    setStaffName('')
+    setStaffRole('')
+    setStaffModal(null)
   }
 
   async function removeStaff(staffRow: StaffRow) {
@@ -561,10 +584,16 @@ export default function ShowDetailPage() {
     setStaff(s => s.filter(x => x.id !== staffRow.id))
   }
 
-  function openStaffModal() {
+  function openAddStaff() {
     setStaffName('')
     setStaffRole('')
-    setShowStaffModal(true)
+    setStaffModal({ type: 'add' })
+  }
+
+  function openEditStaff(item: StaffRow) {
+    setStaffName(item.name)
+    setStaffRole(item.role ?? '')
+    setStaffModal({ type: 'edit', item })
   }
 
   function openModal() {
@@ -681,7 +710,7 @@ export default function ShowDetailPage() {
       {/* Staff */}
       <SectionRow>
         <SectionTitle><Users /> Staff</SectionTitle>
-        <AddGearBtn onClick={openStaffModal}><Plus /> Adicionar staff</AddGearBtn>
+        <AddGearBtn onClick={openAddStaff}><Plus /> Adicionar staff</AddGearBtn>
       </SectionRow>
 
       <GearList>
@@ -691,6 +720,7 @@ export default function ShowDetailPage() {
           <GearRow key={s.id}>
             <GearName>{s.name}</GearName>
             {s.role && <SubBadge>{s.role}</SubBadge>}
+            <EditIconBtn onClick={() => openEditStaff(s)} title="Editar"><Pencil /></EditIconBtn>
             <RemoveBtn onClick={() => removeStaff(s)} title="Remover"><Trash2 /></RemoveBtn>
           </GearRow>
         ))}
@@ -816,14 +846,14 @@ export default function ShowDetailPage() {
       )}
 
       {/* Staff modal */}
-      {showStaffModal && (
-        <StaffOverlay onClick={e => { if (e.target === e.currentTarget) setShowStaffModal(false) }}>
+      {staffModal && (
+        <StaffOverlay onClick={e => { if (e.target === e.currentTarget) setStaffModal(null) }}>
           <StaffBox>
             <ModalHeader>
-              <ModalHeading>Adicionar staff</ModalHeading>
-              <CloseBtn onClick={() => setShowStaffModal(false)} title="Fechar"><X /></CloseBtn>
+              <ModalHeading>{staffModal.type === 'add' ? 'Adicionar staff' : 'Editar staff'}</ModalHeading>
+              <CloseBtn onClick={() => setStaffModal(null)} title="Fechar"><X /></CloseBtn>
             </ModalHeader>
-            <StaffBody as="form" onSubmit={(e: FormEvent) => { e.preventDefault(); addStaff() }}>
+            <StaffBody as="form" onSubmit={(e: FormEvent) => { e.preventDefault(); saveStaff() }}>
               <StaffField>
                 <StaffLabel>Nome *</StaffLabel>
                 <StaffInput
@@ -842,7 +872,7 @@ export default function ShowDetailPage() {
                 />
               </StaffField>
               <StaffSubmitBtn type="submit" disabled={!staffName.trim()}>
-                <Plus /> Adicionar
+                {staffModal.type === 'add' ? <><Plus /> Adicionar</> : <><Check /> Salvar</>}
               </StaffSubmitBtn>
             </StaffBody>
           </StaffBox>
