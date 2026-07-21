@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, type FormEvent } from 'react'
 import { useRouter } from 'next/router'
 import styled, { keyframes } from 'styled-components'
-import { ArrowLeft, Plus, Minus, Check, Trash2, PackageCheck, PackageOpen, Search, X, ChevronDown, ChevronUp, Users } from 'lucide-react'
+import { ArrowLeft, Plus, Minus, Check, Trash2, PackageCheck, PackageOpen, Search, X, ChevronDown, ChevronUp, Users, Music, Pencil } from 'lucide-react'
 import AdminLayout from '../../../components/Admin/AdminLayout'
+import SetlistModal from '../../../components/Admin/SetlistModal'
 import { createClient } from '../../../lib/supabase/client'
 import { CATEGORIES } from '../../../lib/inventory-categories'
 
@@ -45,6 +46,31 @@ interface StaffRow {
   name: string
   role: string | null
   created_at: string
+}
+
+interface SpeechLine {
+  id: string
+  song_id: string
+  timing: 'before' | 'after'
+  position: number
+  speaker: string
+  text: string
+}
+
+interface SetlistSong {
+  id: string
+  block_id: string
+  position: number
+  title: string
+  speeches: SpeechLine[]
+}
+
+interface SetlistBlock {
+  id: string
+  event_id: string
+  position: number
+  name: string | null
+  songs: SetlistSong[]
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -104,6 +130,20 @@ const EventMeta = styled.div`
   display: flex; flex-wrap: wrap; gap: 6px 16px;
   font-family: 'Montserrat', sans-serif;
   font-size: 12px; color: ${C.dim};
+`
+
+const GhostBtn = styled.button`
+  display: flex; align-items: center; gap: 6px;
+  padding: 9px 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid ${C.border};
+  color: ${C.dim};
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  border-radius: 6px; cursor: pointer;
+  transition: all 0.15s;
+  svg { width: 13px; height: 13px; }
+  &:hover { color: ${C.cream}; border-color: rgba(255,255,255,0.2); }
 `
 
 const TagChip = styled.span`
@@ -431,19 +471,24 @@ export default function ShowDetailPage() {
   const [staffName, setStaffName] = useState('')
   const [staffRole, setStaffRole] = useState('')
 
+  const [setlist, setSetlist] = useState<SetlistBlock[]>([])
+  const [showSetlistModal, setShowSetlistModal] = useState(false)
+
   const supabase = createClient()
 
   const load = useCallback(async () => {
     if (!id) return
-    const [eventRes, gearRes, staffRes, invRes] = await Promise.all([
+    const [eventRes, gearRes, staffRes, setlistRes, invRes] = await Promise.all([
       supabase.from('events').select('*').eq('id', id).single(),
       fetch(`/api/admin/show-gear?event_id=${id}`, { headers: await authHeaders() }),
       fetch(`/api/admin/show-staff?event_id=${id}`, { headers: await authHeaders() }),
+      fetch(`/api/admin/setlist?event_id=${id}`, { headers: await authHeaders() }),
       supabase.from('inventory').select('*').order('category').order('name'),
     ])
     setEvent(eventRes.data as EventRow)
     if (gearRes.ok) setGear(await gearRes.json())
     if (staffRes.ok) setStaff(await staffRes.json())
+    if (setlistRes.ok) setSetlist(await setlistRes.json())
     setInventory((invRes.data as InventoryItem[]) ?? [])
   }, [id, supabase])
 
@@ -651,6 +696,46 @@ export default function ShowDetailPage() {
         ))}
       </GearList>
 
+      {/* Setlist */}
+      <SectionRow>
+        <SectionTitle><Music /> Setlist</SectionTitle>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <GhostBtn onClick={() => router.push(`/admin/eventos/${id}/setlist`)}>Ver setlist completo</GhostBtn>
+          <AddGearBtn onClick={() => setShowSetlistModal(true)}><Pencil /> Editar setlist</AddGearBtn>
+        </div>
+      </SectionRow>
+
+      <GearList>
+        {setlist.length === 0 ? (
+          <EmptyState>Nenhum bloco criado — clica em "Editar setlist" para montar o repertório</EmptyState>
+        ) : (() => {
+          let songCounter = 0
+          return setlist.map(block => (
+            <GearRow key={block.id} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 6 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <QtyBadge>{block.songs.length}×</QtyBadge>
+                <GearName>{block.name || `Bloco ${block.position + 1}`}</GearName>
+              </div>
+              {block.songs.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 2, marginTop: 10 }}>
+                  {block.songs.map(s => {
+                    songCounter += 1
+                    return (
+                      <div key={s.id} style={{ display: 'flex', gap: 8, fontSize: 12, color: C.dim }}>
+                        <span style={{ minWidth: 16, color: C.sage, fontWeight: 700 }}>{songCounter}.</span>
+                        <span>{s.title}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : (
+                <div style={{ fontSize: 12, color: C.dim, paddingLeft: 2, marginTop: 10 }}>Sem músicas</div>
+              )}
+            </GearRow>
+          ))
+        })()}
+      </GearList>
+
       {/* Inventory selection modal */}
       {showModal && (
         <ModalOverlay>
@@ -762,6 +847,16 @@ export default function ShowDetailPage() {
             </StaffBody>
           </StaffBox>
         </StaffOverlay>
+      )}
+
+      {/* Setlist modal */}
+      {showSetlistModal && (
+        <SetlistModal
+          eventId={id}
+          blocks={setlist}
+          onClose={() => setShowSetlistModal(false)}
+          reload={load}
+        />
       )}
     </AdminLayout>
   )

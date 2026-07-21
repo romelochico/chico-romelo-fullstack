@@ -1,0 +1,44 @@
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { createClient } from '@supabase/supabase-js'
+
+function adminClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { persistSession: false } }
+  )
+}
+
+async function getUser(req: NextApiRequest) {
+  const token = req.headers.authorization?.replace('Bearer ', '')
+  if (!token) return null
+  const { data: { user } } = await adminClient().auth.getUser(token)
+  return user
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const user = await getUser(req)
+  if (!user) return res.status(401).json({ error: 'Não autenticado.' })
+
+  const supabase = adminClient()
+
+  if (req.method === 'POST') {
+    const { block_id, title } = req.body
+    if (!block_id || !title?.trim()) return res.status(400).json({ error: 'block_id e title são obrigatórios' })
+
+    const { count } = await supabase
+      .from('show_setlist_songs')
+      .select('id', { count: 'exact', head: true })
+      .eq('block_id', block_id)
+
+    const { data, error } = await supabase
+      .from('show_setlist_songs')
+      .insert({ block_id, title: title.trim(), position: count ?? 0 })
+      .select('*')
+      .single()
+    if (error) return res.status(500).json({ error: error.message })
+    return res.status(201).json({ ...data, speeches: [] })
+  }
+
+  return res.status(405).end()
+}
