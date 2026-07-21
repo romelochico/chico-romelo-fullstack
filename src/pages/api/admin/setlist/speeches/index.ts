@@ -1,0 +1,50 @@
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { createClient } from '@supabase/supabase-js'
+
+function adminClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { persistSession: false } }
+  )
+}
+
+async function getUser(req: NextApiRequest) {
+  const token = req.headers.authorization?.replace('Bearer ', '')
+  if (!token) return null
+  const { data: { user } } = await adminClient().auth.getUser(token)
+  return user
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const user = await getUser(req)
+  if (!user) return res.status(401).json({ error: 'Não autenticado.' })
+
+  const supabase = adminClient()
+
+  if (req.method === 'POST') {
+    const { song_id, timing, speaker, text } = req.body
+    if (!song_id || !timing || !speaker?.trim() || !text?.trim()) {
+      return res.status(400).json({ error: 'song_id, timing, speaker e text são obrigatórios' })
+    }
+    if (timing !== 'before' && timing !== 'after') {
+      return res.status(400).json({ error: 'timing deve ser "before" ou "after"' })
+    }
+
+    const { count } = await supabase
+      .from('show_setlist_speeches')
+      .select('id', { count: 'exact', head: true })
+      .eq('song_id', song_id)
+      .eq('timing', timing)
+
+    const { data, error } = await supabase
+      .from('show_setlist_speeches')
+      .insert({ song_id, timing, speaker: speaker.trim(), text: text.trim(), position: count ?? 0 })
+      .select('*')
+      .single()
+    if (error) return res.status(500).json({ error: error.message })
+    return res.status(201).json(data)
+  }
+
+  return res.status(405).end()
+}
