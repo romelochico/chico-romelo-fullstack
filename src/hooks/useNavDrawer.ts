@@ -13,12 +13,12 @@ export interface UseNavDrawerReturn {
  * Also hides the nav bar when the footer is visible on small screens.
  */
 export function useNavDrawer(): UseNavDrawerReturn {
-  const [isOpen,      setIsOpen]      = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
   const [isNavHidden, setIsNavHidden] = useState(false)
 
-  const open   = () => setIsOpen(true)
-  const close  = () => setIsOpen(false)
-  const toggle = () => setIsOpen((prev) => !prev)
+  const open = () => setIsOpen(true)
+  const close = () => setIsOpen(false)
+  const toggle = () => setIsOpen(prev => !prev)
 
   // Hide nav when footer enters viewport (mobile/tablet only)
   useEffect(() => {
@@ -26,10 +26,10 @@ export function useNavDrawer(): UseNavDrawerReturn {
     if (!footer || !('IntersectionObserver' in window)) return
 
     const io = new IntersectionObserver(
-      (entries) => {
+      entries => {
         const isMobile = window.matchMedia('(max-width: 950px)').matches
         if (!isMobile) return
-        entries.forEach((entry) => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             setIsNavHidden(true)
             close()

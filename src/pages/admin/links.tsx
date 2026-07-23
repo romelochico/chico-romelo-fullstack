@@ -1,6 +1,20 @@
 import { useState, useEffect, useCallback } from 'react'
 import styled, { keyframes } from 'styled-components'
-import { Plus, Pencil, Trash2, Eye, EyeOff, Copy, Check, Link2, KeyRound, Image, FileText, Music, Share2, Video } from 'lucide-react'
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Eye,
+  EyeOff,
+  Copy,
+  Link2,
+  KeyRound,
+  Image as ImageIcon,
+  FileText,
+  Music,
+  Share2,
+  Video,
+} from 'lucide-react'
 import AdminLayout from '../../components/Admin/AdminLayout'
 import { createClient } from '../../lib/supabase/client'
 
@@ -30,34 +44,30 @@ interface CredentialRow {
 type ActiveSection = 'links' | 'credentials'
 
 type LinkModal =
-  | { type: 'add' }
-  | { type: 'edit'; item: LinkRow }
-  | { type: 'delete'; item: LinkRow }
+  { type: 'add' } | { type: 'edit'; item: LinkRow } | { type: 'delete'; item: LinkRow }
 
-type CredModal =
-  | { type: 'add' }
-  | { type: 'delete'; item: CredentialRow }
+type CredModal = { type: 'add' } | { type: 'delete'; item: CredentialRow }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const CATEGORIES: { key: LinkCategory; label: string; Icon: React.ElementType }[] = [
-  { key: 'photos',    label: 'Fotos',        Icon: Image   },
-  { key: 'documents', label: 'Documentos',   Icon: FileText },
-  { key: 'songs',     label: 'Músicas',      Icon: Music   },
-  { key: 'videos',    label: 'Vídeos',       Icon: Video   },
-  { key: 'social',    label: 'Redes Sociais', Icon: Share2  },
+  { key: 'photos', label: 'Fotos', Icon: ImageIcon },
+  { key: 'documents', label: 'Documentos', Icon: FileText },
+  { key: 'songs', label: 'Músicas', Icon: Music },
+  { key: 'videos', label: 'Vídeos', Icon: Video },
+  { key: 'social', label: 'Redes Sociais', Icon: Share2 },
 ]
 
 const C = {
-  gold:    '#c8a96e',
-  sage:    '#878766',
-  cream:   '#f5f0e8',
-  cream2:  'rgba(245,240,232,0.6)',
-  dim:     'rgba(245,240,232,0.3)',
-  dimmer:  'rgba(245,240,232,0.12)',
-  border:  'rgba(255,255,255,0.07)',
-  card:    'rgba(255,255,255,0.03)',
-  red:     '#f87171',
+  gold: '#c8a96e',
+  sage: '#878766',
+  cream: '#f5f0e8',
+  cream2: 'rgba(245,240,232,0.6)',
+  dim: 'rgba(245,240,232,0.3)',
+  dimmer: 'rgba(245,240,232,0.12)',
+  border: 'rgba(255,255,255,0.07)',
+  card: 'rgba(255,255,255,0.03)',
+  red: '#f87171',
 }
 
 // ─── Styled components ────────────────────────────────────────────────────────
@@ -66,7 +76,7 @@ const SectionTabs = styled.div`
   display: flex;
   gap: 4px;
   margin-bottom: 28px;
-  background: rgba(255,255,255,0.03);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid ${C.border};
   border-radius: 8px;
   padding: 4px;
@@ -86,11 +96,18 @@ const SectionTab = styled.button<{ $active: boolean }>`
   letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-  background: ${({ $active }) => $active ? C.gold : 'transparent'};
-  color: ${({ $active }) => $active ? '#0d0d0d' : C.dim};
-  svg { width: 14px; height: 14px; }
-  &:hover { color: ${({ $active }) => $active ? '#0d0d0d' : C.cream}; }
+  transition:
+    background 0.15s,
+    color 0.15s;
+  background: ${({ $active }) => ($active ? C.gold : 'transparent')};
+  color: ${({ $active }) => ($active ? '#0d0d0d' : C.dim)};
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+  &:hover {
+    color: ${({ $active }) => ($active ? '#0d0d0d' : C.cream)};
+  }
 `
 
 const TopBar = styled.div`
@@ -136,8 +153,13 @@ const AddBtn = styled.button`
   border-radius: 6px;
   cursor: pointer;
   transition: opacity 0.15s;
-  svg { width: 14px; height: 14px; }
-  &:hover { opacity: 0.85; }
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+  &:hover {
+    opacity: 0.85;
+  }
 `
 
 const LinkList = styled.div`
@@ -156,19 +178,25 @@ const LinkCard = styled.div`
   border: 1px solid ${C.border};
   border-radius: 8px;
   transition: border-color 0.15s;
-  &:hover { border-color: ${C.dimmer}; }
+  &:hover {
+    border-color: ${C.dimmer};
+  }
 `
 
 const LinkIcon = styled.div`
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  background: rgba(135,135,102,0.12);
+  background: rgba(135, 135, 102, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  svg { width: 15px; height: 15px; color: ${C.sage}; }
+  svg {
+    width: 15px;
+    height: 15px;
+    color: ${C.sage};
+  }
 `
 
 const LinkInfo = styled.div`
@@ -195,7 +223,9 @@ const LinkUrl = styled.a`
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
-  &:hover { color: ${C.sage}; }
+  &:hover {
+    color: ${C.sage};
+  }
 `
 
 const RowActions = styled.div`
@@ -210,16 +240,21 @@ const IconBtn = styled.button<{ $red?: boolean }>`
   border: none;
   border-radius: 6px;
   background: transparent;
-  color: ${({ $red }) => $red ? C.red : C.dim};
+  color: ${({ $red }) => ($red ? C.red : C.dim)};
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s, color 0.15s;
-  svg { width: 14px; height: 14px; }
+  transition:
+    background 0.15s,
+    color 0.15s;
+  svg {
+    width: 14px;
+    height: 14px;
+  }
   &:hover {
-    background: ${({ $red }) => $red ? 'rgba(248,113,113,0.1)' : 'rgba(255,255,255,0.06)'};
-    color: ${({ $red }) => $red ? C.red : C.cream};
+    background: ${({ $red }) => ($red ? 'rgba(248,113,113,0.1)' : 'rgba(255,255,255,0.06)')};
+    color: ${({ $red }) => ($red ? C.red : C.cream)};
   }
 `
 
@@ -249,7 +284,9 @@ const CredCard = styled.div`
   border-radius: 10px;
   padding: 16px 18px;
   transition: border-color 0.15s;
-  &:hover { border-color: ${C.dimmer}; }
+  &:hover {
+    border-color: ${C.dimmer};
+  }
 `
 
 const CredSite = styled.div`
@@ -273,7 +310,9 @@ const CredSiteUrl = styled.a`
   font-size: 11px;
   color: ${C.dim};
   text-decoration: none;
-  &:hover { color: ${C.sage}; }
+  &:hover {
+    color: ${C.sage};
+  }
 `
 
 const CredRow = styled.div`
@@ -309,8 +348,12 @@ const CredValue = styled.button`
   overflow: hidden;
   text-overflow: ellipsis;
   transition: color 0.15s;
-  &:hover { color: ${C.gold}; }
-  title { display: none; }
+  &:hover {
+    color: ${C.gold};
+  }
+  title {
+    display: none;
+  }
 `
 
 const CredActions = styled.div`
@@ -335,7 +378,7 @@ const CopyToast = styled.span`
 const Overlay = styled.div`
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   z-index: 100;
   display: flex;
   align-items: center;
@@ -345,7 +388,7 @@ const Overlay = styled.div`
 
 const Modal = styled.div`
   background: #141414;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 32px;
   width: 100%;
@@ -377,29 +420,35 @@ const Label = styled.label`
 
 const Input = styled.input`
   padding: 10px 14px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
   color: ${C.cream};
   font-family: 'Montserrat', sans-serif;
   font-size: 13px;
   outline: none;
   transition: border-color 0.2s;
-  &:focus { border-color: ${C.gold}; }
+  &:focus {
+    border-color: ${C.gold};
+  }
 `
 
 const Select = styled.select`
   padding: 10px 14px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
   color: ${C.cream};
   font-family: 'Montserrat', sans-serif;
   font-size: 13px;
   outline: none;
   transition: border-color 0.2s;
-  &:focus { border-color: ${C.gold}; }
-  option { background: #141414; }
+  &:focus {
+    border-color: ${C.gold};
+  }
+  option {
+    background: #141414;
+  }
 `
 
 const ModalActions = styled.div`
@@ -420,13 +469,18 @@ const CancelBtn = styled.button`
   font-weight: 700;
   letter-spacing: 0.06em;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
-  &:hover { border-color: ${C.dim}; color: ${C.cream}; }
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+  &:hover {
+    border-color: ${C.dim};
+    color: ${C.cream};
+  }
 `
 
 const ConfirmBtn = styled.button<{ $red?: boolean }>`
   padding: 10px 20px;
-  background: ${({ $red }) => $red ? C.red : C.gold};
+  background: ${({ $red }) => ($red ? C.red : C.gold)};
   border: none;
   border-radius: 6px;
   color: #0d0d0d;
@@ -436,8 +490,13 @@ const ConfirmBtn = styled.button<{ $red?: boolean }>`
   letter-spacing: 0.06em;
   cursor: pointer;
   transition: opacity 0.15s;
-  &:hover { opacity: 0.85; }
-  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:hover {
+    opacity: 0.85;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `
 
 const DeleteText = styled.p`
@@ -452,12 +511,18 @@ const DeleteText = styled.p`
 
 function getCategoryIcon(cat: string | null): React.ReactNode {
   switch (cat) {
-    case 'photos':    return <Image size={15} />
-    case 'documents': return <FileText size={15} />
-    case 'songs':     return <Music size={15} />
-    case 'videos':    return <Video size={15} />
-    case 'social':    return <Share2 size={15} />
-    default:          return <Link2 size={15} />
+    case 'photos':
+      return <ImageIcon size={15} />
+    case 'documents':
+      return <FileText size={15} />
+    case 'songs':
+      return <Music size={15} />
+    case 'videos':
+      return <Video size={15} />
+    case 'social':
+      return <Share2 size={15} />
+    default:
+      return <Link2 size={15} />
   }
 }
 
@@ -502,13 +567,13 @@ function CredentialCard({ item, onDelete }: CredentialCardProps) {
           {item.login}
         </CredValue>
         <CredActions>
-          {copied === 'login'
-            ? <CopyToast>Copiado!</CopyToast>
-            : (
-              <IconBtn onClick={() => handleCopy('login', item.login)} title="Copiar login">
-                <Copy />
-              </IconBtn>
-            )}
+          {copied === 'login' ? (
+            <CopyToast>Copiado!</CopyToast>
+          ) : (
+            <IconBtn onClick={() => handleCopy('login', item.login)} title="Copiar login">
+              <Copy />
+            </IconBtn>
+          )}
         </CredActions>
       </CredRow>
 
@@ -518,18 +583,21 @@ function CredentialCard({ item, onDelete }: CredentialCardProps) {
           {showPass ? item.password : '••••••••••••'}
         </CredValue>
         <CredActions>
-          {copied === 'password'
-            ? <CopyToast>Copiado!</CopyToast>
-            : (
-              <>
-                <IconBtn onClick={() => setShowPass(s => !s)} title={showPass ? 'Ocultar' : 'Revelar'}>
-                  {showPass ? <EyeOff /> : <Eye />}
-                </IconBtn>
-                <IconBtn onClick={() => handleCopy('password', item.password)} title="Copiar senha">
-                  <Copy />
-                </IconBtn>
-              </>
-            )}
+          {copied === 'password' ? (
+            <CopyToast>Copiado!</CopyToast>
+          ) : (
+            <>
+              <IconBtn
+                onClick={() => setShowPass(s => !s)}
+                title={showPass ? 'Ocultar' : 'Revelar'}
+              >
+                {showPass ? <EyeOff /> : <Eye />}
+              </IconBtn>
+              <IconBtn onClick={() => handleCopy('password', item.password)} title="Copiar senha">
+                <Copy />
+              </IconBtn>
+            </>
+          )}
         </CredActions>
       </CredRow>
     </CredCard>
@@ -539,15 +607,19 @@ function CredentialCard({ item, onDelete }: CredentialCardProps) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function LinksPage() {
-  const [section, setSection]           = useState<ActiveSection>('links')
-  const [links, setLinks]               = useState<LinkRow[]>([])
-  const [credentials, setCredentials]   = useState<CredentialRow[]>([])
-  const [linkModal, setLinkModal]       = useState<LinkModal | null>(null)
-  const [credModal, setCredModal]       = useState<CredModal | null>(null)
-  const [saving, setSaving]             = useState(false)
+  const [section, setSection] = useState<ActiveSection>('links')
+  const [links, setLinks] = useState<LinkRow[]>([])
+  const [credentials, setCredentials] = useState<CredentialRow[]>([])
+  const [linkModal, setLinkModal] = useState<LinkModal | null>(null)
+  const [credModal, setCredModal] = useState<CredModal | null>(null)
+  const [saving, setSaving] = useState(false)
 
   // Link form state
-  const [linkForm, setLinkForm] = useState({ label: '', url: '', category: 'photos' as LinkCategory })
+  const [linkForm, setLinkForm] = useState({
+    label: '',
+    url: '',
+    category: 'photos' as LinkCategory,
+  })
 
   // Credential form state
   const [credForm, setCredForm] = useState({ site_url: '', label: '', login: '', password: '' })
@@ -560,12 +632,19 @@ export default function LinksPage() {
   }, [supabase])
 
   const loadCredentials = useCallback(async () => {
-    const { data } = await supabase.from('credentials').select('*').order('created_at', { ascending: false })
+    const { data } = await supabase
+      .from('credentials')
+      .select('*')
+      .order('created_at', { ascending: false })
     setCredentials((data as CredentialRow[]) ?? [])
   }, [supabase])
 
-  useEffect(() => { loadLinks() }, [loadLinks])
-  useEffect(() => { loadCredentials() }, [loadCredentials])
+  useEffect(() => {
+    loadLinks()
+  }, [loadLinks])
+  useEffect(() => {
+    loadCredentials()
+  }, [loadCredentials])
 
   // ── Link CRUD ──────────────────────────────────────────────────────────────
 
@@ -575,12 +654,18 @@ export default function LinksPage() {
   }
 
   function openEditLink(item: LinkRow) {
-    setLinkForm({ label: item.label, url: item.url, category: (item.category ?? 'photos') as LinkCategory })
+    setLinkForm({
+      label: item.label,
+      url: item.url,
+      category: (item.category ?? 'photos') as LinkCategory,
+    })
     setLinkModal({ type: 'edit', item })
   }
 
   async function authHeaders(extra: Record<string, string> = {}): Promise<Record<string, string>> {
-    const { data: { session } } = await supabase.auth.getSession()
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
     return {
       'Content-Type': 'application/json',
       ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
@@ -634,7 +719,10 @@ export default function LinksPage() {
   }
 
   async function deleteCred(item: CredentialRow) {
-    await fetch(`/api/admin/credentials/${item.id}`, { method: 'DELETE', headers: await authHeaders() })
+    await fetch(`/api/admin/credentials/${item.id}`, {
+      method: 'DELETE',
+      headers: await authHeaders(),
+    })
     await loadCredentials()
     setCredModal(null)
   }
@@ -643,7 +731,6 @@ export default function LinksPage() {
 
   return (
     <AdminLayout title="Links e Credenciais" subtitle="Hub de links e acessos">
-
       {/* Section tabs */}
       <SectionTabs>
         <SectionTab $active={section === 'links'} onClick={() => setSection('links')}>
@@ -658,7 +745,9 @@ export default function LinksPage() {
       {section === 'links' && (
         <>
           <TopBar>
-            <span style={{ fontFamily: 'Montserrat', fontSize: 12, color: 'rgba(245,240,232,0.3)' }}>
+            <span
+              style={{ fontFamily: 'Montserrat', fontSize: 12, color: 'rgba(245,240,232,0.3)' }}
+            >
               {links.length} link{links.length !== 1 ? 's' : ''}
             </span>
             <AddBtn onClick={openAddLink}>
@@ -684,11 +773,21 @@ export default function LinksPage() {
                         <LinkIcon>{getCategoryIcon(item.category)}</LinkIcon>
                         <LinkInfo>
                           <LinkLabel>{item.label}</LinkLabel>
-                          <LinkUrl href={item.url} target="_blank" rel="noreferrer">{item.url}</LinkUrl>
+                          <LinkUrl href={item.url} target="_blank" rel="noreferrer">
+                            {item.url}
+                          </LinkUrl>
                         </LinkInfo>
                         <RowActions>
-                          <IconBtn onClick={() => openEditLink(item)} title="Editar"><Pencil /></IconBtn>
-                          <IconBtn $red onClick={() => setLinkModal({ type: 'delete', item })} title="Apagar"><Trash2 /></IconBtn>
+                          <IconBtn onClick={() => openEditLink(item)} title="Editar">
+                            <Pencil />
+                          </IconBtn>
+                          <IconBtn
+                            $red
+                            onClick={() => setLinkModal({ type: 'delete', item })}
+                            title="Apagar"
+                          >
+                            <Trash2 />
+                          </IconBtn>
                         </RowActions>
                       </LinkCard>
                     ))}
@@ -704,7 +803,9 @@ export default function LinksPage() {
       {section === 'credentials' && (
         <>
           <TopBar>
-            <span style={{ fontFamily: 'Montserrat', fontSize: 12, color: 'rgba(245,240,232,0.3)' }}>
+            <span
+              style={{ fontFamily: 'Montserrat', fontSize: 12, color: 'rgba(245,240,232,0.3)' }}
+            >
               {credentials.length} credencial{credentials.length !== 1 ? 'is' : ''}
             </span>
             <AddBtn onClick={openAddCred}>
@@ -715,9 +816,15 @@ export default function LinksPage() {
           <CredList>
             {credentials.length === 0 ? (
               <EmptyState>Nenhuma credencial guardada</EmptyState>
-            ) : credentials.map(item => (
-              <CredentialCard key={item.id} item={item} onDelete={c => setCredModal({ type: 'delete', item: c })} />
-            ))}
+            ) : (
+              credentials.map(item => (
+                <CredentialCard
+                  key={item.id}
+                  item={item}
+                  onDelete={c => setCredModal({ type: 'delete', item: c })}
+                />
+              ))
+            )}
           </CredList>
         </>
       )}
@@ -729,16 +836,33 @@ export default function LinksPage() {
             <ModalTitle>{linkModal.type === 'add' ? 'Adicionar link' : 'Editar link'}</ModalTitle>
             <Field>
               <Label>Label</Label>
-              <Input value={linkForm.label} onChange={e => setLinkForm(f => ({ ...f, label: e.target.value }))} placeholder="Ex: Google Drive" />
+              <Input
+                value={linkForm.label}
+                onChange={e => setLinkForm(f => ({ ...f, label: e.target.value }))}
+                placeholder="Ex: Google Drive"
+              />
             </Field>
             <Field>
               <Label>URL</Label>
-              <Input value={linkForm.url} onChange={e => setLinkForm(f => ({ ...f, url: e.target.value }))} placeholder="https://..." />
+              <Input
+                value={linkForm.url}
+                onChange={e => setLinkForm(f => ({ ...f, url: e.target.value }))}
+                placeholder="https://..."
+              />
             </Field>
             <Field>
               <Label>Categoria</Label>
-              <Select value={linkForm.category} onChange={e => setLinkForm(f => ({ ...f, category: e.target.value as LinkCategory }))}>
-                {CATEGORIES.map(c => <option key={c.key} value={c.key}>{c.label}</option>)}
+              <Select
+                value={linkForm.category}
+                onChange={e =>
+                  setLinkForm(f => ({ ...f, category: e.target.value as LinkCategory }))
+                }
+              >
+                {CATEGORIES.map(c => (
+                  <option key={c.key} value={c.key}>
+                    {c.label}
+                  </option>
+                ))}
               </Select>
             </Field>
             <ModalActions>
@@ -755,10 +879,16 @@ export default function LinksPage() {
         <Overlay onClick={() => setLinkModal(null)}>
           <Modal onClick={e => e.stopPropagation()}>
             <ModalTitle>Apagar link</ModalTitle>
-            <DeleteText>Tens a certeza que queres apagar <strong style={{ color: 'rgba(245,240,232,0.9)' }}>{linkModal.item.label}</strong>? Esta ação não pode ser desfeita.</DeleteText>
+            <DeleteText>
+              Tens a certeza que queres apagar{' '}
+              <strong style={{ color: 'rgba(245,240,232,0.9)' }}>{linkModal.item.label}</strong>?
+              Esta ação não pode ser desfeita.
+            </DeleteText>
             <ModalActions>
               <CancelBtn onClick={() => setLinkModal(null)}>Cancelar</CancelBtn>
-              <ConfirmBtn $red onClick={() => deleteLink(linkModal.item)}>Apagar</ConfirmBtn>
+              <ConfirmBtn $red onClick={() => deleteLink(linkModal.item)}>
+                Apagar
+              </ConfirmBtn>
             </ModalActions>
           </Modal>
         </Overlay>
@@ -771,23 +901,43 @@ export default function LinksPage() {
             <ModalTitle>Adicionar credencial</ModalTitle>
             <Field>
               <Label>Nome / Plataforma</Label>
-              <Input value={credForm.label} onChange={e => setCredForm(f => ({ ...f, label: e.target.value }))} placeholder="Ex: Gmail" />
+              <Input
+                value={credForm.label}
+                onChange={e => setCredForm(f => ({ ...f, label: e.target.value }))}
+                placeholder="Ex: Gmail"
+              />
             </Field>
             <Field>
               <Label>URL do site</Label>
-              <Input value={credForm.site_url} onChange={e => setCredForm(f => ({ ...f, site_url: e.target.value }))} placeholder="https://gmail.com" />
+              <Input
+                value={credForm.site_url}
+                onChange={e => setCredForm(f => ({ ...f, site_url: e.target.value }))}
+                placeholder="https://gmail.com"
+              />
             </Field>
             <Field>
               <Label>Login / Email</Label>
-              <Input value={credForm.login} onChange={e => setCredForm(f => ({ ...f, login: e.target.value }))} placeholder="romelochico@gmail.com" />
+              <Input
+                value={credForm.login}
+                onChange={e => setCredForm(f => ({ ...f, login: e.target.value }))}
+                placeholder="romelochico@gmail.com"
+              />
             </Field>
             <Field>
               <Label>Senha</Label>
-              <Input type="password" value={credForm.password} onChange={e => setCredForm(f => ({ ...f, password: e.target.value }))} placeholder="••••••••" />
+              <Input
+                type="password"
+                value={credForm.password}
+                onChange={e => setCredForm(f => ({ ...f, password: e.target.value }))}
+                placeholder="••••••••"
+              />
             </Field>
             <ModalActions>
               <CancelBtn onClick={() => setCredModal(null)}>Cancelar</CancelBtn>
-              <ConfirmBtn onClick={saveCred} disabled={saving || !credForm.label || !credForm.login || !credForm.password}>
+              <ConfirmBtn
+                onClick={saveCred}
+                disabled={saving || !credForm.label || !credForm.login || !credForm.password}
+              >
                 {saving ? 'A guardar...' : 'Guardar'}
               </ConfirmBtn>
             </ModalActions>
@@ -799,15 +949,19 @@ export default function LinksPage() {
         <Overlay onClick={() => setCredModal(null)}>
           <Modal onClick={e => e.stopPropagation()}>
             <ModalTitle>Apagar credencial</ModalTitle>
-            <DeleteText>Tens a certeza que queres apagar as credenciais de <strong style={{ color: 'rgba(245,240,232,0.9)' }}>{credModal.item.label}</strong>?</DeleteText>
+            <DeleteText>
+              Tens a certeza que queres apagar as credenciais de{' '}
+              <strong style={{ color: 'rgba(245,240,232,0.9)' }}>{credModal.item.label}</strong>?
+            </DeleteText>
             <ModalActions>
               <CancelBtn onClick={() => setCredModal(null)}>Cancelar</CancelBtn>
-              <ConfirmBtn $red onClick={() => deleteCred(credModal.item)}>Apagar</ConfirmBtn>
+              <ConfirmBtn $red onClick={() => deleteCred(credModal.item)}>
+                Apagar
+              </ConfirmBtn>
             </ModalActions>
           </Modal>
         </Overlay>
       )}
-
     </AdminLayout>
   )
 }

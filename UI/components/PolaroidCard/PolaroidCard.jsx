@@ -14,9 +14,14 @@ import { Card, Info, Caption, Title, Sub, Note, Tape } from './PolaroidCard.styl
  * @param {boolean} tape     – show decorative tape piece at top
  */
 export function PolaroidCard({
-  src, alt = '',
-  title, sub, note, caption,
-  rotate, ratio,
+  src,
+  alt = '',
+  title,
+  sub,
+  note,
+  caption,
+  rotate,
+  ratio,
   tape = false,
   ...rest
 }) {
@@ -26,9 +31,9 @@ export function PolaroidCard({
       <img src={src} alt={alt} loading="lazy" decoding="async" />
       {(title || sub || note || caption) && (
         <Info>
-          {title   && <Title>{title}</Title>}
-          {sub     && <Sub>{sub}</Sub>}
-          {note    && <Note>{note}</Note>}
+          {title && <Title>{title}</Title>}
+          {sub && <Sub>{sub}</Sub>}
+          {note && <Note>{note}</Note>}
           {caption && <Caption>{caption}</Caption>}
         </Info>
       )}

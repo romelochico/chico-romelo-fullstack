@@ -8,7 +8,14 @@ import Clipping from '../components/Clipping/Clipping'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 import { supabase } from '../lib/supabase/public'
 import { toClippingProps } from '../lib/novidades'
-import { NewsSection, NewsHead, NewsGrid, CtaStrip, CtaInner, BtnPrimary } from '../styles/pages/Novidades.styles'
+import {
+  NewsSection,
+  NewsHead,
+  NewsGrid,
+  CtaStrip,
+  CtaInner,
+  BtnPrimary,
+} from '../styles/pages/Novidades.styles'
 import type { GetStaticProps } from 'next'
 import type { NewsRow } from '../types'
 
@@ -25,20 +32,41 @@ export default function NovidadesPage({ novidades }: NovidadesPageProps) {
     <>
       <Head>
         <title>Chico Romelo | Novidades</title>
-        <meta name="description" content="Últimas notícias da Chico Romelo: prêmios, shows e novidades da banda de pop rock brasileira em Lisboa." />
+        <meta
+          name="description"
+          content="Últimas notícias da Chico Romelo: prêmios, shows e novidades da banda de pop rock brasileira em Lisboa."
+        />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://www.chicoromelo.com/novidades" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Chico Romelo — Novidades" />
-        <meta property="og:description" content="Últimas notícias da Chico Romelo: prêmios, shows e novidades da banda de pop rock brasileira em Lisboa." />
+        <meta
+          property="og:description"
+          content="Últimas notícias da Chico Romelo: prêmios, shows e novidades da banda de pop rock brasileira em Lisboa."
+        />
         <meta property="og:url" content="https://www.chicoromelo.com/novidades" />
-        <meta property="og:image" content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg" />
+        <meta
+          property="og:image"
+          content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg"
+        />
         <meta property="og:site_name" content="Chico Romelo" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Chico Romelo — Novidades" />
-        <meta name="twitter:description" content="Últimas notícias da Chico Romelo: prêmios, shows e novidades da banda de pop rock brasileira em Lisboa." />
-        <meta name="twitter:image" content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg" />
-        <link rel="preload" as="image" href="/uploads/cris-prata-live.webp" type="image/webp" fetchPriority="high" />
+        <meta
+          name="twitter:description"
+          content="Últimas notícias da Chico Romelo: prêmios, shows e novidades da banda de pop rock brasileira em Lisboa."
+        />
+        <meta
+          name="twitter:image"
+          content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/uploads/cris-prata-live.webp"
+          type="image/webp"
+          fetchPriority="high"
+        />
       </Head>
 
       <Nav innerPage />
@@ -61,7 +89,9 @@ export default function NovidadesPage({ novidades }: NovidadesPageProps) {
           <div className="ed">Lisboa · 2026</div>
         </NewsHead>
         <NewsGrid>
-          {novidades.map((n) => <Clipping key={n.id} {...toClippingProps(n)} />)}
+          {novidades.map(n => (
+            <Clipping key={n.id} {...toClippingProps(n)} />
+          ))}
         </NewsGrid>
       </NewsSection>
 
@@ -83,7 +113,9 @@ export const getStaticProps: GetStaticProps<NovidadesPageProps> = async () => {
   try {
     const { data, error } = await supabase
       .from('news')
-      .select('id, title, strap, date_label, body, link_url, link_label, created_at, image:media!image_id(id, storage_path, bucket, alt_text)')
+      .select(
+        'id, title, strap, date_label, body, link_url, link_label, created_at, image:media!image_id(id, storage_path, bucket, alt_text)'
+      )
       .eq('published', true)
       .order('order', { ascending: true })
       .order('created_at', { ascending: false })

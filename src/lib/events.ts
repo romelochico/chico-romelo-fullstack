@@ -1,15 +1,24 @@
 import type { EventRow, ShowCardProps, ShowLink } from '../types'
 
-const PT_MONTHS = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
+const PT_MONTHS = [
+  'JAN',
+  'FEV',
+  'MAR',
+  'ABR',
+  'MAI',
+  'JUN',
+  'JUL',
+  'AGO',
+  'SET',
+  'OUT',
+  'NOV',
+  'DEZ',
+]
 
 export function splitEvents(events: EventRow[]): { upcoming: EventRow[]; past: EventRow[] } {
   const today = new Date().toISOString().split('T')[0]
-  const upcoming = events
-    .filter(e => e.date >= today)
-    .sort((a, b) => a.date.localeCompare(b.date))
-  const past = events
-    .filter(e => e.date < today)
-    .sort((a, b) => b.date.localeCompare(a.date))
+  const upcoming = events.filter(e => e.date >= today).sort((a, b) => a.date.localeCompare(b.date))
+  const past = events.filter(e => e.date < today).sort((a, b) => b.date.localeCompare(a.date))
   return { upcoming, past }
 }
 

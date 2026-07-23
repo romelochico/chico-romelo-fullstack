@@ -12,16 +12,20 @@ export const Kicker: StyledComponent<'h2', DefaultTheme, { $noMargin?: boolean }
 export const Lead: StyledComponent<'p', DefaultTheme>
 export const BodyP: StyledComponent<'p', DefaultTheme>
 export const Collage: StyledComponent<'div', DefaultTheme>
-export const Piece: StyledComponent<'div', DefaultTheme, {
-  $top?: number
-  $left?: number
-  $width?: number
-  $height?: number
-  $zIndex?: number
-  $delay?: string
-  $animName?: string
-  $objectPos?: string
-}>
+export const Piece: StyledComponent<
+  'div',
+  DefaultTheme,
+  {
+    $top?: number
+    $left?: number
+    $width?: number
+    $height?: number
+    $zIndex?: number
+    $delay?: string
+    $animName?: string
+    $objectPos?: string
+  }
+>
 export const PieceCap: StyledComponent<'div', DefaultTheme>
 export const CollageT1: StyledComponent<'div', DefaultTheme>
 export const CollageT2: StyledComponent<'div', DefaultTheme>

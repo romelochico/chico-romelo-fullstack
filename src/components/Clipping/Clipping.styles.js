@@ -5,7 +5,7 @@ export const Article = styled.article`
   flex: 1;
   background: ${({ theme }) => theme.colors.white};
   padding: 26px 24px 30px;
-  box-shadow: 0 10px 24px -16px rgba(0,0,0,0.28);
+  box-shadow: 0 10px 24px -16px rgba(0, 0, 0, 0.28);
   display: flex;
   flex-direction: column;
 `
@@ -72,5 +72,7 @@ export const ClipLink = styled.a`
   font-weight: 700;
   color: ${({ theme }) => theme.colors.olive};
 
-  &:hover { text-decoration: underline; }
+  &:hover {
+    text-decoration: underline;
+  }
 `

@@ -49,20 +49,21 @@ Full-stack web platform for the Portuguese band Chico Romelo. Combines a public-
 
 ## Stack
 
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 14 (Pages Router) |
-| UI | React 18 + styled-components 6 |
-| Icons | Lucide React |
-| Database | Supabase (PostgreSQL) |
-| Auth | Supabase Auth with Edge Middleware |
-| Storage | Supabase Storage |
-| Form delivery | Formspree |
-| Deployment | Vercel |
+| Layer         | Technology                         |
+| ------------- | ---------------------------------- |
+| Framework     | Next.js 14 (Pages Router)          |
+| UI            | React 18 + styled-components 6     |
+| Icons         | Lucide React                       |
+| Database      | Supabase (PostgreSQL)              |
+| Auth          | Supabase Auth with Edge Middleware |
+| Storage       | Supabase Storage                   |
+| Form delivery | Formspree                          |
+| Deployment    | Vercel                             |
 
 ## Running locally
 
 **1. Install dependencies**
+
 ```bash
 npm install
 ```
@@ -70,19 +71,21 @@ npm install
 **2. Set up environment variables**
 
 Copy `.env.example` to `.env.local` and fill in the values:
+
 ```bash
 cp .env.example .env.local
 ```
 
-| Variable | Where to find it |
-|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Settings → General |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → Settings → API |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Settings → API (secret) |
-| `ADMIN_EMAILS` | Comma-separated list of allowed admin emails |
-| `NEXT_PUBLIC_FORMSPREE_ID` | Formspree dashboard |
+| Variable                        | Where to find it                             |
+| ------------------------------- | -------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Supabase → Settings → General                |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → Settings → API                    |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Supabase → Settings → API (secret)           |
+| `ADMIN_EMAILS`                  | Comma-separated list of allowed admin emails |
+| `NEXT_PUBLIC_FORMSPREE_ID`      | Formspree dashboard                          |
 
 **3. Start the dev server**
+
 ```bash
 npm run dev
 ```

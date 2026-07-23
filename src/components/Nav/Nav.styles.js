@@ -13,7 +13,9 @@ export const NavWrapper = styled.nav`
   backdrop-filter: blur(18px) saturate(160%);
   -webkit-backdrop-filter: blur(18px) saturate(160%);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.1);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   font-family: ${({ theme }) => theme.fonts.body};
   font-weight: 500;
   font-size: 14px;
@@ -28,11 +30,13 @@ export const NavWrapper = styled.nav`
   left: 50%;
   transform: translateX(-50%);
 
-  ${({ $hidden }) => $hidden && css`
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(-8px);
-  `}
+  ${({ $hidden }) =>
+    $hidden &&
+    css`
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-8px);
+    `}
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     width: auto;
@@ -41,13 +45,17 @@ export const NavWrapper = styled.nav`
     left: 10px;
     transform: none !important;
     justify-content: center;
-    transition: opacity 0.25s, transform 0.25s;
+    transition:
+      opacity 0.25s,
+      transform 0.25s;
 
-    ${({ $hidden }) => $hidden && css`
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(-8px) !important;
-    `}
+    ${({ $hidden }) =>
+      $hidden &&
+      css`
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-8px) !important;
+      `}
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.small}) {
@@ -68,10 +76,17 @@ export const NavLinks = styled.div`
   gap: 20px;
   flex: 1;
   min-width: max-content;
-  justify-content: ${({ $right }) => $right ? 'flex-start' : 'flex-end'};
+  justify-content: ${({ $right }) => ($right ? 'flex-start' : 'flex-end')};
 
-  a { opacity: 0.9; transition: opacity 0.2s; flex-shrink: 0; white-space: nowrap; }
-  a:hover { opacity: 1; }
+  a {
+    opacity: 0.9;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  a:hover {
+    opacity: 1;
+  }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     display: none;
@@ -115,12 +130,18 @@ export const BurgerBtn = styled.button`
     height: 2px;
     background: ${({ theme }) => theme.colors.cream};
     border-radius: 2px;
-    transition: transform 0.25s, opacity 0.25s;
+    transition:
+      transform 0.25s,
+      opacity 0.25s;
     transform-origin: center;
   }
 
-  &.is-open span:nth-child(1) { transform: translateY(3.5px) rotate(45deg); }
-  &.is-open span:nth-child(2) { transform: translateY(-3.5px) rotate(-45deg); }
+  &.is-open span:nth-child(1) {
+    transform: translateY(3.5px) rotate(45deg);
+  }
+  &.is-open span:nth-child(2) {
+    transform: translateY(-3.5px) rotate(-45deg);
+  }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     display: flex;
@@ -141,14 +162,16 @@ export const Drawer = styled.div`
     background: rgba(20, 18, 18, 0.82);
     backdrop-filter: blur(20px) saturate(160%);
     -webkit-backdrop-filter: blur(20px) saturate(160%);
-    border-right: 1px solid rgba(255,255,255,0.1);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
     padding: 90px 32px 40px;
     gap: 6px;
     z-index: 150;
     transform: translateX(-100%);
-    transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
+    transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
 
-    &.is-open { transform: translateX(0); }
+    &.is-open {
+      transform: translateX(0);
+    }
 
     a {
       font-family: ${({ theme }) => theme.fonts.body};
@@ -157,9 +180,11 @@ export const Drawer = styled.div`
       letter-spacing: 0.04em;
       color: ${({ theme }) => theme.colors.cream};
       padding: 10px 0 10px 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       opacity: 0.85;
-      transition: opacity 0.15s, color 0.15s;
+      transition:
+        opacity 0.15s,
+        color 0.15s;
       position: relative;
 
       &::before {
@@ -175,15 +200,22 @@ export const Drawer = styled.div`
         transition: background 0.15s;
       }
 
-      &:last-child { border-bottom: none; }
-      &:hover { opacity: 1; color: ${({ theme }) => theme.colors.tape}; }
+      &:last-child {
+        border-bottom: none;
+      }
+      &:hover {
+        opacity: 1;
+        color: ${({ theme }) => theme.colors.tape};
+      }
 
       &[aria-current='page'] {
         opacity: 1;
         color: ${({ theme }) => theme.colors.tape};
         font-weight: 700;
 
-        &::before { background: ${({ theme }) => theme.colors.tape}; }
+        &::before {
+          background: ${({ theme }) => theme.colors.tape};
+        }
       }
     }
   }
@@ -196,12 +228,15 @@ export const Overlay = styled.div`
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.45);
+    background: rgba(0, 0, 0, 0.45);
     z-index: 140;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s;
 
-    &.is-open { opacity: 1; pointer-events: all; }
+    &.is-open {
+      opacity: 1;
+      pointer-events: all;
+    }
   }
 `

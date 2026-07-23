@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const Overlay = styled.div`
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.72);
+  background: rgba(0, 0, 0, 0.72);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   z-index: 500;
@@ -24,7 +24,7 @@ export const Overlay = styled.div`
 export const Card = styled.div`
   position: relative;
   background: ${({ theme }) => theme.colors.charcoal};
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 18px;
   padding: 32px 28px 28px;
   width: 100%;
@@ -33,9 +33,9 @@ export const Card = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
   transform: translateY(16px) scale(0.97);
-  transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 
   .is-open & {
     transform: translateY(0) scale(1);
@@ -48,7 +48,7 @@ export const CloseBtn = styled.button`
   right: 14px;
   width: 32px;
   height: 32px;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   border: none;
   border-radius: 50%;
   color: ${({ theme }) => theme.colors.cream};
@@ -58,18 +58,23 @@ export const CloseBtn = styled.button`
   justify-content: center;
   transition: background 0.15s;
 
-  &:hover { background: rgba(255,255,255,0.16); }
+  &:hover {
+    background: rgba(255, 255, 255, 0.16);
+  }
 `
 
 export const CoverWrap = styled.div`
+  position: relative;
   width: 180px;
   height: 180px;
   border-radius: 10px;
   overflow: hidden;
   flex-shrink: 0;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 
-  img { width: 100%; height: 100%; object-fit: cover; }
+  img {
+    object-fit: cover;
+  }
 `
 
 export const Title = styled.p`

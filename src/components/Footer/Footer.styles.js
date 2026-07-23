@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 
-const NOISE_LIGHT = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='280'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.11  0 0 0 0 0.10  0 0 0 0 0.05  0 0 0 0.25 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")`
-const NOISE_DARK  = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 0.8  0 0 0 0.38 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")`
+const NOISE_DARK = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 0.8  0 0 0 0.38 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")`
 
 export const FooterEl = styled.footer`
   background: ${({ theme }) => theme.colors.olive};
@@ -20,14 +19,17 @@ export const FooterEl = styled.footer`
     pointer-events: none;
     z-index: 1;
   }
-  & > * { position: relative; z-index: 2; }
+  & > * {
+    position: relative;
+    z-index: 2;
+  }
 `
 
 export const FooterGrid = styled.div`
   display: flex;
   align-items: center;
   gap: 40px;
-  border-bottom: 1.5px solid rgba(255,255,255,0.15);
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.15);
   padding-bottom: 30px;
   max-width: 1200px;
   margin: 0 auto;
@@ -52,7 +54,9 @@ export const SocBtn = styled.a`
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
   cursor: pointer;
 
   &:hover {
@@ -91,8 +95,13 @@ export const FooterLinks = styled.nav`
   font-size: 14px;
   font-weight: 500;
 
-  a { opacity: 0.9; transition: opacity 0.2s; }
-  a:hover { opacity: 1; }
+  a {
+    opacity: 0.9;
+    transition: opacity 0.2s;
+  }
+  a:hover {
+    opacity: 1;
+  }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     flex-direction: row;

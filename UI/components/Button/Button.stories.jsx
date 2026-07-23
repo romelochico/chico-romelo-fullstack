@@ -8,9 +8,9 @@ export default {
     backgrounds: {
       default: 'cream',
       values: [
-        { name: 'cream',  value: '#fdf4e8' },
-        { name: 'olive',  value: '#404015' },
-        { name: 'dark',   value: '#373435' },
+        { name: 'cream', value: '#fdf4e8' },
+        { name: 'olive', value: '#404015' },
+        { name: 'dark', value: '#373435' },
       ],
     },
   },
@@ -28,12 +28,15 @@ export default {
   args: { children: 'Ouça já →' },
 }
 
-export const Primary    = { args: { variant: 'primary' } }
-export const Secondary  = { args: { variant: 'secondary' } }
-export const Olive      = { args: { variant: 'olive' } }
-export const Ghost      = { args: { variant: 'ghost' }, parameters: { backgrounds: { default: 'olive' } } }
-export const Small      = { args: { variant: 'primary', size: 'sm' } }
-export const Large      = { args: { variant: 'primary', size: 'lg' } }
+export const Primary = { args: { variant: 'primary' } }
+export const Secondary = { args: { variant: 'secondary' } }
+export const Olive = { args: { variant: 'olive' } }
+export const Ghost = {
+  args: { variant: 'ghost' },
+  parameters: { backgrounds: { default: 'olive' } },
+}
+export const Small = { args: { variant: 'primary', size: 'sm' } }
+export const Large = { args: { variant: 'primary', size: 'lg' } }
 
 export const AllVariants = {
   render: () => (
@@ -41,8 +44,12 @@ export const AllVariants = {
       <Button variant="primary">Ouvir agora</Button>
       <Button variant="secondary">Saiba mais</Button>
       <Button variant="olive">Ver agenda</Button>
-      <Button size="sm" variant="primary">Small</Button>
-      <Button size="lg" variant="primary">Large</Button>
+      <Button size="sm" variant="primary">
+        Small
+      </Button>
+      <Button size="lg" variant="primary">
+        Large
+      </Button>
     </div>
   ),
 }

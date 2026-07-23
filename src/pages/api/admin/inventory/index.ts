@@ -12,7 +12,9 @@ function adminClient() {
 async function getUser(req: NextApiRequest) {
   const token = req.headers.authorization?.replace('Bearer ', '')
   if (!token) return null
-  const { data: { user } } = await adminClient().auth.getUser(token)
+  const {
+    data: { user },
+  } = await adminClient().auth.getUser(token)
   return user
 }
 
@@ -26,7 +28,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { category, subcategory, name, quantity, condition, notes } = req.body
     const { data, error } = await supabase
       .from('inventory')
-      .insert({ category, subcategory: subcategory || null, name, quantity, condition, notes: notes || null })
+      .insert({
+        category,
+        subcategory: subcategory || null,
+        name,
+        quantity,
+        condition,
+        notes: notes || null,
+      })
       .select()
       .single()
     if (error) return res.status(500).json({ error: error.message })

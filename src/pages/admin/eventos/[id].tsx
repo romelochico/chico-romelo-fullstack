@@ -1,7 +1,22 @@
 import { useState, useEffect, useCallback, type FormEvent } from 'react'
 import { useRouter } from 'next/router'
-import styled, { keyframes } from 'styled-components'
-import { ArrowLeft, Plus, Minus, Check, Trash2, PackageCheck, PackageOpen, Search, X, ChevronDown, ChevronUp, Users, Music, Pencil } from 'lucide-react'
+import styled from 'styled-components'
+import {
+  ArrowLeft,
+  Plus,
+  Minus,
+  Check,
+  Trash2,
+  PackageCheck,
+  PackageOpen,
+  Search,
+  X,
+  ChevronDown,
+  ChevronUp,
+  Users,
+  Music,
+  Pencil,
+} from 'lucide-react'
 import AdminLayout from '../../../components/Admin/AdminLayout'
 import SetlistModal from '../../../components/Admin/SetlistModal'
 import { createClient } from '../../../lib/supabase/client'
@@ -76,46 +91,78 @@ interface SetlistBlock {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const C = {
-  gold:   '#c8a96e',
-  sage:   '#878766',
-  cream:  '#f5f0e8',
+  gold: '#c8a96e',
+  sage: '#878766',
+  cream: '#f5f0e8',
   cream2: 'rgba(245,240,232,0.6)',
-  dim:    'rgba(245,240,232,0.3)',
+  dim: 'rgba(245,240,232,0.3)',
   border: 'rgba(255,255,255,0.07)',
-  card:   'rgba(255,255,255,0.03)',
-  red:    '#f87171',
-  green:  '#4ade80',
+  card: 'rgba(255,255,255,0.03)',
+  red: '#f87171',
+  green: '#4ade80',
 }
 
 const CONDITION_LABELS: Record<string, string> = {
-  good: 'Bom', fair: 'Regular', needs_repair: 'Manutenção', broken: 'Danificado',
+  good: 'Bom',
+  fair: 'Regular',
+  needs_repair: 'Manutenção',
+  broken: 'Danificado',
 }
 const CONDITION_COLORS: Record<string, string> = {
-  good: '#4ade80', fair: '#facc15', needs_repair: '#fb923c', broken: '#f87171',
+  good: '#4ade80',
+  fair: '#facc15',
+  needs_repair: '#fb923c',
+  broken: '#f87171',
 }
 
 function formatDate(dateStr: string): string {
   const [year, month, day] = dateStr.split('-')
-  const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
+  const months = [
+    'Jan',
+    'Fev',
+    'Mar',
+    'Abr',
+    'Mai',
+    'Jun',
+    'Jul',
+    'Ago',
+    'Set',
+    'Out',
+    'Nov',
+    'Dez',
+  ]
   return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`
 }
 
 // ─── Styled components ────────────────────────────────────────────────────────
 
 const BackBtn = styled.button`
-  display: flex; align-items: center; gap: 8px;
-  background: none; border: none; color: ${C.dim};
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: ${C.dim};
   font-family: 'Montserrat', sans-serif;
-  font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
-  cursor: pointer; padding: 0; margin-bottom: 24px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 24px;
   transition: color 0.15s;
-  &:hover { color: ${C.cream}; }
-  svg { width: 14px; height: 14px; }
+  &:hover {
+    color: ${C.cream};
+  }
+  svg {
+    width: 14px;
+    height: 14px;
+  }
 `
 
 const EventHeader = styled.div`
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 12px;
   padding: 24px 28px;
   margin-bottom: 32px;
@@ -123,164 +170,282 @@ const EventHeader = styled.div`
 
 const EventTitle = styled.h1`
   font-family: 'Special Elite', serif;
-  font-size: 26px; color: ${C.cream}; margin: 0 0 6px;
+  font-size: 26px;
+  color: ${C.cream};
+  margin: 0 0 6px;
 `
 
 const EventMeta = styled.div`
-  display: flex; flex-wrap: wrap; gap: 6px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
   font-family: 'Montserrat', sans-serif;
-  font-size: 12px; color: ${C.dim};
+  font-size: 12px;
+  color: ${C.dim};
 `
 
 const GhostBtn = styled.button`
-  display: flex; align-items: center; gap: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   padding: 9px 14px;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid ${C.border};
   color: ${C.dim};
   font-family: 'Montserrat', sans-serif;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-  border-radius: 6px; cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 6px;
+  cursor: pointer;
   transition: all 0.15s;
-  svg { width: 13px; height: 13px; }
-  &:hover { color: ${C.cream}; border-color: rgba(255,255,255,0.2); }
+  svg {
+    width: 13px;
+    height: 13px;
+  }
+  &:hover {
+    color: ${C.cream};
+    border-color: rgba(255, 255, 255, 0.2);
+  }
 `
 
 const TagChip = styled.span`
   font-family: 'Montserrat', sans-serif;
-  font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  background: rgba(135,135,102,0.15);
-  border: 1px solid rgba(135,135,102,0.3);
-  color: ${C.sage}; border-radius: 20px; padding: 2px 10px;
+  background: rgba(135, 135, 102, 0.15);
+  border: 1px solid rgba(135, 135, 102, 0.3);
+  color: ${C.sage};
+  border-radius: 20px;
+  padding: 2px 10px;
 `
 
 const SectionTitle = styled.h2`
   font-family: 'Montserrat', sans-serif;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
-  text-transform: uppercase; color: ${C.sage};
-  display: flex; align-items: center; gap: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: ${C.sage};
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin: 0 0 16px;
-  svg { width: 16px; height: 16px; }
-  &::after { content: ''; flex: 1; height: 1px; background: ${C.border}; }
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: ${C.border};
+  }
 `
 
 const SectionRow = styled.div`
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 16px;
 `
 
 const AddGearBtn = styled.button`
-  display: flex; align-items: center; gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 9px 16px;
-  background: ${C.gold}; color: #0d0d0d;
+  background: ${C.gold};
+  color: #0d0d0d;
   font-family: 'Montserrat', sans-serif;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-  border: none; border-radius: 6px; cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
   transition: opacity 0.15s;
-  svg { width: 13px; height: 13px; }
-  &:hover { opacity: 0.85; }
+  svg {
+    width: 13px;
+    height: 13px;
+  }
+  &:hover {
+    opacity: 0.85;
+  }
 `
 
 const GearList = styled.div`
-  display: flex; flex-direction: column; gap: 6px; margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 40px;
 `
 
 const GearRow = styled.div<{ $returned?: boolean }>`
-  display: flex; align-items: center; gap: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   padding: 12px 16px;
-  background: ${({ $returned }) => $returned ? 'rgba(74,222,128,0.04)' : 'rgba(255,255,255,0.03)'};
-  border: 1px solid ${({ $returned }) => $returned ? 'rgba(74,222,128,0.15)' : 'rgba(255,255,255,0.07)'};
+  background: ${({ $returned }) => ($returned ? 'rgba(74,222,128,0.04)' : 'rgba(255,255,255,0.03)')};
+  border: 1px solid
+    ${({ $returned }) => ($returned ? 'rgba(74,222,128,0.15)' : 'rgba(255,255,255,0.07)')};
   border-radius: 8px;
   transition: all 0.2s;
 `
 
 const QtyBadge = styled.span<{ $muted?: boolean }>`
   font-family: 'Montserrat', sans-serif;
-  font-size: 11px; font-weight: 700;
-  background: ${({ $muted }) => $muted ? 'rgba(135,135,102,0.2)' : C.sage};
-  color: ${({ $muted }) => $muted ? C.sage : '#0d0d0d'};
-  border-radius: 4px; padding: 2px 8px; flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  background: ${({ $muted }) => ($muted ? 'rgba(135,135,102,0.2)' : C.sage)};
+  color: ${({ $muted }) => ($muted ? C.sage : '#0d0d0d')};
+  border-radius: 4px;
+  padding: 2px 8px;
+  flex-shrink: 0;
 `
 
 const GearName = styled.span`
   font-family: 'Montserrat', sans-serif;
-  font-size: 13px; color: ${C.cream}; flex: 1;
+  font-size: 13px;
+  color: ${C.cream};
+  flex: 1;
 `
 
 const SubBadge = styled.span`
   font-family: 'Montserrat', sans-serif;
-  font-size: 10px; font-weight: 600; color: ${C.dim};
-  background: rgba(255,255,255,0.05); border: 1px solid ${C.border};
-  border-radius: 4px; padding: 2px 7px; flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 600;
+  color: ${C.dim};
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid ${C.border};
+  border-radius: 4px;
+  padding: 2px 7px;
+  flex-shrink: 0;
 `
 
 const CondBadge = styled.span<{ $color: string }>`
   font-family: 'Montserrat', sans-serif;
-  font-size: 10px; font-weight: 700;
+  font-size: 10px;
+  font-weight: 700;
   color: ${({ $color }) => $color};
   background: ${({ $color }) => $color}18;
   border: 1px solid ${({ $color }) => $color}40;
-  border-radius: 4px; padding: 2px 7px; flex-shrink: 0;
+  border-radius: 4px;
+  padding: 2px 7px;
+  flex-shrink: 0;
 `
 
 const ReturnProgress = styled.span`
   font-family: 'Montserrat', sans-serif;
-  font-size: 11px; font-weight: 700; color: ${C.green};
+  font-size: 11px;
+  font-weight: 700;
+  color: ${C.green};
   flex-shrink: 0;
 `
 
 const ReturnBtn = styled.button<{ $done?: boolean }>`
-  display: flex; align-items: center; gap: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   padding: 6px 12px;
-  background: ${({ $done }) => $done ? 'rgba(74,222,128,0.12)' : 'rgba(200,169,110,0.1)'};
-  border: 1px solid ${({ $done }) => $done ? 'rgba(74,222,128,0.3)' : 'rgba(200,169,110,0.3)'};
-  color: ${({ $done }) => $done ? C.green : C.gold};
+  background: ${({ $done }) => ($done ? 'rgba(74,222,128,0.12)' : 'rgba(200,169,110,0.1)')};
+  border: 1px solid ${({ $done }) => ($done ? 'rgba(74,222,128,0.3)' : 'rgba(200,169,110,0.3)')};
+  color: ${({ $done }) => ($done ? C.green : C.gold)};
   font-family: 'Montserrat', sans-serif;
-  font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-  border-radius: 6px; cursor: ${({ $done }) => $done ? 'default' : 'pointer'};
-  transition: all 0.15s; flex-shrink: 0;
-  svg { width: 12px; height: 12px; }
-  &:hover:not(:disabled) { opacity: 0.85; }
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 6px;
+  cursor: ${({ $done }) => ($done ? 'default' : 'pointer')};
+  transition: all 0.15s;
+  flex-shrink: 0;
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+  &:hover:not(:disabled) {
+    opacity: 0.85;
+  }
 `
 
 const RemoveBtn = styled.button`
-  width: 28px; height: 28px;
-  border: none; border-radius: 6px; background: transparent;
-  color: ${C.dim}; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.15s, color 0.15s;
-  svg { width: 13px; height: 13px; }
-  &:hover { background: rgba(248,113,113,0.1); color: ${C.red}; }
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: ${C.dim};
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  svg {
+    width: 13px;
+    height: 13px;
+  }
+  &:hover {
+    background: rgba(248, 113, 113, 0.1);
+    color: ${C.red};
+  }
 `
 
 const EditIconBtn = styled.button`
-  width: 28px; height: 28px;
-  border: none; border-radius: 6px; background: transparent;
-  color: ${C.dim}; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.15s, color 0.15s;
-  svg { width: 13px; height: 13px; }
-  &:hover { background: rgba(200,169,110,0.1); color: ${C.gold}; }
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: ${C.dim};
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  svg {
+    width: 13px;
+    height: 13px;
+  }
+  &:hover {
+    background: rgba(200, 169, 110, 0.1);
+    color: ${C.gold};
+  }
 `
 
 const EmptyState = styled.div`
-  text-align: center; padding: 32px 24px;
-  color: ${C.dim}; font-family: 'Montserrat', sans-serif; font-size: 13px;
-  border: 1px dashed ${C.border}; border-radius: 8px;
+  text-align: center;
+  padding: 32px 24px;
+  color: ${C.dim};
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  border: 1px dashed ${C.border};
+  border-radius: 8px;
 `
 
 // ─── Inventory modal styled ────────────────────────────────────────────────────
 
 const ModalOverlay = styled.div`
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.85);
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
   z-index: 200;
-  display: flex; flex-direction: column;
+  display: flex;
+  flex-direction: column;
 `
 
 const ModalHeader = styled.div`
-  display: flex; align-items: center; gap: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
   padding: 20px 28px;
   border-bottom: 1px solid ${C.border};
   background: #0d0d0d;
@@ -289,35 +454,63 @@ const ModalHeader = styled.div`
 
 const ModalHeading = styled.h2`
   font-family: 'Special Elite', serif;
-  font-size: 20px; color: ${C.cream}; margin: 0; flex: 1;
+  font-size: 20px;
+  color: ${C.cream};
+  margin: 0;
+  flex: 1;
 `
 
 const CloseBtn = styled.button`
-  width: 36px; height: 36px;
-  border: none; border-radius: 8px; background: rgba(255,255,255,0.05);
-  color: ${C.dim}; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.15s, color 0.15s;
-  svg { width: 18px; height: 18px; }
-  &:hover { background: rgba(255,255,255,0.1); color: ${C.cream}; }
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: ${C.dim};
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: ${C.cream};
+  }
 `
 
 const ConcludeRow = styled.div`
-  display: flex; justify-content: flex-end;
+  display: flex;
+  justify-content: flex-end;
   padding: 12px 28px 0;
   background: #0d0d0d;
   flex-shrink: 0;
 `
 
 const ConcludeBtn = styled.button`
-  display: flex; align-items: center; gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 10px 20px;
-  background: ${C.gold}; color: #0d0d0d;
+  background: ${C.gold};
+  color: #0d0d0d;
   font-family: 'Montserrat', sans-serif;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-  border: none; border-radius: 6px; cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
   transition: opacity 0.15s;
-  &:hover { opacity: 0.85; }
+  &:hover {
+    opacity: 0.85;
+  }
 `
 
 const SearchBar = styled.div`
@@ -326,140 +519,238 @@ const SearchBar = styled.div`
   background: #0d0d0d;
   flex-shrink: 0;
   position: relative;
-  svg { position: absolute; left: 42px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: ${C.dim}; }
+  svg {
+    position: absolute;
+    left: 42px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 15px;
+    color: ${C.dim};
+  }
 `
 
 const SearchInput = styled.input`
-  width: 100%; padding: 10px 14px 10px 40px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  width: 100%;
+  padding: 10px 14px 10px 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  color: ${C.cream}; font-family: 'Montserrat', sans-serif; font-size: 13px;
+  color: ${C.cream};
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
   outline: none;
-  &:focus { border-color: ${C.gold}; }
+  &:focus {
+    border-color: ${C.gold};
+  }
 `
 
 const ModalBody = styled.div`
-  flex: 1; overflow-y: auto; padding: 20px 28px;
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 28px;
 `
 
 const InvGroupHeader = styled.button`
-  width: 100%; display: flex; align-items: center; gap: 10px;
-  padding: 12px 0; background: none; border: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  background: none;
+  border: none;
   border-bottom: 1px solid ${C.border};
-  cursor: pointer; margin-bottom: 2px;
-  svg { color: ${C.sage}; flex-shrink: 0; }
+  cursor: pointer;
+  margin-bottom: 2px;
+  svg {
+    color: ${C.sage};
+    flex-shrink: 0;
+  }
 `
 
 const InvGroupTitle = styled.span`
   font-family: 'Montserrat', sans-serif;
-  font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-  color: ${C.sage}; flex: 1; text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: ${C.sage};
+  flex: 1;
+  text-align: left;
 `
 
 const InvItem = styled.div<{ $added?: boolean }>`
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 12px; border-radius: 8px;
-  background: ${({ $added }) => $added ? 'rgba(200,169,110,0.06)' : 'transparent'};
-  border: 1px solid ${({ $added }) => $added ? 'rgba(200,169,110,0.2)' : 'transparent'};
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: ${({ $added }) => ($added ? 'rgba(200,169,110,0.06)' : 'transparent')};
+  border: 1px solid ${({ $added }) => ($added ? 'rgba(200,169,110,0.2)' : 'transparent')};
   margin-bottom: 4px;
   transition: background 0.1s;
-  &:hover { background: rgba(255,255,255,0.03); }
+  &:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
 `
 
 const InvName = styled.span`
   font-family: 'Montserrat', sans-serif;
-  font-size: 13px; color: ${C.cream}; flex: 1;
+  font-size: 13px;
+  color: ${C.cream};
+  flex: 1;
 `
 
 const QtyControl = styled.div`
-  display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 `
 
 const QtyBtn = styled.button`
-  width: 26px; height: 26px;
-  border: 1px solid ${C.border}; border-radius: 4px;
-  background: rgba(255,255,255,0.04); color: ${C.cream};
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; transition: background 0.1s;
-  svg { width: 12px; height: 12px; }
-  &:hover { background: rgba(255,255,255,0.08); }
-  &:disabled { opacity: 0.3; cursor: not-allowed; }
+  width: 26px;
+  height: 26px;
+  border: 1px solid ${C.border};
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  color: ${C.cream};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.1s;
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
 `
 
 const QtyNum = styled.span`
   font-family: 'Montserrat', sans-serif;
-  font-size: 13px; font-weight: 700; color: ${C.cream};
-  min-width: 20px; text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: ${C.cream};
+  min-width: 20px;
+  text-align: center;
 `
 
 const AddItemBtn = styled.button<{ $added?: boolean }>`
   padding: 6px 14px;
-  background: ${({ $added }) => $added ? 'rgba(74,222,128,0.1)' : C.gold};
-  border: 1px solid ${({ $added }) => $added ? 'rgba(74,222,128,0.3)' : 'transparent'};
-  color: ${({ $added }) => $added ? C.green : '#0d0d0d'};
+  background: ${({ $added }) => ($added ? 'rgba(74,222,128,0.1)' : C.gold)};
+  border: 1px solid ${({ $added }) => ($added ? 'rgba(74,222,128,0.3)' : 'transparent')};
+  color: ${({ $added }) => ($added ? C.green : '#0d0d0d')};
   font-family: 'Montserrat', sans-serif;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-  border-radius: 6px; cursor: pointer; flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 6px;
+  cursor: pointer;
+  flex-shrink: 0;
   transition: opacity 0.15s;
-  &:hover { opacity: 0.85; }
+  &:hover {
+    opacity: 0.85;
+  }
 `
 
 // ─── Staff modal styled ────────────────────────────────────────────────────────
 
 const StaffOverlay = styled.div`
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.85);
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
   z-index: 200;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 24px;
 `
 
 const StaffBox = styled.div`
-  width: 100%; max-width: 420px;
+  width: 100%;
+  max-width: 420px;
   background: #0d0d0d;
   border: 1px solid ${C.border};
   border-radius: 12px;
-  display: flex; flex-direction: column;
+  display: flex;
+  flex-direction: column;
 `
 
 const StaffBody = styled.div`
   padding: 20px 28px 28px;
-  display: flex; flex-direction: column; gap: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 `
 
 const StaffField = styled.div`
-  display: flex; flex-direction: column; gap: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 `
 
 const StaffLabel = styled.label`
   font-family: 'Montserrat', sans-serif;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: ${C.dim};
 `
 
 const StaffInput = styled.input`
   padding: 10px 14px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  color: ${C.cream}; font-family: 'Montserrat', sans-serif; font-size: 13px;
+  color: ${C.cream};
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
   outline: none;
-  &:focus { border-color: ${C.gold}; }
-  &::placeholder { color: ${C.dim}; }
+  &:focus {
+    border-color: ${C.gold};
+  }
+  &::placeholder {
+    color: ${C.dim};
+  }
 `
 
 const StaffSubmitBtn = styled.button`
-  display: flex; align-items: center; justify-content: center; gap: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   padding: 10px 16px;
-  background: ${C.gold}; color: #0d0d0d;
+  background: ${C.gold};
+  color: #0d0d0d;
   font-family: 'Montserrat', sans-serif;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-  border: none; border-radius: 6px; cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
   transition: opacity 0.15s;
-  svg { width: 13px; height: 13px; }
-  &:hover { opacity: 0.85; }
-  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  svg {
+    width: 13px;
+    height: 13px;
+  }
+  &:hover {
+    opacity: 0.85;
+  }
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 `
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -468,16 +759,18 @@ export default function ShowDetailPage() {
   const router = useRouter()
   const { id } = router.query as { id: string }
 
-  const [event, setEvent]       = useState<EventRow | null>(null)
-  const [gear, setGear]         = useState<ShowGearRow[]>([])
+  const [event, setEvent] = useState<EventRow | null>(null)
+  const [gear, setGear] = useState<ShowGearRow[]>([])
   const [inventory, setInventory] = useState<InventoryItem[]>([])
   const [showModal, setShowModal] = useState(false)
-  const [search, setSearch]     = useState('')
+  const [search, setSearch] = useState('')
   const [quantities, setQuantities] = useState<Record<string, number>>({})
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
 
-  const [staff, setStaff]       = useState<StaffRow[]>([])
-  const [staffModal, setStaffModal] = useState<{ type: 'add' } | { type: 'edit'; item: StaffRow } | null>(null)
+  const [staff, setStaff] = useState<StaffRow[]>([])
+  const [staffModal, setStaffModal] = useState<
+    { type: 'add' } | { type: 'edit'; item: StaffRow } | null
+  >(null)
   const [staffName, setStaffName] = useState('')
   const [staffRole, setStaffRole] = useState('')
 
@@ -485,6 +778,16 @@ export default function ShowDetailPage() {
   const [showSetlistModal, setShowSetlistModal] = useState(false)
 
   const supabase = createClient()
+
+  const authHeaders = useCallback(async (): Promise<Record<string, string>> => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+    return {
+      'Content-Type': 'application/json',
+      ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+    }
+  }, [supabase])
 
   const load = useCallback(async () => {
     if (!id) return
@@ -500,17 +803,11 @@ export default function ShowDetailPage() {
     if (staffRes.ok) setStaff(await staffRes.json())
     if (setlistRes.ok) setSetlist(await setlistRes.json())
     setInventory((invRes.data as InventoryItem[]) ?? [])
-  }, [id, supabase])
+  }, [id, supabase, authHeaders])
 
-  useEffect(() => { load() }, [load])
-
-  async function authHeaders(): Promise<Record<string, string>> {
-    const { data: { session } } = await supabase.auth.getSession()
-    return {
-      'Content-Type': 'application/json',
-      ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
-    }
-  }
+  useEffect(() => {
+    load()
+  }, [load])
 
   async function addGear(inventoryId: string, qty: number) {
     const res = await fetch('/api/admin/show-gear', {
@@ -519,7 +816,7 @@ export default function ShowDetailPage() {
       body: JSON.stringify({ event_id: id, inventory_id: inventoryId, quantity_taken: qty }),
     })
     if (res.ok) {
-      const row = await res.json() as ShowGearRow
+      const row = (await res.json()) as ShowGearRow
       setGear(g => {
         const existing = g.findIndex(x => x.inventory_id === inventoryId)
         if (existing >= 0) {
@@ -541,13 +838,16 @@ export default function ShowDetailPage() {
       body: JSON.stringify({ quantity_returned: next }),
     })
     if (res.ok) {
-      const row = await res.json() as ShowGearRow
-      setGear(g => g.map(x => x.id === row.id ? row : x))
+      const row = (await res.json()) as ShowGearRow
+      setGear(g => g.map(x => (x.id === row.id ? row : x)))
     }
   }
 
   async function removeGear(gearRow: ShowGearRow) {
-    await fetch(`/api/admin/show-gear/${gearRow.id}`, { method: 'DELETE', headers: await authHeaders() })
+    await fetch(`/api/admin/show-gear/${gearRow.id}`, {
+      method: 'DELETE',
+      headers: await authHeaders(),
+    })
     setGear(g => g.filter(x => x.id !== gearRow.id))
   }
 
@@ -560,7 +860,7 @@ export default function ShowDetailPage() {
         body: JSON.stringify({ event_id: id, name: staffName, role: staffRole }),
       })
       if (res.ok) {
-        const row = await res.json() as StaffRow
+        const row = (await res.json()) as StaffRow
         setStaff(s => [...s, row])
       }
     } else {
@@ -570,8 +870,8 @@ export default function ShowDetailPage() {
         body: JSON.stringify({ name: staffName, role: staffRole }),
       })
       if (res.ok) {
-        const row = await res.json() as StaffRow
-        setStaff(s => s.map(x => x.id === row.id ? row : x))
+        const row = (await res.json()) as StaffRow
+        setStaff(s => s.map(x => (x.id === row.id ? row : x)))
       }
     }
     setStaffName('')
@@ -580,7 +880,10 @@ export default function ShowDetailPage() {
   }
 
   async function removeStaff(staffRow: StaffRow) {
-    await fetch(`/api/admin/show-staff/${staffRow.id}`, { method: 'DELETE', headers: await authHeaders() })
+    await fetch(`/api/admin/show-staff/${staffRow.id}`, {
+      method: 'DELETE',
+      headers: await authHeaders(),
+    })
     setStaff(s => s.filter(x => x.id !== staffRow.id))
   }
 
@@ -598,7 +901,9 @@ export default function ShowDetailPage() {
 
   function openModal() {
     const initial: Record<string, number> = {}
-    inventory.forEach(item => { initial[item.id] = 1 })
+    inventory.forEach(item => {
+      initial[item.id] = 1
+    })
     setQuantities(initial)
     setSearch('')
     setShowModal(true)
@@ -613,23 +918,32 @@ export default function ShowDetailPage() {
   const addedIds = new Set(gear.map(g => g.inventory_id))
 
   const filteredInventory = search
-    ? inventory.filter(i =>
-        i.name.toLowerCase().includes(search.toLowerCase()) ||
-        (i.subcategory ?? '').toLowerCase().includes(search.toLowerCase())
+    ? inventory.filter(
+        i =>
+          i.name.toLowerCase().includes(search.toLowerCase()) ||
+          (i.subcategory ?? '').toLowerCase().includes(search.toLowerCase())
       )
     : inventory
 
-  const inventoryGroups = CATEGORIES
-    .map(cat => ({ cat, items: filteredInventory.filter(i => i.category === cat.key) }))
-    .filter(g => g.items.length > 0)
+  const inventoryGroups = CATEGORIES.map(cat => ({
+    cat,
+    items: filteredInventory.filter(i => i.category === cat.key),
+  })).filter(g => g.items.length > 0)
 
-  const taking = gear.filter(g => g.quantity_taken > g.quantity_returned || g.quantity_returned === 0)
   const returned = gear.filter(g => g.quantity_returned > 0)
 
-  if (!event) return <AdminLayout title="Show" subtitle=""><div /></AdminLayout>
+  if (!event)
+    return (
+      <AdminLayout title="Show" subtitle="">
+        <div />
+      </AdminLayout>
+    )
 
   return (
-    <AdminLayout title={event.title} subtitle={`${formatDate(event.date)} · ${event.venue}, ${event.city}`}>
+    <AdminLayout
+      title={event.title}
+      subtitle={`${formatDate(event.date)} · ${event.venue}, ${event.city}`}
+    >
       <BackBtn onClick={() => router.push('/admin/eventos')}>
         <ArrowLeft /> Voltar aos eventos
       </BackBtn>
@@ -638,56 +952,82 @@ export default function ShowDetailPage() {
       <EventHeader>
         <EventTitle>{event.title}</EventTitle>
         <EventMeta>
-          <span>{formatDate(event.date)}{event.time ? ` às ${event.time}` : ''}</span>
-          <span>{event.venue}, {event.city}</span>
+          <span>
+            {formatDate(event.date)}
+            {event.time ? ` às ${event.time}` : ''}
+          </span>
+          <span>
+            {event.venue}, {event.city}
+          </span>
         </EventMeta>
         {(event.tags ?? []).length > 0 && (
           <div style={{ marginTop: 12, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            {event.tags?.map(t => <TagChip key={t}>{t}</TagChip>)}
+            {event.tags?.map(t => (
+              <TagChip key={t}>{t}</TagChip>
+            ))}
           </div>
         )}
       </EventHeader>
 
       {/* O que estamos levando */}
       <SectionRow>
-        <SectionTitle><PackageOpen /> O que estamos levando</SectionTitle>
-        <AddGearBtn onClick={openModal}><Plus /> Adicionar item</AddGearBtn>
+        <SectionTitle>
+          <PackageOpen /> O que estamos levando
+        </SectionTitle>
+        <AddGearBtn onClick={openModal}>
+          <Plus /> Adicionar item
+        </AddGearBtn>
       </SectionRow>
 
       <GearList>
         {gear.length === 0 ? (
-          <EmptyState>Nenhum item adicionado — clica em "Adicionar item" para começar</EmptyState>
-        ) : gear.map(row => {
-          const fully = row.quantity_returned >= row.quantity_taken
-          const cond = row.inventory?.condition ?? 'good'
-          return (
-            <GearRow key={row.id} $returned={fully}>
-              <QtyBadge $muted={fully}>{row.quantity_taken}×</QtyBadge>
-              <GearName>{row.inventory?.name}</GearName>
-              {row.inventory?.subcategory && <SubBadge>{row.inventory.subcategory}</SubBadge>}
-              <CondBadge $color={CONDITION_COLORS[cond] ?? C.sage}>
-                {CONDITION_LABELS[cond] ?? cond}
-              </CondBadge>
-              {row.quantity_returned > 0 && !fully && (
-                <ReturnProgress>{row.quantity_returned}/{row.quantity_taken} devolvidos</ReturnProgress>
-              )}
-              {fully ? (
-                <ReturnBtn $done disabled><Check /> Devolvido</ReturnBtn>
-              ) : (
-                <ReturnBtn onClick={() => markReturned(row)}>
-                  <Check /> Devolver{row.quantity_taken > 1 ? ` (${row.quantity_returned + 1}/${row.quantity_taken})` : ''}
-                </ReturnBtn>
-              )}
-              <RemoveBtn onClick={() => removeGear(row)} title="Remover"><Trash2 /></RemoveBtn>
-            </GearRow>
-          )
-        })}
+          <EmptyState>
+            Nenhum item adicionado — clica em &quot;Adicionar item&quot; para começar
+          </EmptyState>
+        ) : (
+          gear.map(row => {
+            const fully = row.quantity_returned >= row.quantity_taken
+            const cond = row.inventory?.condition ?? 'good'
+            return (
+              <GearRow key={row.id} $returned={fully}>
+                <QtyBadge $muted={fully}>{row.quantity_taken}×</QtyBadge>
+                <GearName>{row.inventory?.name}</GearName>
+                {row.inventory?.subcategory && <SubBadge>{row.inventory.subcategory}</SubBadge>}
+                <CondBadge $color={CONDITION_COLORS[cond] ?? C.sage}>
+                  {CONDITION_LABELS[cond] ?? cond}
+                </CondBadge>
+                {row.quantity_returned > 0 && !fully && (
+                  <ReturnProgress>
+                    {row.quantity_returned}/{row.quantity_taken} devolvidos
+                  </ReturnProgress>
+                )}
+                {fully ? (
+                  <ReturnBtn $done disabled>
+                    <Check /> Devolvido
+                  </ReturnBtn>
+                ) : (
+                  <ReturnBtn onClick={() => markReturned(row)}>
+                    <Check /> Devolver
+                    {row.quantity_taken > 1
+                      ? ` (${row.quantity_returned + 1}/${row.quantity_taken})`
+                      : ''}
+                  </ReturnBtn>
+                )}
+                <RemoveBtn onClick={() => removeGear(row)} title="Remover">
+                  <Trash2 />
+                </RemoveBtn>
+              </GearRow>
+            )
+          })
+        )}
       </GearList>
 
       {/* O que estamos trazendo de volta */}
       {returned.length > 0 && (
         <>
-          <SectionTitle><PackageCheck /> O que estamos trazendo de volta</SectionTitle>
+          <SectionTitle>
+            <PackageCheck /> O que estamos trazendo de volta
+          </SectionTitle>
           <GearList>
             {returned.map(row => {
               const fully = row.quantity_returned >= row.quantity_taken
@@ -696,10 +1036,13 @@ export default function ShowDetailPage() {
                   <QtyBadge $muted>{row.quantity_returned}×</QtyBadge>
                   <GearName>{row.inventory?.name}</GearName>
                   {row.inventory?.subcategory && <SubBadge>{row.inventory.subcategory}</SubBadge>}
-                  {fully
-                    ? <ReturnProgress>✓ Tudo devolvido</ReturnProgress>
-                    : <ReturnProgress>{row.quantity_returned}/{row.quantity_taken} devolvidos</ReturnProgress>
-                  }
+                  {fully ? (
+                    <ReturnProgress>✓ Tudo devolvido</ReturnProgress>
+                  ) : (
+                    <ReturnProgress>
+                      {row.quantity_returned}/{row.quantity_taken} devolvidos
+                    </ReturnProgress>
+                  )}
                 </GearRow>
               )
             })}
@@ -709,61 +1052,101 @@ export default function ShowDetailPage() {
 
       {/* Staff */}
       <SectionRow>
-        <SectionTitle><Users /> Staff</SectionTitle>
-        <AddGearBtn onClick={openAddStaff}><Plus /> Adicionar staff</AddGearBtn>
+        <SectionTitle>
+          <Users /> Staff
+        </SectionTitle>
+        <AddGearBtn onClick={openAddStaff}>
+          <Plus /> Adicionar staff
+        </AddGearBtn>
       </SectionRow>
 
       <GearList>
         {staff.length === 0 ? (
-          <EmptyState>Nenhum staff adicionado — clica em "Adicionar staff" para começar</EmptyState>
-        ) : staff.map(s => (
-          <GearRow key={s.id}>
-            <GearName>{s.name}</GearName>
-            {s.role && <SubBadge>{s.role}</SubBadge>}
-            <EditIconBtn onClick={() => openEditStaff(s)} title="Editar"><Pencil /></EditIconBtn>
-            <RemoveBtn onClick={() => removeStaff(s)} title="Remover"><Trash2 /></RemoveBtn>
-          </GearRow>
-        ))}
+          <EmptyState>
+            Nenhum staff adicionado — clica em &quot;Adicionar staff&quot; para começar
+          </EmptyState>
+        ) : (
+          staff.map(s => (
+            <GearRow key={s.id}>
+              <GearName>{s.name}</GearName>
+              {s.role && <SubBadge>{s.role}</SubBadge>}
+              <EditIconBtn onClick={() => openEditStaff(s)} title="Editar">
+                <Pencil />
+              </EditIconBtn>
+              <RemoveBtn onClick={() => removeStaff(s)} title="Remover">
+                <Trash2 />
+              </RemoveBtn>
+            </GearRow>
+          ))
+        )}
       </GearList>
 
       {/* Setlist */}
       <SectionRow>
-        <SectionTitle><Music /> Setlist</SectionTitle>
+        <SectionTitle>
+          <Music /> Setlist
+        </SectionTitle>
         <div style={{ display: 'flex', gap: 8 }}>
-          <GhostBtn onClick={() => router.push(`/admin/eventos/${id}/setlist`)}>Ver setlist completo</GhostBtn>
-          <AddGearBtn onClick={() => setShowSetlistModal(true)}><Pencil /> Editar setlist</AddGearBtn>
+          <GhostBtn onClick={() => router.push(`/admin/eventos/${id}/setlist`)}>
+            Ver setlist completo
+          </GhostBtn>
+          <AddGearBtn onClick={() => setShowSetlistModal(true)}>
+            <Pencil /> Editar setlist
+          </AddGearBtn>
         </div>
       </SectionRow>
 
       <GearList>
         {setlist.length === 0 ? (
-          <EmptyState>Nenhum bloco criado — clica em "Editar setlist" para montar o repertório</EmptyState>
-        ) : (() => {
-          let songCounter = 0
-          return setlist.map(block => (
-            <GearRow key={block.id} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 6 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <QtyBadge>{block.songs.length}×</QtyBadge>
-                <GearName>{block.name || `Bloco ${block.position + 1}`}</GearName>
-              </div>
-              {block.songs.length > 0 ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 2, marginTop: 10 }}>
-                  {block.songs.map(s => {
-                    songCounter += 1
-                    return (
-                      <div key={s.id} style={{ display: 'flex', gap: 8, fontSize: 12, color: C.dim }}>
-                        <span style={{ minWidth: 16, color: C.sage, fontWeight: 700 }}>{songCounter}.</span>
-                        <span>{s.title}</span>
-                      </div>
-                    )
-                  })}
+          <EmptyState>
+            Nenhum bloco criado — clica em &quot;Editar setlist&quot; para montar o repertório
+          </EmptyState>
+        ) : (
+          (() => {
+            let songCounter = 0
+            return setlist.map(block => (
+              <GearRow
+                key={block.id}
+                style={{ flexDirection: 'column', alignItems: 'stretch', gap: 6 }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <QtyBadge>{block.songs.length}×</QtyBadge>
+                  <GearName>{block.name || `Bloco ${block.position + 1}`}</GearName>
                 </div>
-              ) : (
-                <div style={{ fontSize: 12, color: C.dim, paddingLeft: 2, marginTop: 10 }}>Sem músicas</div>
-              )}
-            </GearRow>
-          ))
-        })()}
+                {block.songs.length > 0 ? (
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 4,
+                      paddingLeft: 2,
+                      marginTop: 10,
+                    }}
+                  >
+                    {block.songs.map(s => {
+                      songCounter += 1
+                      return (
+                        <div
+                          key={s.id}
+                          style={{ display: 'flex', gap: 8, fontSize: 12, color: C.dim }}
+                        >
+                          <span style={{ minWidth: 16, color: C.sage, fontWeight: 700 }}>
+                            {songCounter}.
+                          </span>
+                          <span>{s.title}</span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                ) : (
+                  <div style={{ fontSize: 12, color: C.dim, paddingLeft: 2, marginTop: 10 }}>
+                    Sem músicas
+                  </div>
+                )}
+              </GearRow>
+            ))
+          })()
+        )}
       </GearList>
 
       {/* Inventory selection modal */}
@@ -771,7 +1154,9 @@ export default function ShowDetailPage() {
         <ModalOverlay>
           <ModalHeader>
             <ModalHeading>Adicionar equipamento ao show</ModalHeading>
-            <CloseBtn onClick={() => setShowModal(false)} title="Fechar"><X /></CloseBtn>
+            <CloseBtn onClick={() => setShowModal(false)} title="Fechar">
+              <X />
+            </CloseBtn>
           </ModalHeader>
 
           <SearchBar>
@@ -785,7 +1170,12 @@ export default function ShowDetailPage() {
           </SearchBar>
 
           <ConcludeRow>
-            <ConcludeBtn onClick={() => { setShowModal(false); router.push(`/admin/eventos/${id}`) }}>
+            <ConcludeBtn
+              onClick={() => {
+                setShowModal(false)
+                router.push(`/admin/eventos/${id}`)
+              }}
+            >
               <Check /> Concluir
             </ConcludeBtn>
           </ConcludeRow>
@@ -793,67 +1183,99 @@ export default function ShowDetailPage() {
           <ModalBody>
             {inventoryGroups.length === 0 ? (
               <EmptyState>Nenhum item encontrado</EmptyState>
-            ) : inventoryGroups.map(({ cat, items }) => {
-              const isOpen = !collapsed[cat.key]
-              return (
-                <div key={cat.key}>
-                  <InvGroupHeader onClick={() => toggleCollapse(cat.key)}>
-                    <cat.Icon size={14} />
-                    <InvGroupTitle>{cat.label}</InvGroupTitle>
-                    {isOpen ? <ChevronUp size={13} color={C.dim} /> : <ChevronDown size={13} color={C.dim} />}
-                  </InvGroupHeader>
+            ) : (
+              inventoryGroups.map(({ cat, items }) => {
+                const isOpen = !collapsed[cat.key]
+                return (
+                  <div key={cat.key}>
+                    <InvGroupHeader onClick={() => toggleCollapse(cat.key)}>
+                      <cat.Icon size={14} />
+                      <InvGroupTitle>{cat.label}</InvGroupTitle>
+                      {isOpen ? (
+                        <ChevronUp size={13} color={C.dim} />
+                      ) : (
+                        <ChevronDown size={13} color={C.dim} />
+                      )}
+                    </InvGroupHeader>
 
-                  {isOpen && items.map(item => {
-                    const isAdded = addedIds.has(item.id)
-                    const qty = quantities[item.id] ?? 1
-                    const cond = item.condition
-                    return (
-                      <InvItem key={item.id} $added={isAdded}>
-                        <InvName>{item.name}</InvName>
-                        {item.subcategory && <SubBadge>{item.subcategory}</SubBadge>}
-                        <CondBadge $color={CONDITION_COLORS[cond] ?? C.sage}>
-                          {CONDITION_LABELS[cond] ?? cond}
-                        </CondBadge>
+                    {isOpen &&
+                      items.map(item => {
+                        const isAdded = addedIds.has(item.id)
+                        const qty = quantities[item.id] ?? 1
+                        const cond = item.condition
+                        return (
+                          <InvItem key={item.id} $added={isAdded}>
+                            <InvName>{item.name}</InvName>
+                            {item.subcategory && <SubBadge>{item.subcategory}</SubBadge>}
+                            <CondBadge $color={CONDITION_COLORS[cond] ?? C.sage}>
+                              {CONDITION_LABELS[cond] ?? cond}
+                            </CondBadge>
 
-                        {item.quantity > 1 && (
-                          <QtyControl>
-                            <QtyBtn
-                              onClick={() => setQuantities(q => ({ ...q, [item.id]: Math.max(1, (q[item.id] ?? 1) - 1) }))}
-                              disabled={qty <= 1}
-                            ><Minus /></QtyBtn>
-                            <QtyNum>{qty}</QtyNum>
-                            <QtyBtn
-                              onClick={() => setQuantities(q => ({ ...q, [item.id]: Math.min(item.quantity, (q[item.id] ?? 1) + 1) }))}
-                              disabled={qty >= item.quantity}
-                            ><Plus /></QtyBtn>
-                          </QtyControl>
-                        )}
+                            {item.quantity > 1 && (
+                              <QtyControl>
+                                <QtyBtn
+                                  onClick={() =>
+                                    setQuantities(q => ({
+                                      ...q,
+                                      [item.id]: Math.max(1, (q[item.id] ?? 1) - 1),
+                                    }))
+                                  }
+                                  disabled={qty <= 1}
+                                >
+                                  <Minus />
+                                </QtyBtn>
+                                <QtyNum>{qty}</QtyNum>
+                                <QtyBtn
+                                  onClick={() =>
+                                    setQuantities(q => ({
+                                      ...q,
+                                      [item.id]: Math.min(item.quantity, (q[item.id] ?? 1) + 1),
+                                    }))
+                                  }
+                                  disabled={qty >= item.quantity}
+                                >
+                                  <Plus />
+                                </QtyBtn>
+                              </QtyControl>
+                            )}
 
-                        <AddItemBtn
-                          $added={isAdded}
-                          onClick={() => addGear(item.id, qty)}
-                        >
-                          {isAdded ? '✓ Adicionado' : 'Adicionar'}
-                        </AddItemBtn>
-                      </InvItem>
-                    )
-                  })}
-                </div>
-              )
-            })}
+                            <AddItemBtn $added={isAdded} onClick={() => addGear(item.id, qty)}>
+                              {isAdded ? '✓ Adicionado' : 'Adicionar'}
+                            </AddItemBtn>
+                          </InvItem>
+                        )
+                      })}
+                  </div>
+                )
+              })
+            )}
           </ModalBody>
         </ModalOverlay>
       )}
 
       {/* Staff modal */}
       {staffModal && (
-        <StaffOverlay onClick={e => { if (e.target === e.currentTarget) setStaffModal(null) }}>
+        <StaffOverlay
+          onClick={e => {
+            if (e.target === e.currentTarget) setStaffModal(null)
+          }}
+        >
           <StaffBox>
             <ModalHeader>
-              <ModalHeading>{staffModal.type === 'add' ? 'Adicionar staff' : 'Editar staff'}</ModalHeading>
-              <CloseBtn onClick={() => setStaffModal(null)} title="Fechar"><X /></CloseBtn>
+              <ModalHeading>
+                {staffModal.type === 'add' ? 'Adicionar staff' : 'Editar staff'}
+              </ModalHeading>
+              <CloseBtn onClick={() => setStaffModal(null)} title="Fechar">
+                <X />
+              </CloseBtn>
             </ModalHeader>
-            <StaffBody as="form" onSubmit={(e: FormEvent) => { e.preventDefault(); saveStaff() }}>
+            <StaffBody
+              as="form"
+              onSubmit={(e: FormEvent) => {
+                e.preventDefault()
+                saveStaff()
+              }}
+            >
               <StaffField>
                 <StaffLabel>Nome *</StaffLabel>
                 <StaffInput
@@ -872,7 +1294,15 @@ export default function ShowDetailPage() {
                 />
               </StaffField>
               <StaffSubmitBtn type="submit" disabled={!staffName.trim()}>
-                {staffModal.type === 'add' ? <><Plus /> Adicionar</> : <><Check /> Salvar</>}
+                {staffModal.type === 'add' ? (
+                  <>
+                    <Plus /> Adicionar
+                  </>
+                ) : (
+                  <>
+                    <Check /> Salvar
+                  </>
+                )}
               </StaffSubmitBtn>
             </StaffBody>
           </StaffBox>

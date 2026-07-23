@@ -9,14 +9,18 @@ const Row = styled.div`
 
 const Star = styled.span<{ $on: boolean; $size?: number }>`
   font-size: ${({ $size }) => $size ?? 18}px;
-  color: ${({ $on, theme }) => $on ? theme.colors.olive : '#ccc5b0'};
+  color: ${({ $on, theme }) => ($on ? theme.colors.olive : '#ccc5b0')};
   cursor: pointer;
-  transition: color 0.1s, transform 0.1s;
+  transition:
+    color 0.1s,
+    transform 0.1s;
   line-height: 1;
   padding: 2px;
   user-select: none;
 
-  &:active { transform: scale(1.3); }
+  &:active {
+    transform: scale(1.3);
+  }
 `
 
 interface StarRatingProps {
@@ -39,7 +43,9 @@ export default function StarRating({ value = 0, onChange, size }: StarRatingProp
           onClick={() => onChange?.(v)}
           onMouseEnter={() => setHover(v)}
           onMouseLeave={() => setHover(0)}
-        >★</Star>
+        >
+          ★
+        </Star>
       ))}
     </Row>
   )
@@ -55,7 +61,9 @@ export function StarsDisplay({ value, size = 14 }: StarsDisplayProps) {
   return (
     <Row>
       {[1, 2, 3, 4, 5].map(i => (
-        <Star key={i} $on={i <= v} $size={size} style={{ cursor: 'default', padding: 0 }}>★</Star>
+        <Star key={i} $on={i <= v} $size={size} style={{ cursor: 'default', padding: 0 }}>
+          ★
+        </Star>
       ))}
     </Row>
   )

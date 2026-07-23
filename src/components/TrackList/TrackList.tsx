@@ -9,16 +9,18 @@ interface TrackListProps {
 export default function TrackList({ tracks = [], onTrackClick }: TrackListProps) {
   return (
     <List>
-      {tracks.map((track) => (
+      {tracks.map(track => (
         <TrackItem
           key={track.num}
-          onClick={() => onTrackClick?.({
-            cover:   track.cover,
-            title:   track.name,
-            spotify: track.spotify,
-            apple:   track.apple,
-            youtube: track.youtube,
-          })}
+          onClick={() =>
+            onTrackClick?.({
+              cover: track.cover,
+              title: track.name,
+              spotify: track.spotify,
+              apple: track.apple,
+              youtube: track.youtube,
+            })
+          }
         >
           <Num>{track.num}</Num>
           <TrackName>{track.name}</TrackName>

@@ -43,9 +43,11 @@ export const StatLabel = styled.div`
 export const StatDivider = styled.div`
   width: 1px;
   height: 36px;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.small}) { display: none; }
+  @media (max-width: ${({ theme }) => theme.breakpoints.small}) {
+    display: none;
+  }
 `
 
 // ── SHOWS SECTION ───────────────────────────────────────────────
@@ -90,18 +92,21 @@ export const ShowsGrid = styled.div`
 export const ShowCard = styled.a`
   display: block;
   background: ${({ theme }) => theme.colors.white};
-  border: 1.5px solid rgba(64,64,21,0.12);
+  border: 1.5px solid rgba(64, 64, 21, 0.12);
   border-radius: 14px;
   padding: 20px 24px;
   text-decoration: none;
   cursor: pointer;
-  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    transform 0.15s,
+    box-shadow 0.15s;
   position: relative;
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.olive};
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px -8px rgba(64,64,21,0.2);
+    box-shadow: 0 8px 24px -8px rgba(64, 64, 21, 0.2);
   }
 `
 
@@ -133,8 +138,8 @@ export const Badge = styled.span`
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: ${({ theme }) => theme.colors.olive};
-  background: rgba(64,64,21,0.08);
-  border: 1px solid rgba(64,64,21,0.2);
+  background: rgba(64, 64, 21, 0.08);
+  border: 1px solid rgba(64, 64, 21, 0.2);
   border-radius: 4px;
   padding: 3px 8px;
 `
@@ -146,7 +151,9 @@ export const ShowArrow = styled.span`
   transform: translateY(-50%);
   font-size: 18px;
   color: ${({ theme }) => theme.colors.sage};
-  transition: color 0.15s, right 0.15s;
+  transition:
+    color 0.15s,
+    right 0.15s;
 
   ${ShowCard}:hover & {
     color: ${({ theme }) => theme.colors.olive};
@@ -166,7 +173,7 @@ export const EmptyShows = styled.div`
 // ── CRIAR SHOW (admin) ──────────────────────────────────────────
 export const CriarSection = styled.section`
   background: ${({ theme }) => theme.colors.cream2};
-  border-top: 1px solid rgba(64,64,21,0.1);
+  border-top: 1px solid rgba(64, 64, 21, 0.1);
   padding: 60px 5vw;
 `
 
@@ -216,7 +223,7 @@ export const FieldLabel = styled.label`
 
 export const FieldInput = styled.input`
   background: ${({ theme }) => theme.colors.white};
-  border: 1.5px solid rgba(64,64,21,0.15);
+  border: 1.5px solid rgba(64, 64, 21, 0.15);
   border-radius: 8px;
   color: ${({ theme }) => theme.colors.charcoal};
   font-family: ${({ theme }) => theme.fonts.body};
@@ -226,7 +233,9 @@ export const FieldInput = styled.input`
   transition: border-color 0.2s;
   width: 100%;
 
-  &:focus { border-color: ${({ theme }) => theme.colors.olive}; }
+  &:focus {
+    border-color: ${({ theme }) => theme.colors.olive};
+  }
 `
 
 export const PapeisGrid = styled.div`
@@ -242,9 +251,9 @@ export const PapelToggle = styled.button`
   gap: 10px;
   padding: 10px 14px;
   border-radius: 8px;
-  border: 1.5px solid ${({ $on, theme }) => $on ? theme.colors.olive : 'rgba(64,64,21,0.15)'};
-  background: ${({ $on, theme }) => $on ? theme.colors.olive : theme.colors.white};
-  color: ${({ $on, theme }) => $on ? theme.colors.cream : theme.colors.charcoal};
+  border: 1.5px solid ${({ $on, theme }) => ($on ? theme.colors.olive : 'rgba(64,64,21,0.15)')};
+  background: ${({ $on, theme }) => ($on ? theme.colors.olive : theme.colors.white)};
+  color: ${({ $on, theme }) => ($on ? theme.colors.cream : theme.colors.charcoal)};
   font-family: ${({ theme }) => theme.fonts.body};
   font-size: 13px;
   cursor: pointer;
@@ -270,8 +279,13 @@ export const SubmitBtn = styled.button`
   text-transform: uppercase;
   transition: opacity 0.2s;
 
-  &:hover { opacity: 0.85; }
-  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  &:hover {
+    opacity: 0.85;
+  }
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 `
 
 export const ExistingShows = styled.div`
@@ -280,7 +294,7 @@ export const ExistingShows = styled.div`
 
 export const ExistingCard = styled.div`
   background: ${({ theme }) => theme.colors.white};
-  border: 1.5px solid rgba(64,64,21,0.1);
+  border: 1.5px solid rgba(64, 64, 21, 0.1);
   border-radius: 10px;
   padding: 14px 16px;
   margin-bottom: 8px;
@@ -313,28 +327,30 @@ export const DeleteBtn = styled.button`
   letter-spacing: 0.06em;
   text-transform: uppercase;
   border-radius: 6px;
-  border: 1.5px solid rgba(163,58,42,0.3);
+  border: 1.5px solid rgba(163, 58, 42, 0.3);
   background: none;
   color: #a33a2a;
   cursor: pointer;
   font-family: ${({ theme }) => theme.fonts.body};
   transition: background 0.15s;
 
-  &:hover { background: rgba(163,58,42,0.08); }
+  &:hover {
+    background: rgba(163, 58, 42, 0.08);
+  }
 `
 
 export const Toast = styled.div`
   position: fixed;
   bottom: 2rem;
   left: 50%;
-  transform: translateX(-50%) translateY(${({ $show }) => $show ? '0' : '10px'});
-  background: ${({ $error, theme }) => $error ? '#a33a2a' : theme.colors.olive};
+  transform: translateX(-50%) translateY(${({ $show }) => ($show ? '0' : '10px')});
+  background: ${({ $error, theme }) => ($error ? '#a33a2a' : theme.colors.olive)};
   border-radius: 8px;
   padding: 12px 20px;
   font-family: ${({ theme }) => theme.fonts.body};
   font-size: 13px;
   color: ${({ theme }) => theme.colors.cream};
-  opacity: ${({ $show }) => $show ? 1 : 0};
+  opacity: ${({ $show }) => ($show ? 1 : 0)};
   transition: all 0.3s;
   pointer-events: none;
   white-space: nowrap;

@@ -16,9 +16,7 @@ export default function Marquee({ items = [], alt = false, reverse = false }: Ma
         {doubled.map((text, i) => (
           <span key={`${text}-${i}`}>
             {text}
-            {i % 2 === 0
-              ? <Dot>●</Dot>
-              : <Star>✦</Star>}
+            {i % 2 === 0 ? <Dot>●</Dot> : <Star>✦</Star>}
           </span>
         ))}
       </Track>

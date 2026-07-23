@@ -7,9 +7,5 @@ import { theme } from './theme'
  * Wrap your app (or Storybook decorator) with this.
  */
 export function ThemeProvider({ children }) {
-  return (
-    <StyledThemeProvider theme={theme}>
-      {children}
-    </StyledThemeProvider>
-  )
+  return <StyledThemeProvider theme={theme}>{children}</StyledThemeProvider>
 }

@@ -13,7 +13,7 @@ export const Container = styled.div`
 
 export const ShowBanner = styled.div`
   background: ${({ theme }) => theme.colors.white};
-  border: 1.5px solid rgba(64,64,21,0.1);
+  border: 1.5px solid rgba(64, 64, 21, 0.1);
   border-radius: 12px;
   padding: 16px 20px;
   margin-bottom: 32px;
@@ -66,7 +66,7 @@ export const FieldLabel = styled.label`
 export const FieldInput = styled.input`
   width: 100%;
   background: ${({ theme }) => theme.colors.white};
-  border: 1.5px solid rgba(64,64,21,0.15);
+  border: 1.5px solid rgba(64, 64, 21, 0.15);
   border-radius: 8px;
   color: ${({ theme }) => theme.colors.charcoal};
   font-family: ${({ theme }) => theme.fonts.body};
@@ -75,13 +75,15 @@ export const FieldInput = styled.input`
   outline: none;
   transition: border-color 0.2s;
 
-  &:focus { border-color: ${({ theme }) => theme.colors.olive}; }
+  &:focus {
+    border-color: ${({ theme }) => theme.colors.olive};
+  }
 `
 
 export const FieldTextarea = styled.textarea`
   width: 100%;
   background: ${({ theme }) => theme.colors.white};
-  border: 1.5px solid rgba(64,64,21,0.15);
+  border: 1.5px solid rgba(64, 64, 21, 0.15);
   border-radius: 8px;
   color: ${({ theme }) => theme.colors.charcoal};
   font-family: ${({ theme }) => theme.fonts.body};
@@ -92,7 +94,9 @@ export const FieldTextarea = styled.textarea`
   min-height: 64px;
   transition: border-color 0.2s;
 
-  &:focus { border-color: ${({ theme }) => theme.colors.olive}; }
+  &:focus {
+    border-color: ${({ theme }) => theme.colors.olive};
+  }
 `
 
 export const PapelGrid = styled.div`
@@ -104,9 +108,10 @@ export const PapelGrid = styled.div`
 export const PapelBtn = styled.button`
   padding: 11px 14px;
   border-radius: 8px;
-  border: 1.5px solid ${({ $selected, theme }) => $selected ? theme.colors.olive : 'rgba(64,64,21,0.15)'};
-  background: ${({ $selected, theme }) => $selected ? theme.colors.olive : theme.colors.white};
-  color: ${({ $selected, theme }) => $selected ? theme.colors.cream : theme.colors.charcoal};
+  border: 1.5px solid
+    ${({ $selected, theme }) => ($selected ? theme.colors.olive : 'rgba(64,64,21,0.15)')};
+  background: ${({ $selected, theme }) => ($selected ? theme.colors.olive : theme.colors.white)};
+  color: ${({ $selected, theme }) => ($selected ? theme.colors.cream : theme.colors.charcoal)};
   font-family: ${({ theme }) => theme.fonts.body};
   font-size: 13px;
   cursor: pointer;
@@ -114,13 +119,15 @@ export const PapelBtn = styled.button`
   transition: all 0.15s;
   font-weight: 500;
 
-  &:hover { border-color: ${({ theme }) => theme.colors.olive}; }
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.olive};
+  }
 `
 
 // ── MUSIC CARD ──────────────────────────────────────────────────
 export const MusicaCard = styled.div`
   background: ${({ theme }) => theme.colors.white};
-  border: 1.5px solid rgba(64,64,21,0.1);
+  border: 1.5px solid rgba(64, 64, 21, 0.1);
   border-radius: 12px;
   margin-bottom: 10px;
   overflow: hidden;
@@ -135,7 +142,9 @@ export const MusicaCardHeader = styled.div`
   user-select: none;
   transition: background 0.15s;
 
-  &:hover { background: ${({ theme }) => theme.colors.cream}; }
+  &:hover {
+    background: ${({ theme }) => theme.colors.cream};
+  }
 `
 
 export const MusicaNum = styled.span`
@@ -167,8 +176,8 @@ export const MusicaChevron = styled.span`
 
 export const MusicaBody = styled.div`
   padding: 16px 18px;
-  border-top: 1px solid rgba(64,64,21,0.08);
-  display: ${({ $open }) => $open ? 'block' : 'none'};
+  border-top: 1px solid rgba(64, 64, 21, 0.08);
+  display: ${({ $open }) => ($open ? 'block' : 'none')};
 `
 
 export const Cols2 = styled.div`
@@ -210,7 +219,7 @@ export const StarLabel = styled.span`
 
 export const BandaMember = styled.div`
   background: ${({ theme }) => theme.colors.cream2};
-  border: 1.5px solid rgba(64,64,21,0.1);
+  border: 1.5px solid rgba(64, 64, 21, 0.1);
   border-radius: 8px;
   padding: 10px 12px;
   margin-bottom: 8px;
@@ -255,14 +264,14 @@ export const NoteDot = styled.span`
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: ${({ $green }) => $green ? '#404015' : '#a33a2a'};
+  background: ${({ $green }) => ($green ? '#404015' : '#a33a2a')};
   flex-shrink: 0;
 `
 
 export const NoteTextarea = styled.textarea`
   width: 100%;
   background: ${({ theme }) => theme.colors.white};
-  border: 1.5px solid rgba(64,64,21,0.1);
+  border: 1.5px solid rgba(64, 64, 21, 0.1);
   border-radius: 6px;
   color: ${({ theme }) => theme.colors.charcoal};
   font-family: ${({ theme }) => theme.fonts.body};
@@ -273,7 +282,9 @@ export const NoteTextarea = styled.textarea`
   min-height: 48px;
   transition: border-color 0.2s;
 
-  &:focus { border-color: ${({ theme }) => theme.colors.olive}; }
+  &:focus {
+    border-color: ${({ theme }) => theme.colors.olive};
+  }
 `
 
 // ── GENERAL STARS ───────────────────────────────────────────────
@@ -316,12 +327,17 @@ export const SubmitBtn = styled.button`
   text-transform: uppercase;
   transition: opacity 0.2s;
 
-  &:hover { opacity: 0.85; }
-  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  &:hover {
+    opacity: 0.85;
+  }
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 `
 
 export const SuccessBox = styled.div`
-  background: rgba(64,64,21,0.06);
+  background: rgba(64, 64, 21, 0.06);
   border: 1.5px solid ${({ theme }) => theme.colors.olive};
   border-radius: 10px;
   padding: 32px;
@@ -336,21 +352,24 @@ export const SuccessBox = styled.div`
     margin-bottom: 8px;
   }
 
-  p { font-size: 14px; color: ${({ theme }) => theme.colors.charcoal}; }
+  p {
+    font-size: 14px;
+    color: ${({ theme }) => theme.colors.charcoal};
+  }
 `
 
 export const Toast = styled.div`
   position: fixed;
   bottom: 2rem;
   left: 50%;
-  transform: translateX(-50%) translateY(${({ $show }) => $show ? '0' : '10px'});
-  background: ${({ $error, theme }) => $error ? '#a33a2a' : theme.colors.olive};
+  transform: translateX(-50%) translateY(${({ $show }) => ($show ? '0' : '10px')});
+  background: ${({ $error, theme }) => ($error ? '#a33a2a' : theme.colors.olive)};
   border-radius: 8px;
   padding: 12px 20px;
   font-family: ${({ theme }) => theme.fonts.body};
   font-size: 13px;
   color: ${({ theme }) => theme.colors.cream};
-  opacity: ${({ $show }) => $show ? 1 : 0};
+  opacity: ${({ $show }) => ($show ? 1 : 0)};
   transition: all 0.3s;
   pointer-events: none;
   white-space: nowrap;

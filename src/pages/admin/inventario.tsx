@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import styled, { keyframes } from 'styled-components'
+import styled from 'styled-components'
 import { Plus, Pencil, Trash2, PackageOpen, ChevronDown, ChevronUp } from 'lucide-react'
 import AdminLayout from '../../components/Admin/AdminLayout'
 import { createClient } from '../../lib/supabase/client'
@@ -22,37 +22,40 @@ interface InventoryItem {
 }
 
 type ItemModal =
-  | { type: 'add' }
-  | { type: 'edit'; item: InventoryItem }
-  | { type: 'delete'; item: InventoryItem }
+  { type: 'add' } | { type: 'edit'; item: InventoryItem } | { type: 'delete'; item: InventoryItem }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const C = {
-  gold:   '#c8a96e',
-  sage:   '#878766',
-  cream:  '#f5f0e8',
+  gold: '#c8a96e',
+  sage: '#878766',
+  cream: '#f5f0e8',
   cream2: 'rgba(245,240,232,0.6)',
-  dim:    'rgba(245,240,232,0.3)',
+  dim: 'rgba(245,240,232,0.3)',
   dimmer: 'rgba(245,240,232,0.12)',
   border: 'rgba(255,255,255,0.07)',
-  card:   'rgba(255,255,255,0.03)',
-  red:    '#f87171',
-  green:  '#4ade80',
+  card: 'rgba(255,255,255,0.03)',
+  red: '#f87171',
+  green: '#4ade80',
   yellow: '#facc15',
   orange: '#fb923c',
 }
 
-
 const CONDITIONS: { key: Condition; label: string; color: string }[] = [
-  { key: 'good',         label: 'Bom',              color: C.green  },
-  { key: 'fair',         label: 'Regular',           color: C.yellow },
+  { key: 'good', label: 'Bom', color: C.green },
+  { key: 'fair', label: 'Regular', color: C.yellow },
   { key: 'needs_repair', label: 'Precisa manutenção', color: C.orange },
-  { key: 'broken',       label: 'Danificado',        color: C.red    },
+  { key: 'broken', label: 'Danificado', color: C.red },
 ]
 
 function getCategoryDef(key: string): CategoryDef {
-  return CATEGORIES.find(c => c.key === key) ?? { key, label: key, Icon: PackageOpen as CategoryDef['Icon'] }
+  return (
+    CATEGORIES.find(c => c.key === key) ?? {
+      key,
+      label: key,
+      Icon: PackageOpen as CategoryDef['Icon'],
+    }
+  )
 }
 
 function getCondition(key: string) {
@@ -74,14 +77,20 @@ const SummaryCard = styled.button<{ $active: boolean }>`
   align-items: flex-start;
   gap: 6px;
   padding: 14px 16px;
-  background: ${({ $active }) => $active ? 'rgba(200,169,110,0.1)' : C.card};
-  border: 1px solid ${({ $active }) => $active ? C.gold : C.border};
+  background: ${({ $active }) => ($active ? 'rgba(200,169,110,0.1)' : C.card)};
+  border: 1px solid ${({ $active }) => ($active ? C.gold : C.border)};
   border-radius: 10px;
   cursor: pointer;
   text-align: left;
   transition: all 0.15s;
-  &:hover { border-color: ${C.gold}; }
-  svg { color: ${({ $active }) => $active ? C.gold : C.sage}; width: 16px; height: 16px; }
+  &:hover {
+    border-color: ${C.gold};
+  }
+  svg {
+    color: ${({ $active }) => ($active ? C.gold : C.sage)};
+    width: 16px;
+    height: 16px;
+  }
 `
 
 const SummaryLabel = styled.span`
@@ -123,8 +132,13 @@ const AddBtn = styled.button`
   border-radius: 6px;
   cursor: pointer;
   transition: opacity 0.15s;
-  svg { width: 14px; height: 14px; }
-  &:hover { opacity: 0.85; }
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+  &:hover {
+    opacity: 0.85;
+  }
 `
 
 const FilterInfo = styled.span`
@@ -140,7 +154,9 @@ const FilterInfo = styled.span`
     cursor: pointer;
     margin-left: 8px;
     text-decoration: underline;
-    &:hover { color: ${C.cream}; }
+    &:hover {
+      color: ${C.cream};
+    }
   }
 `
 
@@ -157,13 +173,18 @@ const GroupHeader = styled.button`
   align-items: center;
   gap: 10px;
   padding: 14px 16px;
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
   border: none;
   cursor: pointer;
   text-align: left;
   transition: background 0.15s;
-  &:hover { background: rgba(255,255,255,0.04); }
-  svg { color: ${C.sage}; flex-shrink: 0; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+  svg {
+    color: ${C.sage};
+    flex-shrink: 0;
+  }
 `
 
 const GroupTitle = styled.span`
@@ -195,8 +216,12 @@ const ItemRow = styled.div`
   padding: 12px 16px;
   border-bottom: 1px solid ${C.border};
   transition: background 0.1s;
-  &:last-child { border-bottom: none; }
-  &:hover { background: rgba(255,255,255,0.02); }
+  &:last-child {
+    border-bottom: none;
+  }
+  &:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
 `
 
 const ItemBody = styled.div`
@@ -249,7 +274,7 @@ const SubBadge = styled.span`
   font-size: 10px;
   font-weight: 600;
   color: ${C.dim};
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid ${C.border};
   border-radius: 4px;
   padding: 2px 7px;
@@ -287,17 +312,26 @@ const RowActions = styled.div`
 `
 
 const IconBtn = styled.button<{ $red?: boolean }>`
-  width: 28px; height: 28px;
-  border: none; border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
   background: transparent;
-  color: ${({ $red }) => $red ? C.red : C.dim};
+  color: ${({ $red }) => ($red ? C.red : C.dim)};
   cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.15s, color 0.15s;
-  svg { width: 13px; height: 13px; }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  svg {
+    width: 13px;
+    height: 13px;
+  }
   &:hover {
-    background: ${({ $red }) => $red ? 'rgba(248,113,113,0.1)' : 'rgba(255,255,255,0.06)'};
-    color: ${({ $red }) => $red ? C.red : C.cream};
+    background: ${({ $red }) => ($red ? 'rgba(248,113,113,0.1)' : 'rgba(255,255,255,0.06)')};
+    color: ${({ $red }) => ($red ? C.red : C.cream)};
   }
 `
 
@@ -314,10 +348,13 @@ const EmptyState = styled.div`
 // ─── Modal styled ─────────────────────────────────────────────────────────────
 
 const Overlay = styled.div`
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.7);
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
   z-index: 100;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 24px;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
@@ -328,7 +365,7 @@ const Overlay = styled.div`
 
 const Modal = styled.div`
   background: #141414;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 32px;
   width: 100%;
@@ -366,49 +403,59 @@ const FormGrid = styled.div`
 `
 
 const Field = styled.div<{ $full?: boolean }>`
-  display: flex; flex-direction: column; gap: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   margin-bottom: 16px;
   ${({ $full }) => $full && 'grid-column: 1 / -1;'}
 `
 
 const Label = styled.label`
   font-family: 'Montserrat', sans-serif;
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: ${C.dim};
 `
 
 const Input = styled.input`
   padding: 10px 14px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
   color: ${C.cream};
   font-family: 'Montserrat', sans-serif;
   font-size: 13px;
   outline: none;
   transition: border-color 0.2s;
-  &:focus { border-color: ${C.gold}; }
+  &:focus {
+    border-color: ${C.gold};
+  }
 `
 
 const Select = styled.select`
   padding: 10px 14px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
   color: ${C.cream};
   font-family: 'Montserrat', sans-serif;
   font-size: 13px;
   outline: none;
   transition: border-color 0.2s;
-  &:focus { border-color: ${C.gold}; }
-  option { background: #141414; }
+  &:focus {
+    border-color: ${C.gold};
+  }
+  option {
+    background: #141414;
+  }
 `
 
 const Textarea = styled.textarea`
   padding: 10px 14px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
   color: ${C.cream};
   font-family: 'Montserrat', sans-serif;
@@ -417,11 +464,15 @@ const Textarea = styled.textarea`
   resize: vertical;
   min-height: 72px;
   transition: border-color 0.2s;
-  &:focus { border-color: ${C.gold}; }
+  &:focus {
+    border-color: ${C.gold};
+  }
 `
 
 const ModalActions = styled.div`
-  display: flex; gap: 10px; justify-content: flex-end;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
   margin-top: 24px;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
@@ -440,28 +491,46 @@ const CancelBtn = styled.button`
   border-radius: 6px;
   color: ${C.dim};
   font-family: 'Montserrat', sans-serif;
-  font-size: 12px; font-weight: 700; letter-spacing: 0.06em;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
-  &:hover { border-color: ${C.dim}; color: ${C.cream}; }
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+  &:hover {
+    border-color: ${C.dim};
+    color: ${C.cream};
+  }
 `
 
 const ConfirmBtn = styled.button<{ $red?: boolean }>`
   padding: 10px 20px;
-  background: ${({ $red }) => $red ? C.red : C.gold};
-  border: none; border-radius: 6px;
+  background: ${({ $red }) => ($red ? C.red : C.gold)};
+  border: none;
+  border-radius: 6px;
   color: #0d0d0d;
   font-family: 'Montserrat', sans-serif;
-  font-size: 12px; font-weight: 700; letter-spacing: 0.06em;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   cursor: pointer;
   transition: opacity 0.15s;
-  &:hover { opacity: 0.85; }
-  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:hover {
+    opacity: 0.85;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `
 
 const DeleteText = styled.p`
   font-family: 'Montserrat', sans-serif;
-  font-size: 13px; color: ${C.cream2}; line-height: 1.6; margin: 0;
+  font-size: 13px;
+  color: ${C.cream2};
+  line-height: 1.6;
+  margin: 0;
 `
 
 // ─── Empty form ───────────────────────────────────────────────────────────────
@@ -478,28 +547,28 @@ const emptyForm = {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function InventarioPage() {
-  const [items, setItems]         = useState<InventoryItem[]>([])
-  const [modal, setModal]         = useState<ItemModal | null>(null)
-  const [form, setForm]           = useState({ ...emptyForm })
-  const [saving, setSaving]       = useState(false)
+  const [items, setItems] = useState<InventoryItem[]>([])
+  const [modal, setModal] = useState<ItemModal | null>(null)
+  const [form, setForm] = useState({ ...emptyForm })
+  const [saving, setSaving] = useState(false)
   const [filterCat, setFilterCat] = useState<string | null>(null)
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
 
   const supabase = createClient()
 
   const load = useCallback(async () => {
-    const { data } = await supabase
-      .from('inventory')
-      .select('*')
-      .order('category')
-      .order('name')
+    const { data } = await supabase.from('inventory').select('*').order('category').order('name')
     setItems((data as InventoryItem[]) ?? [])
   }, [supabase])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    load()
+  }, [load])
 
   async function authHeaders(): Promise<Record<string, string>> {
-    const { data: { session } } = await supabase.auth.getSession()
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
     return {
       'Content-Type': 'application/json',
       ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
@@ -513,12 +582,12 @@ export default function InventarioPage() {
 
   function openEdit(item: InventoryItem) {
     setForm({
-      category:    item.category,
+      category: item.category,
       subcategory: item.subcategory ?? '',
-      name:        item.name,
-      quantity:    item.quantity,
-      condition:   item.condition,
-      notes:       item.notes ?? '',
+      name: item.name,
+      quantity: item.quantity,
+      condition: item.condition,
+      notes: item.notes ?? '',
     })
     setModal({ type: 'edit', item })
   }
@@ -566,12 +635,10 @@ export default function InventarioPage() {
   const displayed = filterCat ? items.filter(i => i.category === filterCat) : items
 
   // group by category, preserving CATEGORIES order
-  const groups = CATEGORIES
-    .map(cat => ({
-      cat,
-      items: displayed.filter(i => i.category === cat.key),
-    }))
-    .filter(g => g.items.length > 0)
+  const groups = CATEGORIES.map(cat => ({
+    cat,
+    items: displayed.filter(i => i.category === cat.key),
+  })).filter(g => g.items.length > 0)
 
   // summary totals per category (from ALL items, ignoring filter)
   const summaryTotals = CATEGORIES.map(cat => ({
@@ -584,7 +651,6 @@ export default function InventarioPage() {
 
   return (
     <AdminLayout title="Inventário" subtitle="Equipamentos da banda">
-
       {/* ── Summary cards ── */}
       {summaryTotals.length > 0 && (
         <SummaryGrid>
@@ -605,12 +671,21 @@ export default function InventarioPage() {
       {/* ── Top bar ── */}
       <TopBar>
         <FilterInfo>
-          {filterCat
-            ? <>A mostrar: <strong style={{ color: C.cream }}>{getCategoryDef(filterCat).label}</strong><button onClick={() => setFilterCat(null)}>Ver tudo</button></>
-            : <>{items.length} item{items.length !== 1 ? 's' : ''} no inventário</>
-          }
+          {filterCat ? (
+            <>
+              A mostrar:{' '}
+              <strong style={{ color: C.cream }}>{getCategoryDef(filterCat).label}</strong>
+              <button onClick={() => setFilterCat(null)}>Ver tudo</button>
+            </>
+          ) : (
+            <>
+              {items.length} item{items.length !== 1 ? 's' : ''} no inventário
+            </>
+          )}
         </FilterInfo>
-        <AddBtn onClick={openAdd}><Plus /> Adicionar</AddBtn>
+        <AddBtn onClick={openAdd}>
+          <Plus /> Adicionar
+        </AddBtn>
       </TopBar>
 
       {/* ── Grouped list ── */}
@@ -630,7 +705,11 @@ export default function InventarioPage() {
                 <cat.Icon size={15} />
                 <GroupTitle>{cat.label}</GroupTitle>
                 <GroupTotal>{groupTotal} unid.</GroupTotal>
-                {isCollapsed ? <ChevronDown size={14} color={C.dim} /> : <ChevronUp size={14} color={C.dim} />}
+                {isCollapsed ? (
+                  <ChevronDown size={14} color={C.dim} />
+                ) : (
+                  <ChevronUp size={14} color={C.dim} />
+                )}
               </GroupHeader>
 
               {!isCollapsed && (
@@ -651,8 +730,16 @@ export default function InventarioPage() {
                           </ItemMeta>
                         </ItemBody>
                         <RowActions>
-                          <IconBtn onClick={() => openEdit(item)} title="Editar"><Pencil /></IconBtn>
-                          <IconBtn $red onClick={() => setModal({ type: 'delete', item })} title="Apagar"><Trash2 /></IconBtn>
+                          <IconBtn onClick={() => openEdit(item)} title="Editar">
+                            <Pencil />
+                          </IconBtn>
+                          <IconBtn
+                            $red
+                            onClick={() => setModal({ type: 'delete', item })}
+                            title="Apagar"
+                          >
+                            <Trash2 />
+                          </IconBtn>
                         </RowActions>
                       </ItemRow>
                     )
@@ -683,10 +770,14 @@ export default function InventarioPage() {
                 <Label>Categoria</Label>
                 <Select
                   value={form.category}
-                  onChange={e => setForm(f => ({ ...f, category: e.target.value, subcategory: '' }))}
+                  onChange={e =>
+                    setForm(f => ({ ...f, category: e.target.value, subcategory: '' }))
+                  }
                 >
                   {CATEGORIES.map(c => (
-                    <option key={c.key} value={c.key}>{c.label}</option>
+                    <option key={c.key} value={c.key}>
+                      {c.label}
+                    </option>
                   ))}
                 </Select>
               </Field>
@@ -697,7 +788,9 @@ export default function InventarioPage() {
                   type="number"
                   min={1}
                   value={form.quantity}
-                  onChange={e => setForm(f => ({ ...f, quantity: Math.max(1, parseInt(e.target.value) || 1) }))}
+                  onChange={e =>
+                    setForm(f => ({ ...f, quantity: Math.max(1, parseInt(e.target.value) || 1) }))
+                  }
                 />
               </Field>
 
@@ -710,7 +803,9 @@ export default function InventarioPage() {
                   >
                     <option value="">— Sem tipo —</option>
                     {selectedCatDef?.subcategories?.map(s => (
-                      <option key={s} value={s}>{s}</option>
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
                     ))}
                   </Select>
                 </Field>
@@ -723,7 +818,9 @@ export default function InventarioPage() {
                   onChange={e => setForm(f => ({ ...f, condition: e.target.value as Condition }))}
                 >
                   {CONDITIONS.map(c => (
-                    <option key={c.key} value={c.key}>{c.label}</option>
+                    <option key={c.key} value={c.key}>
+                      {c.label}
+                    </option>
                   ))}
                 </Select>
               </Field>
@@ -754,16 +851,19 @@ export default function InventarioPage() {
           <Modal onClick={e => e.stopPropagation()}>
             <ModalTitle>Apagar item</ModalTitle>
             <DeleteText>
-              Tens a certeza que queres apagar <strong style={{ color: C.cream }}>{modal.item.name}</strong>? Esta ação não pode ser desfeita.
+              Tens a certeza que queres apagar{' '}
+              <strong style={{ color: C.cream }}>{modal.item.name}</strong>? Esta ação não pode ser
+              desfeita.
             </DeleteText>
             <ModalActions>
               <CancelBtn onClick={() => setModal(null)}>Cancelar</CancelBtn>
-              <ConfirmBtn $red onClick={() => deleteItem(modal.item)}>Apagar</ConfirmBtn>
+              <ConfirmBtn $red onClick={() => deleteItem(modal.item)}>
+                Apagar
+              </ConfirmBtn>
             </ModalActions>
           </Modal>
         </Overlay>
       )}
-
     </AdminLayout>
   )
 }

@@ -9,13 +9,13 @@ export function useScrollReveal(selector = '[data-reveal]'): void {
     const elements = document.querySelectorAll<Element>(selector)
 
     if (!('IntersectionObserver' in window)) {
-      elements.forEach((el) => el.classList.add('in'))
+      elements.forEach(el => el.classList.add('in'))
       return
     }
 
     const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+      entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             entry.target.classList.add('in')
             io.unobserve(entry.target)
@@ -25,7 +25,7 @@ export function useScrollReveal(selector = '[data-reveal]'): void {
       { rootMargin: '0px 0px -10% 0px', threshold: 0.05 }
     )
 
-    elements.forEach((el) => io.observe(el))
+    elements.forEach(el => io.observe(el))
     return () => io.disconnect()
   }, [selector])
 }
@@ -43,8 +43,8 @@ export function useCollageReveal(collageRef: RefObject<Element | null>): void {
     }
 
     const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+      entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             entry.target.classList.add('in')
             io.unobserve(entry.target)

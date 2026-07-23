@@ -31,7 +31,9 @@ export function Select({ label, id, children, ...rest }) {
   return (
     <FieldWrap>
       {label && <LabelEl htmlFor={id}>{label}</LabelEl>}
-      <SelectBase id={id} {...rest}>{children}</SelectBase>
+      <SelectBase id={id} {...rest}>
+        {children}
+      </SelectBase>
     </FieldWrap>
   )
 }

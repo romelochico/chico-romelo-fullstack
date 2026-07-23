@@ -9,12 +9,14 @@ export const Item = styled.li`
   font-size: 14px;
   letter-spacing: 0.04em;
   list-style: none;
-  cursor: ${({ $clickable }) => $clickable ? 'pointer' : 'default'};
-  transition: background 0.2s, transform 0.2s;
+  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
+  transition:
+    background 0.2s,
+    transform 0.2s;
 
   &:hover {
-    background: ${({ $clickable, theme }) => $clickable ? theme.colors.sageFade : 'transparent'};
-    transform: ${({ $clickable }) => $clickable ? 'translateX(4px)' : 'none'};
+    background: ${({ $clickable, theme }) => ($clickable ? theme.colors.sageFade : 'transparent')};
+    transform: ${({ $clickable }) => ($clickable ? 'translateX(4px)' : 'none')};
   }
 `
 

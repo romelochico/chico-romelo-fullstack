@@ -1,6 +1,15 @@
+import Image from 'next/image'
 import { IconClose } from '../Icons/Icons'
 import StreamBtn from '../StreamBtn/StreamBtn'
-import { Overlay, Card, CloseBtn, CoverWrap, Title, ModalLabel, BtnsCol } from './StreamingModal.styles'
+import {
+  Overlay,
+  Card,
+  CloseBtn,
+  CoverWrap,
+  Title,
+  ModalLabel,
+  BtnsCol,
+} from './StreamingModal.styles'
 import type { StreamingModalData } from '../../types'
 
 interface StreamingModalProps {
@@ -15,7 +24,9 @@ export default function StreamingModal({ isOpen, onClose, modal }: StreamingModa
   return (
     <Overlay
       className={isOpen ? 'is-open' : ''}
-      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+      onClick={e => {
+        if (e.target === e.currentTarget) onClose()
+      }}
       role="dialog"
       aria-modal={true}
       aria-hidden={!isOpen}
@@ -26,7 +37,9 @@ export default function StreamingModal({ isOpen, onClose, modal }: StreamingModa
         </CloseBtn>
 
         <CoverWrap>
-          <img src={modal?.cover} alt={modal?.title} loading="lazy" decoding="async" />
+          {modal?.cover && (
+            <Image src={modal.cover} alt={modal.title} fill sizes="180px" />
+          )}
         </CoverWrap>
 
         <Title>{modal?.title}</Title>
@@ -34,7 +47,7 @@ export default function StreamingModal({ isOpen, onClose, modal }: StreamingModa
 
         <BtnsCol>
           {modal?.spotify && <StreamBtn platform="spotify" href={modal.spotify} />}
-          {modal?.apple   && <StreamBtn platform="apple"   href={modal.apple} />}
+          {modal?.apple && <StreamBtn platform="apple" href={modal.apple} />}
           {modal?.youtube && <StreamBtn platform="youtube" href={modal.youtube} />}
         </BtnsCol>
       </Card>

@@ -1,15 +1,15 @@
 import styled from 'styled-components'
 
 const C = {
-  text:       '#f5f0e8',
-  textDim:    'rgba(245,240,232,0.45)',
-  textFaint:  'rgba(245,240,232,0.2)',
-  border:     'rgba(255,255,255,0.07)',
-  borderHov:  'rgba(255,255,255,0.13)',
-  card:       'rgba(255,255,255,0.03)',
-  gold:       '#c8a96e',
-  red:        '#f87171',
-  green:      '#86efac',
+  text: '#f5f0e8',
+  textDim: 'rgba(245,240,232,0.45)',
+  textFaint: 'rgba(245,240,232,0.2)',
+  border: 'rgba(255,255,255,0.07)',
+  borderHov: 'rgba(255,255,255,0.13)',
+  card: 'rgba(255,255,255,0.03)',
+  gold: '#c8a96e',
+  red: '#f87171',
+  green: '#86efac',
 }
 
 export const BackLink = styled.a`
@@ -27,7 +27,9 @@ export const BackLink = styled.a`
   transition: color 0.2s;
   cursor: pointer;
 
-  &:hover { color: ${C.text}; }
+  &:hover {
+    color: ${C.text};
+  }
 `
 
 export const AvaliarLink = styled.a`
@@ -48,7 +50,9 @@ export const AvaliarLink = styled.a`
   transition: opacity 0.15s;
   cursor: pointer;
 
-  &:hover { opacity: 0.85; }
+  &:hover {
+    opacity: 0.85;
+  }
 `
 
 export const SummaryGrid = styled.div`
@@ -113,7 +117,9 @@ export const MusicaHeader = styled.div`
   transition: background 0.15s;
   user-select: none;
 
-  &:hover { background: rgba(255,255,255,0.03); }
+  &:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
 `
 
 export const MusicaNum = styled.span`
@@ -154,7 +160,7 @@ export const MusicaChevron = styled.span`
 export const MusicaBody = styled.div`
   padding: 14px 18px;
   border-top: 1px solid ${C.border};
-  display: ${({ $open }) => $open ? 'block' : 'none'};
+  display: ${({ $open }) => ($open ? 'block' : 'none')};
 `
 
 // ── TABLES ──────────────────────────────────────────────────────
@@ -179,13 +185,15 @@ export const Th = styled.th`
 
 export const Td = styled.td`
   padding: 8px 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   vertical-align: top;
   font-family: ${({ theme }) => theme.fonts.body};
   font-size: 13px;
   color: ${C.text};
 
-  &:last-child { border-bottom: none; }
+  &:last-child {
+    border-bottom: none;
+  }
 `
 
 export const PersonName = styled.span`
@@ -222,7 +230,7 @@ export const NotaDot = styled.span`
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: ${({ $green }) => $green ? C.green : C.red};
+  background: ${({ $green }) => ($green ? C.green : C.red)};
   flex-shrink: 0;
 `
 
@@ -233,8 +241,8 @@ export const NotaItem = styled.div`
   line-height: 1.5;
   margin-bottom: 6px;
   color: ${C.text};
-  background: ${({ $green }) => $green ? 'rgba(134,239,172,0.05)' : 'rgba(248,113,113,0.05)'};
-  border-left: 2px solid ${({ $green }) => $green ? C.green : C.red};
+  background: ${({ $green }) => ($green ? 'rgba(134,239,172,0.05)' : 'rgba(248,113,113,0.05)')};
+  border-left: 2px solid ${({ $green }) => ($green ? C.green : C.red)};
 `
 
 export const NotaAuthor = styled.div`
@@ -247,7 +255,7 @@ export const NotaAuthor = styled.div`
 
 // ── COMMENT CARD ────────────────────────────────────────────────
 export const CommentCard = styled.div`
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
   border: 1px solid ${C.border};
   border-radius: 8px;
   padding: 12px 14px;

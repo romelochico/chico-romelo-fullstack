@@ -10,14 +10,18 @@ export const InputBase = styled.input`
   padding: 12px 14px;
   outline: none;
   width: 100%;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 
   &:focus {
     border-color: ${({ theme }) => theme.colors.olive};
     box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.sageFade};
   }
 
-  &::placeholder { color: ${({ theme }) => theme.colors.sage}; }
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.sage};
+  }
 `
 
 export const TextareaBase = styled.textarea`
@@ -32,14 +36,18 @@ export const TextareaBase = styled.textarea`
   width: 100%;
   resize: vertical;
   min-height: 120px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 
   &:focus {
     border-color: ${({ theme }) => theme.colors.olive};
     box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.sageFade};
   }
 
-  &::placeholder { color: ${({ theme }) => theme.colors.sage}; }
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.sage};
+  }
 `
 
 export const SelectBase = styled.select`
@@ -52,7 +60,9 @@ export const SelectBase = styled.select`
   padding: 12px 14px;
   outline: none;
   width: 100%;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 
   &:focus {
     border-color: ${({ theme }) => theme.colors.olive};

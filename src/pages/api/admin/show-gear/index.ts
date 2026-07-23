@@ -12,7 +12,9 @@ function adminClient() {
 async function getUser(req: NextApiRequest) {
   const token = req.headers.authorization?.replace('Bearer ', '')
   if (!token) return null
-  const { data: { user } } = await adminClient().auth.getUser(token)
+  const {
+    data: { user },
+  } = await adminClient().auth.getUser(token)
   return user
 }
 

@@ -16,7 +16,9 @@ export const TrackItem = styled.li`
   font-family: ${({ theme }) => theme.fonts.mono};
   font-size: 14px;
   letter-spacing: 0.04em;
-  transition: background 0.2s, transform 0.2s;
+  transition:
+    background 0.2s,
+    transform 0.2s;
   cursor: pointer;
 
   &:hover {

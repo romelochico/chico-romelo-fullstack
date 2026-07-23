@@ -1,22 +1,35 @@
 export const SET_LIST: string[] = [
-  '2 de Fevereiro', 'Test Drive', 'Salsa de Baiano', 'Conhecidos Estranhos',
-  'Zé do Pipo', 'Pirajá', 'Chico Romelo', 'Passatempo', 'Beira do Rio',
+  '2 de Fevereiro',
+  'Test Drive',
+  'Salsa de Baiano',
+  'Conhecidos Estranhos',
+  'Zé do Pipo',
+  'Pirajá',
+  'Chico Romelo',
+  'Passatempo',
+  'Beira do Rio',
 ]
 
 export const TODOS_PAPEIS: string[] = [
-  'Guitarra Base e Vocal', 'Guitarra Solo e Vocal', 'Bateria e Vocal',
-  'Teclado e Vocal', 'Baixo', 'Percussão', 'Sopro', 'Direção',
+  'Guitarra Base e Vocal',
+  'Guitarra Solo e Vocal',
+  'Bateria e Vocal',
+  'Teclado e Vocal',
+  'Baixo',
+  'Percussão',
+  'Sopro',
+  'Direção',
 ]
 
 export const PAPEIS_ASPECTOS: Record<string, string[]> = {
   'Guitarra Base e Vocal': ['Guitarra base', 'Voz'],
   'Guitarra Solo e Vocal': ['Guitarra solo', 'Voz'],
-  'Bateria e Vocal':       ['Bateria', 'Voz'],
-  'Teclado e Vocal':       ['Teclado', 'Voz'],
-  'Baixo':                 ['Baixo'],
-  'Percussão':             ['Percussão'],
-  'Sopro':                 ['Sopro / Sax'],
-  'Direção':               [],
+  'Bateria e Vocal': ['Bateria', 'Voz'],
+  'Teclado e Vocal': ['Teclado', 'Voz'],
+  Baixo: ['Baixo'],
+  Percussão: ['Percussão'],
+  Sopro: ['Sopro / Sax'],
+  Direção: [],
 }
 
 export function avg(arr: number[]): number {

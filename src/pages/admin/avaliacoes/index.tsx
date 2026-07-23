@@ -4,13 +4,41 @@ import { createClient } from '../../../lib/supabase/client'
 import AdminLayout from '../../../components/Admin/AdminLayout'
 import { avg, fmtAvg, fmtDate, TODOS_PAPEIS } from '../../../lib/avaliacoes'
 import {
-  StatsBar, StatItem, StatVal, StatLabel, StatDivider,
-  SortBar, SortBtn,
-  SectionHead, SectionTitle, ShowsGrid,
-  ShowCard, ShowName, ShowMeta, ShowBadges, Badge, ShowArrow, EmptyShows,
-  CriarSection, CriarInner, FormTitle, FieldGrid, FieldFull, Field, FieldLabel, FieldInput,
-  PapeisGrid, PapelToggle, SubmitBtn, ExistingShows, ExistingCard, ExistingInfo,
-  ExistingName, ExistingMeta, DeleteBtn, Toast,
+  StatsBar,
+  StatItem,
+  StatVal,
+  StatLabel,
+  StatDivider,
+  SortBar,
+  SortBtn,
+  SectionHead,
+  SectionTitle,
+  ShowsGrid,
+  ShowCard,
+  ShowName,
+  ShowMeta,
+  ShowBadges,
+  Badge,
+  ShowArrow,
+  EmptyShows,
+  CriarSection,
+  CriarInner,
+  FormTitle,
+  FieldGrid,
+  FieldFull,
+  Field,
+  FieldLabel,
+  FieldInput,
+  PapeisGrid,
+  PapelToggle,
+  SubmitBtn,
+  ExistingShows,
+  ExistingCard,
+  ExistingInfo,
+  ExistingName,
+  ExistingMeta,
+  DeleteBtn,
+  Toast,
 } from '../../../styles/pages/AvaliacoesAdmin.styles'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -37,7 +65,11 @@ interface GlobalStats {
 export default function AvaliacoesPage() {
   const [shows, setShows] = useState<ShowRow[]>([])
   const [showStats, setShowStats] = useState<Record<string, ShowStat>>({})
-  const [globalStats, setGlobalStats] = useState<GlobalStats>({ totalShows: 0, totalAvals: 0, avgNota: 0 })
+  const [globalStats, setGlobalStats] = useState<GlobalStats>({
+    totalShows: 0,
+    totalAvals: 0,
+    avgNota: 0,
+  })
   const [loading, setLoading] = useState(true)
 
   const [dataShow, setDataShow] = useState('')
@@ -90,13 +122,15 @@ export default function AvaliacoesPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [supabase])
 
   useEffect(() => {
     loadData()
-    createClient().auth.getUser().then(({ data: { user } }) => {
-      setIsSuperAdmin(user?.email === 'romelochico@gmail.com')
-    })
+    createClient()
+      .auth.getUser()
+      .then(({ data: { user } }) => {
+        setIsSuperAdmin(user?.email === 'romelochico@gmail.com')
+      })
   }, [loadData])
 
   const togglePapel = (p: string) => {
@@ -108,9 +142,18 @@ export default function AvaliacoesPage() {
   }
 
   const criarShow = async () => {
-    if (!dataShow) { showToast('Selecione a data do show.', true); return }
-    if (!nomeShow.trim()) { showToast('Escreva o nome do evento.', true); return }
-    if (papeis.size === 0) { showToast('Selecione pelo menos um papel.', true); return }
+    if (!dataShow) {
+      showToast('Selecione a data do show.', true)
+      return
+    }
+    if (!nomeShow.trim()) {
+      showToast('Escreva o nome do evento.', true)
+      return
+    }
+    if (papeis.size === 0) {
+      showToast('Selecione pelo menos um papel.', true)
+      return
+    }
 
     setCriando(true)
     const { error } = await supabase.from('shows').insert({
@@ -124,7 +167,10 @@ export default function AvaliacoesPage() {
       showToast('Erro ao criar show.', true)
     } else {
       showToast('✓ Show criado!')
-      setDataShow(''); setNomeShow(''); setLocalShow(''); setPapeis(new Set())
+      setDataShow('')
+      setNomeShow('')
+      setLocalShow('')
+      setPapeis(new Set())
       loadData()
     }
     setCriando(false)
@@ -134,7 +180,10 @@ export default function AvaliacoesPage() {
     if (!confirm('Apagar este show? As avaliações associadas ficam na base de dados.')) return
     const { error } = await supabase.from('shows').delete().eq('id', id)
     if (error) showToast('Erro ao apagar.', true)
-    else { showToast('Show apagado.'); loadData() }
+    else {
+      showToast('Show apagado.')
+      loadData()
+    }
   }
 
   return (
@@ -167,10 +216,10 @@ export default function AvaliacoesPage() {
           {!loading && shows.length > 0 && (
             <SortBar>
               {[
-                { key: 'latest',  label: 'Mais recente' },
-                { key: 'oldest',  label: 'Mais antigo' },
+                { key: 'latest', label: 'Mais recente' },
+                { key: 'oldest', label: 'Mais antigo' },
                 { key: 'highest', label: '★ Melhor nota' },
-                { key: 'lowest',  label: '★ Pior nota' },
+                { key: 'lowest', label: '★ Pior nota' },
               ].map(({ key, label }) => (
                 <SortBtn key={key} $active={sortBy === key} onClick={() => setSortBy(key)}>
                   {label}
@@ -185,31 +234,42 @@ export default function AvaliacoesPage() {
             <EmptyShows>Nenhum show criado ainda.</EmptyShows>
           ) : (
             <ShowsGrid>
-              {[...shows].sort((a, b) => {
-                const sa = showStats[a.id] ?? { count: 0, avgNota: 0 }
-                const sb = showStats[b.id] ?? { count: 0, avgNota: 0 }
-                if (sortBy === 'latest') return new Date(b.data_show).getTime() - new Date(a.data_show).getTime()
-                if (sortBy === 'oldest') return new Date(a.data_show).getTime() - new Date(b.data_show).getTime()
-                if (sortBy === 'highest') return sb.avgNota - sa.avgNota
-                if (sortBy === 'lowest') return sa.avgNota - sb.avgNota
-                return 0
-              }).map(s => {
-                const st = showStats[s.id] ?? { count: 0, avgNota: 0 }
-                return (
-                  <Link key={s.id} href={`/admin/avaliacoes/${s.id}`} passHref legacyBehavior>
-                    <ShowCard>
-                      <ShowName>{s.nome}</ShowName>
-                      <ShowMeta>{fmtDate(s.data_show)}{s.local ? ` · ${s.local}` : ''}</ShowMeta>
-                      <ShowBadges>
-                        {st.count > 0 && <Badge>{st.count} avaliação{st.count !== 1 ? 'ões' : ''}</Badge>}
-                        {st.avgNota > 0 && <Badge>★ {fmtAvg(st.avgNota)}</Badge>}
-                        {st.count === 0 && <Badge>Sem avaliações</Badge>}
-                      </ShowBadges>
-                      <ShowArrow>→</ShowArrow>
-                    </ShowCard>
-                  </Link>
-                )
-              })}
+              {[...shows]
+                .sort((a, b) => {
+                  const sa = showStats[a.id] ?? { count: 0, avgNota: 0 }
+                  const sb = showStats[b.id] ?? { count: 0, avgNota: 0 }
+                  if (sortBy === 'latest')
+                    return new Date(b.data_show).getTime() - new Date(a.data_show).getTime()
+                  if (sortBy === 'oldest')
+                    return new Date(a.data_show).getTime() - new Date(b.data_show).getTime()
+                  if (sortBy === 'highest') return sb.avgNota - sa.avgNota
+                  if (sortBy === 'lowest') return sa.avgNota - sb.avgNota
+                  return 0
+                })
+                .map(s => {
+                  const st = showStats[s.id] ?? { count: 0, avgNota: 0 }
+                  return (
+                    <Link key={s.id} href={`/admin/avaliacoes/${s.id}`} passHref legacyBehavior>
+                      <ShowCard>
+                        <ShowName>{s.nome}</ShowName>
+                        <ShowMeta>
+                          {fmtDate(s.data_show)}
+                          {s.local ? ` · ${s.local}` : ''}
+                        </ShowMeta>
+                        <ShowBadges>
+                          {st.count > 0 && (
+                            <Badge>
+                              {st.count} avaliação{st.count !== 1 ? 'ões' : ''}
+                            </Badge>
+                          )}
+                          {st.avgNota > 0 && <Badge>★ {fmtAvg(st.avgNota)}</Badge>}
+                          {st.count === 0 && <Badge>Sem avaliações</Badge>}
+                        </ShowBadges>
+                        <ShowArrow>→</ShowArrow>
+                      </ShowCard>
+                    </Link>
+                  )
+                })}
             </ShowsGrid>
           )}
         </div>
@@ -222,25 +282,47 @@ export default function AvaliacoesPage() {
             <FieldGrid>
               <Field>
                 <FieldLabel htmlFor="data-show">Data do show</FieldLabel>
-                <FieldInput id="data-show" type="date" value={dataShow} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDataShow(e.target.value)} />
+                <FieldInput
+                  id="data-show"
+                  type="date"
+                  value={dataShow}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDataShow(e.target.value)}
+                />
               </Field>
               <Field>
                 <FieldLabel htmlFor="nome-show">Nome do evento</FieldLabel>
-                <FieldInput id="nome-show" type="text" placeholder="ex: São João, Festa X" value={nomeShow} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNomeShow(e.target.value)} />
+                <FieldInput
+                  id="nome-show"
+                  type="text"
+                  placeholder="ex: São João, Festa X"
+                  value={nomeShow}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNomeShow(e.target.value)}
+                />
               </Field>
               <FieldFull>
                 <Field>
                   <FieldLabel htmlFor="local-show">Local</FieldLabel>
-                  <FieldInput id="local-show" type="text" placeholder="ex: Parque da Paz, Almada" value={localShow} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocalShow(e.target.value)} />
+                  <FieldInput
+                    id="local-show"
+                    type="text"
+                    placeholder="ex: Parque da Paz, Almada"
+                    value={localShow}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setLocalShow(e.target.value)
+                    }
+                  />
                 </Field>
               </FieldFull>
             </FieldGrid>
 
-            <FieldLabel as="div" style={{ marginBottom: 10, marginTop: 8 }}>Quem tocou neste show</FieldLabel>
+            <FieldLabel as="div" style={{ marginBottom: 10, marginTop: 8 }}>
+              Quem tocou neste show
+            </FieldLabel>
             <PapeisGrid>
               {TODOS_PAPEIS.map(p => (
                 <PapelToggle key={p} $on={papeis.has(p)} onClick={() => togglePapel(p)}>
-                  {papeis.has(p) ? '✓ ' : ''}{p}
+                  {papeis.has(p) ? '✓ ' : ''}
+                  {p}
                 </PapelToggle>
               ))}
             </PapeisGrid>
@@ -251,14 +333,21 @@ export default function AvaliacoesPage() {
 
             {shows.length > 0 && (
               <ExistingShows>
-                <FieldLabel as="div" style={{ marginBottom: 12 }}>Shows criados</FieldLabel>
+                <FieldLabel as="div" style={{ marginBottom: 12 }}>
+                  Shows criados
+                </FieldLabel>
                 {shows.map(s => (
                   <ExistingCard key={s.id}>
                     <ExistingInfo>
                       <ExistingName>{s.nome}</ExistingName>
-                      <ExistingMeta>{fmtDate(s.data_show)}{s.local ? ` · ${s.local}` : ''}</ExistingMeta>
+                      <ExistingMeta>
+                        {fmtDate(s.data_show)}
+                        {s.local ? ` · ${s.local}` : ''}
+                      </ExistingMeta>
                     </ExistingInfo>
-                    {isSuperAdmin && <DeleteBtn onClick={() => deletarShow(s.id)}>Apagar</DeleteBtn>}
+                    {isSuperAdmin && (
+                      <DeleteBtn onClick={() => deletarShow(s.id)}>Apagar</DeleteBtn>
+                    )}
                   </ExistingCard>
                 ))}
               </ExistingShows>
@@ -267,7 +356,9 @@ export default function AvaliacoesPage() {
         </CriarSection>
       </>
 
-      <Toast $show={toast.show} $error={toast.error}>{toast.msg}</Toast>
+      <Toast $show={toast.show} $error={toast.error}>
+        {toast.msg}
+      </Toast>
     </AdminLayout>
   )
 }

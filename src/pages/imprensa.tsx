@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Image from 'next/image'
 import Nav from '../components/Nav/Nav'
 import Footer from '../components/Footer/Footer'
 import PageHero from '../components/PageHero/PageHero'
@@ -10,12 +11,34 @@ import { useScrollReveal } from '../hooks/useScrollReveal'
 import { PRESS_FACTS, PRESS_PHOTOS } from '../lib/data'
 import DecoStamp from '../components/DecoStamp/DecoStamp'
 import {
-  PressIntro, PressIntroInner, PressBio, Kicker, KickerLogos, LogoStampImg,
-  PressSidebar, PressFactCard, FactRow, FactLabel, FactValue,
-  PressDownloadCard, DownloadBtn,
-  PhotosSection, PhotosHeader, PhotosGrid, PressPhoto, DlBadge,
-  VideoSection, VideoInner, VideoHeader, VideoKicker, VideoSub, VideoWrap,
-  LogosSection, LogosInner, LogosGrid, LogoCard,
+  PressIntro,
+  PressIntroInner,
+  PressBio,
+  Kicker,
+  KickerLogos,
+  LogoStampImg,
+  PressSidebar,
+  PressFactCard,
+  FactRow,
+  FactLabel,
+  FactValue,
+  PressDownloadCard,
+  DownloadBtn,
+  PhotosSection,
+  PhotosHeader,
+  PhotosGrid,
+  PressPhoto,
+  DlBadge,
+  VideoSection,
+  VideoInner,
+  VideoHeader,
+  VideoKicker,
+  VideoSub,
+  VideoWrap,
+  LogosSection,
+  LogosInner,
+  LogosGrid,
+  LogoCard,
 } from '../styles/pages/Imprensa.styles'
 
 const MARQUEE_1 = ['Press Kit · Chico Romelo', 'Fotos · Logos · Bio', 'Para uso editorial']
@@ -28,27 +51,52 @@ export default function ImprensaPage() {
     <>
       <Head>
         <title>Chico Romelo | Imprensa e Press Kit</title>
-        <meta name="description" content="Press kit de Chico Romelo: fotos de alta resolução, biografias, cobertura de mídia e contatos para imprensa." />
+        <meta
+          name="description"
+          content="Press kit de Chico Romelo: fotos de alta resolução, biografias, cobertura de mídia e contatos para imprensa."
+        />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://www.chicoromelo.com/imprensa" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Chico Romelo — Imprensa e Press Kit" />
-        <meta property="og:description" content="Press kit de Chico Romelo: fotos de alta resolução, biografias, cobertura de mídia e contatos para imprensa." />
+        <meta
+          property="og:description"
+          content="Press kit de Chico Romelo: fotos de alta resolução, biografias, cobertura de mídia e contatos para imprensa."
+        />
         <meta property="og:url" content="https://www.chicoromelo.com/imprensa" />
-        <meta property="og:image" content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg" />
+        <meta
+          property="og:image"
+          content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg"
+        />
         <meta property="og:site_name" content="Chico Romelo" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Chico Romelo — Imprensa e Press Kit" />
-        <meta name="twitter:description" content="Press kit de Chico Romelo: fotos de alta resolução, biografias, cobertura de mídia e contatos para imprensa." />
-        <meta name="twitter:image" content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg" />
-        <link rel="preload" as="image" href="/assets/renan-live.webp" type="image/webp" fetchPriority="high" />
+        <meta
+          name="twitter:description"
+          content="Press kit de Chico Romelo: fotos de alta resolução, biografias, cobertura de mídia e contatos para imprensa."
+        />
+        <meta
+          name="twitter:image"
+          content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/assets/renan-live.webp"
+          type="image/webp"
+          fetchPriority="high"
+        />
       </Head>
 
       <Nav innerPage />
 
       <PageHero
         label="Press Kit"
-        title={<>Im<span className="outline">pren</span>sa</>}
+        title={
+          <>
+            Im<span className="outline">pren</span>sa
+          </>
+        }
         imageSrc="/assets/renan-live.webp"
         imageJpg="/assets/renan-live.jpg"
         imageAlt="Renan Castro — bateria ao vivo"
@@ -65,17 +113,36 @@ export default function ImprensaPage() {
         <PressIntroInner>
           <PressBio>
             <SectionLabel>Press Kit</SectionLabel>
-            <Kicker>Biografia<br /><span className="outline">oficial.</span></Kicker>
-            <p className="lead">Chico Romelo é uma banda formada por músicos brasileiros e portugueses radicados em Lisboa, misturando pop rock com fortes influências da música brasileira, latino-americana e cabo-verdiana.</p>
-            <p>Nascida do cruzamento entre a canção brasileira, o pop-rock e os ritmos latinos que ecoam por Lisboa, a banda constrói um som que fala de gente, de rua e de pertencimento.</p>
-            <p>Nos palcos, essa energia já passou por espaços marcantes da cidade como o Titanic, o mySpot (Nirvana Studios) e o Hollywood Spot.</p>
-            <p>O grupo é composto por Marcus Quintela (guitarra e voz principal), Gabriel Almeida (baixo), Cris Prata (teclado e vocais), Renan Castro (bateria e vocais) e Danillo Vieira (segunda guitarra e vocais).</p>
+            <Kicker>
+              Biografia
+              <br />
+              <span className="outline">oficial.</span>
+            </Kicker>
+            <p className="lead">
+              Chico Romelo é uma banda formada por músicos brasileiros e portugueses radicados em
+              Lisboa, misturando pop rock com fortes influências da música brasileira,
+              latino-americana e cabo-verdiana.
+            </p>
+            <p>
+              Nascida do cruzamento entre a canção brasileira, o pop-rock e os ritmos latinos que
+              ecoam por Lisboa, a banda constrói um som que fala de gente, de rua e de
+              pertencimento.
+            </p>
+            <p>
+              Nos palcos, essa energia já passou por espaços marcantes da cidade como o Titanic, o
+              mySpot (Nirvana Studios) e o Hollywood Spot.
+            </p>
+            <p>
+              O grupo é composto por Marcus Quintela (guitarra e voz principal), Gabriel Almeida
+              (baixo), Cris Prata (teclado e vocais), Renan Castro (bateria e vocais) e Danillo
+              Vieira (segunda guitarra e vocais).
+            </p>
           </PressBio>
 
           <PressSidebar>
             <PressFactCard>
               <h4>Ficha Técnica</h4>
-              {PRESS_FACTS.map((f) => (
+              {PRESS_FACTS.map(f => (
                 <FactRow key={f.label}>
                   <FactLabel>{f.label}</FactLabel>
                   <FactValue>{f.value}</FactValue>
@@ -110,9 +177,14 @@ export default function ImprensaPage() {
         </PhotosHeader>
 
         <PhotosGrid>
-          {PRESS_PHOTOS.map((p) => (
+          {PRESS_PHOTOS.map(p => (
             <PressPhoto key={p.src} data-reveal>
-              <DlBadge href={p.jpg} download={p.download} aria-label="Download foto" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
+              <DlBadge
+                href={p.jpg}
+                download={p.download}
+                aria-label="Download foto"
+                onClick={(e: React.MouseEvent) => e.stopPropagation()}
+              >
                 <IconDownload size={14} />
               </DlBadge>
               <picture>
@@ -130,7 +202,10 @@ export default function ImprensaPage() {
         <VideoInner>
           <VideoHeader>
             <SectionLabel>Ao Vivo</SectionLabel>
-            <VideoKicker>Ver a<br /><span className="outline">banda.</span></VideoKicker>
+            <VideoKicker>
+              Ver a<br />
+              <span className="outline">banda.</span>
+            </VideoKicker>
             <VideoSub>Registro ao vivo — energia, palco e público.</VideoSub>
           </VideoHeader>
           <VideoWrap data-reveal>
@@ -151,20 +226,32 @@ export default function ImprensaPage() {
           <div>
             <SectionLabel>Logotipos</SectionLabel>
             <KickerLogos>
-              Logos &amp;<br /><span className="outline">Marca.</span>
+              Logos &amp;
+              <br />
+              <span className="outline">Marca.</span>
             </KickerLogos>
           </div>
           <LogosGrid>
             <LogoCard data-reveal>
-              <img src="/assets/logo-full.png" alt="Logo completo" loading="lazy" />
+              <Image src="/assets/logo-full.png" alt="Logo completo" width={464} height={50} />
               <span>Logo completo · Cream</span>
             </LogoCard>
             <LogoCard $dark data-reveal>
-              <img src="/assets/logo-full.png" alt="Logo — fundo escuro" loading="lazy" />
+              <Image
+                src="/assets/logo-full.png"
+                alt="Logo — fundo escuro"
+                width={464}
+                height={50}
+              />
               <span>Logo completo · Dark</span>
             </LogoCard>
             <LogoCard $olive data-reveal>
-              <img src="/assets/logo-full.png" alt="Logo — fundo olive" loading="lazy" />
+              <Image
+                src="/assets/logo-full.png"
+                alt="Logo — fundo olive"
+                width={464}
+                height={50}
+              />
               <span>Logo completo · Olive</span>
             </LogoCard>
             <LogoCard $dark data-reveal>

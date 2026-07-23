@@ -11,13 +11,17 @@ const Placeholder = styled.div`
   padding: 80px 32px;
   text-align: center;
 
-  svg { width: 40px; height: 40px; color: rgba(245,240,232,0.2); }
+  svg {
+    width: 40px;
+    height: 40px;
+    color: rgba(245, 240, 232, 0.2);
+  }
 `
 
 const PlaceholderText = styled.p`
   font-family: 'Montserrat', sans-serif;
   font-size: 14px;
-  color: rgba(245,240,232,0.3);
+  color: rgba(245, 240, 232, 0.3);
 `
 
 export default function AddNovidadePage() {

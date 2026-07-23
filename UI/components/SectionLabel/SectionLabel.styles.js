@@ -9,9 +9,9 @@ export const LabelWrap = styled.span`
   letter-spacing: 0.3em;
   text-transform: uppercase;
   padding: 6px 14px;
-  border: 1.5px solid ${({ $dark, theme }) => $dark ? theme.colors.cream : theme.colors.charcoal};
-  color: ${({ $dark, theme }) => $dark ? theme.colors.cream : theme.colors.olive};
-  background: ${({ $dark, theme }) => $dark ? 'transparent' : theme.colors.cream};
+  border: 1.5px solid ${({ $dark, theme }) => ($dark ? theme.colors.cream : theme.colors.charcoal)};
+  color: ${({ $dark, theme }) => ($dark ? theme.colors.cream : theme.colors.olive)};
+  background: ${({ $dark, theme }) => ($dark ? 'transparent' : theme.colors.cream)};
   transform: rotate(-1.5deg);
 
   .dot {
@@ -19,7 +19,7 @@ export const LabelWrap = styled.span`
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: ${({ $dark, theme }) => $dark ? theme.colors.cream : theme.colors.olive};
+    background: ${({ $dark, theme }) => ($dark ? theme.colors.cream : theme.colors.olive)};
     flex-shrink: 0;
   }
 `

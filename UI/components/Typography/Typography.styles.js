@@ -66,7 +66,7 @@ export const Mono = styled.span`
   font-size: ${({ $size }) => $size || '13px'};
   letter-spacing: ${({ $spacing }) => $spacing || '0.18em'};
   text-transform: uppercase;
-  color: ${({ $muted, theme }) => $muted ? theme.colors.sage : 'inherit'};
+  color: ${({ $muted, theme }) => ($muted ? theme.colors.sage : 'inherit')};
 `
 
 export const Hand = styled.span`

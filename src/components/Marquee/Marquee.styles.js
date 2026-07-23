@@ -1,9 +1,9 @@
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 export const MarqueeWrapper = styled.div`
-  background: ${({ $alt, theme }) => $alt ? theme.colors.charcoal : theme.colors.olive};
+  background: ${({ $alt, theme }) => ($alt ? theme.colors.charcoal : theme.colors.olive)};
   color: ${({ theme }) => theme.colors.cream};
-  border-top: ${({ $alt }) => $alt ? 'none' : '2px solid #000'};
+  border-top: ${({ $alt }) => ($alt ? 'none' : '2px solid #000')};
   border-bottom: 2px solid #000;
   overflow: hidden;
   padding: 14px 0;
@@ -22,7 +22,7 @@ export const MarqueeWrapper = styled.div`
 export const Track = styled.div`
   display: inline-block;
   animation: marquee 28s linear infinite;
-  animation-direction: ${({ $reverse }) => $reverse ? 'reverse' : 'normal'};
+  animation-direction: ${({ $reverse }) => ($reverse ? 'reverse' : 'normal')};
   padding-left: 100%;
 `
 

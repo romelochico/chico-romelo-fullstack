@@ -13,7 +13,9 @@ export const NewsSection = styled.section`
   padding: 100px 5vw;
   overflow: hidden;
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.small}) { padding: 60px 5vw; }
+  @media (max-width: ${({ theme }) => theme.breakpoints.small}) {
+    padding: 60px 5vw;
+  }
 `
 
 export const NewsHead = styled.div`
@@ -46,17 +48,23 @@ export const NewsHead = styled.div`
     color: ${({ theme }) => theme.colors.sage};
   }
 
-  .ed:last-child { text-align: right; }
+  .ed:last-child {
+    text-align: right;
+  }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    .ed:last-child { text-align: center; }
+    .ed:last-child {
+      text-align: center;
+    }
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.small}) {
-    h2 { font-size: clamp(44px, 13vw, 80px); }
+    h2 {
+      font-size: clamp(44px, 13vw, 80px);
+    }
   }
 `
 
@@ -101,7 +109,9 @@ export const BtnPrimary = styled.a`
   letter-spacing: 0.06em;
   text-transform: uppercase;
   border-radius: 2px;
-  transition: transform 0.15s, background 0.15s;
+  transition:
+    transform 0.15s,
+    background 0.15s;
 
   &:hover {
     transform: translateY(-2px) rotate(-0.5deg);

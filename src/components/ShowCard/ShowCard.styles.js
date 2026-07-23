@@ -6,11 +6,17 @@ export const CardRow = styled.div`
   align-items: center;
   gap: 32px;
   padding: 28px 0;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
-  &:first-child { border-top: 1px solid rgba(0,0,0,0.1); }
+  &:first-child {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
 
-  ${({ $past }) => $past && css`opacity: 0.55;`}
+  ${({ $past }) =>
+    $past &&
+    css`
+      opacity: 0.55;
+    `}
 
   @media (max-width: ${({ theme }) => theme.breakpoints.small}) {
     grid-template-columns: 70px 1fr;
@@ -22,7 +28,7 @@ export const DateBox = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: ${({ $past, theme }) => $past ? '#999' : theme.colors.olive};
+  background: ${({ $past, theme }) => ($past ? '#999' : theme.colors.olive)};
   color: #fff;
   border-radius: 4px;
   padding: 12px 8px;
@@ -81,7 +87,7 @@ export const ShowTag = styled.span`
   letter-spacing: 0.08em;
   text-transform: uppercase;
   background: ${({ theme }) => theme.colors.cream2};
-  border: 1px solid rgba(0,0,0,0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 3px;
   padding: 2px 8px;
   color: ${({ theme }) => theme.colors.olive};
@@ -107,7 +113,9 @@ export const ShowLink = styled.a`
   text-decoration: none;
   white-space: nowrap;
 
-  &:hover { text-decoration: underline; }
+  &:hover {
+    text-decoration: underline;
+  }
 `
 
 export const ShowBadge = styled.span`

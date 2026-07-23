@@ -25,7 +25,7 @@ const TopBar = styled.header`
   right: 0;
   height: 56px;
   background: ${({ theme }) => theme.colors.dark2};
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   align-items: center;
   justify-content: space-between;
   padding: 0 16px;
@@ -49,8 +49,13 @@ const HamburgerBtn = styled.button`
   border-radius: 6px;
   transition: background 0.15s;
 
-  &:hover { background: rgba(255,255,255,0.06); }
-  svg { width: 20px; height: 20px; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+  svg {
+    width: 20px;
+    height: 20px;
+  }
 `
 
 const TopBarLogo = styled.img`
@@ -64,7 +69,9 @@ const TopBarLogo = styled.img`
 `
 
 /* spacer so TopBar right side is balanced */
-const TopBarSpacer = styled.div`width: 40px;`
+const TopBarSpacer = styled.div`
+  width: 40px;
+`
 
 /* ── Main content area ────────────────────────────────────────────── */
 
@@ -82,7 +89,7 @@ const Main = styled.main`
 
 const Header = styled.div`
   padding: 20px 32px 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   margin-bottom: 24px;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
@@ -105,7 +112,7 @@ const PageTitle = styled.h1`
 const PageSub = styled.p`
   font-family: ${({ theme }) => theme.fonts.body};
   font-size: 11px;
-  color: rgba(255,255,255,0.3);
+  color: rgba(255, 255, 255, 0.3);
   margin-top: 2px;
   letter-spacing: 0.04em;
 `
@@ -143,14 +150,16 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
   const [authed, setAuthed] = useState(false)
 
   useEffect(() => {
-    createClient().auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        const next = encodeURIComponent(router.asPath)
-        router.replace(`/admin/login?next=${next}`)
-      } else {
-        setAuthed(true)
-      }
-    })
+    createClient()
+      .auth.getSession()
+      .then(({ data: { session } }) => {
+        if (!session) {
+          const next = encodeURIComponent(router.asPath)
+          router.replace(`/admin/login?next=${next}`)
+        } else {
+          setAuthed(true)
+        }
+      })
   }, [router])
 
   if (!authed) return null

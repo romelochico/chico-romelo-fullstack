@@ -11,7 +11,15 @@ interface PageHeroProps {
   imagePos?: string
 }
 
-export default function PageHero({ label, title, imageSrc, imageJpg, imageAlt, priority = false, imagePos }: PageHeroProps) {
+export default function PageHero({
+  label,
+  title,
+  imageSrc,
+  imageJpg,
+  imageAlt,
+  priority = false,
+  imagePos,
+}: PageHeroProps) {
   return (
     <HeroWrapper>
       <HeroBg $imagePos={imagePos}>

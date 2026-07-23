@@ -5,14 +5,14 @@ import type { ReactNode } from 'react'
 type Platform = 'spotify' | 'apple' | 'youtube'
 
 const ICONS: Record<Platform, ReactNode> = {
-  spotify:     <IconSpotify size={20} />,
-  apple:       <IconAppleMusic size={20} />,
-  youtube:     <IconYouTube size={20} />,
+  spotify: <IconSpotify size={20} />,
+  apple: <IconAppleMusic size={20} />,
+  youtube: <IconYouTube size={20} />,
 }
 
 const LABELS: Record<Platform, string> = {
   spotify: 'Spotify',
-  apple:   'Apple Music',
+  apple: 'Apple Music',
   youtube: 'YouTube',
 }
 

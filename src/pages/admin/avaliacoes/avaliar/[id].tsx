@@ -6,17 +6,43 @@ import { createClient } from '../../../../lib/supabase/client'
 import StarRating from '../../../../components/StarRating/StarRating'
 import { SET_LIST, PAPEIS_ASPECTOS, fmtDate } from '../../../../lib/avaliacoes'
 import {
-  SectionLabel, Field, FieldLabel, FieldInput as _FieldInput, FieldTextarea,
-  PapelGrid, PapelBtn,
-  MusicaCard, MusicaCardHeader, MusicaNum, MusicaName, MusicaChevron, MusicaBody,
-  Cols2, ColTitle, StarRow, StarLabel, BandaMember, BandaMemberTitle,
-  MusicNotes, NoteBlock, NoteLabel, NoteDot, NoteTextarea,
-  GeneralBlock, NotaRow, NotaLabel,
-  SubmitArea, SubmitBtn, SuccessBox, Toast,
+  SectionLabel,
+  Field,
+  FieldLabel,
+  FieldInput as _FieldInput,
+  FieldTextarea,
+  PapelGrid,
+  PapelBtn,
+  MusicaCard,
+  MusicaCardHeader,
+  MusicaNum,
+  MusicaName,
+  MusicaChevron,
+  MusicaBody,
+  Cols2,
+  ColTitle,
+  StarRow,
+  StarLabel,
+  BandaMember,
+  BandaMemberTitle,
+  MusicNotes,
+  NoteBlock,
+  NoteLabel,
+  NoteDot,
+  NoteTextarea,
+  GeneralBlock,
+  NotaRow,
+  NotaLabel,
+  SubmitArea,
+  SubmitBtn,
+  SuccessBox,
+  Toast,
 } from '../../../../styles/pages/AvaliacoesAvaliarAdmin.styles'
 
 // suppress unused import warning
-void _FieldInput; void PapelGrid; void PapelBtn;
+void _FieldInput
+void PapelGrid
+void PapelBtn
 
 const C = {
   textDim: 'rgba(245,240,232,0.45)',
@@ -61,12 +87,15 @@ interface ExistingAval {
   obs_bem?: string | null
   obs_melhorar?: string | null
   obs_livres?: string | null
-  musicas?: Record<string, {
-    minha?: Record<string, number | string>
-    banda?: Record<string, { nota?: number; comentario?: string }>
-    bem?: string
-    melhorar?: string
-  }>
+  musicas?: Record<
+    string,
+    {
+      minha?: Record<string, number | string>
+      banda?: Record<string, { nota?: number; comentario?: string }>
+      bem?: string
+      melhorar?: string
+    }
+  >
 }
 
 // ─── MusicaCardItem ──────────────────────────────────────────────────────────
@@ -82,7 +111,16 @@ interface MusicaCardItemProps {
   setText: (key: string, val: string) => void
 }
 
-function MusicaCardItem({ nome, index, papel, outrosPapeis, ratings, setRating, texts, setText }: MusicaCardItemProps) {
+function MusicaCardItem({
+  nome,
+  index,
+  papel,
+  outrosPapeis,
+  ratings,
+  setRating,
+  texts,
+  setText,
+}: MusicaCardItemProps) {
   const [open, setOpen] = useState(false)
   const aspectosProprios = PAPEIS_ASPECTOS[papel] ?? []
 
@@ -102,12 +140,17 @@ function MusicaCardItem({ nome, index, papel, outrosPapeis, ratings, setRating, 
               <>
                 <StarRow>
                   <StarLabel>Direção geral</StarLabel>
-                  <StarRating value={ratings[`m${index}-my-direcao`] ?? 0} onChange={(v: number) => setRating(`m${index}-my-direcao`, v)} />
+                  <StarRating
+                    value={ratings[`m${index}-my-direcao`] ?? 0}
+                    onChange={(v: number) => setRating(`m${index}-my-direcao`, v)}
+                  />
                 </StarRow>
                 <NoteTextarea
                   placeholder="Comentário..."
                   value={texts[`m${index}-my-direcao-txt`] ?? ''}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setText(`m${index}-my-direcao-txt`, e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    setText(`m${index}-my-direcao-txt`, e.target.value)
+                  }
                 />
               </>
             ) : (
@@ -116,7 +159,10 @@ function MusicaCardItem({ nome, index, papel, outrosPapeis, ratings, setRating, 
                 return (
                   <StarRow key={asp}>
                     <StarLabel>{asp}</StarLabel>
-                    <StarRating value={ratings[key] ?? 0} onChange={(v: number) => setRating(key, v)} />
+                    <StarRating
+                      value={ratings[key] ?? 0}
+                      onChange={(v: number) => setRating(key, v)}
+                    />
                   </StarRow>
                 )
               })
@@ -126,7 +172,9 @@ function MusicaCardItem({ nome, index, papel, outrosPapeis, ratings, setRating, 
           <div>
             <ColTitle>A banda</ColTitle>
             {outrosPapeis.length === 0 ? (
-              <p style={{ fontSize: 13, color: C.textDim, fontStyle: 'italic' }}>Nenhum outro membro neste show.</p>
+              <p style={{ fontSize: 13, color: C.textDim, fontStyle: 'italic' }}>
+                Nenhum outro membro neste show.
+              </p>
             ) : (
               outrosPapeis.map((p: string) => {
                 const pkey = `m${index}-band-${p.replace(/[\s/]+/g, '-').toLowerCase()}`
@@ -135,13 +183,18 @@ function MusicaCardItem({ nome, index, papel, outrosPapeis, ratings, setRating, 
                     <BandaMemberTitle>{p}</BandaMemberTitle>
                     <StarRow>
                       <StarLabel>Nota</StarLabel>
-                      <StarRating value={ratings[pkey] ?? 0} onChange={(v: number) => setRating(pkey, v)} />
+                      <StarRating
+                        value={ratings[pkey] ?? 0}
+                        onChange={(v: number) => setRating(pkey, v)}
+                      />
                     </StarRow>
                     <NoteTextarea
                       placeholder="Comentário (opcional)..."
                       style={{ minHeight: 38, fontSize: 12 }}
                       value={texts[`${pkey}-txt`] ?? ''}
-                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setText(`${pkey}-txt`, e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                        setText(`${pkey}-txt`, e.target.value)
+                      }
                     />
                   </BandaMember>
                 )
@@ -152,12 +205,28 @@ function MusicaCardItem({ nome, index, papel, outrosPapeis, ratings, setRating, 
 
         <MusicNotes>
           <NoteBlock>
-            <NoteLabel><NoteDot $green />O que correu bem</NoteLabel>
-            <NoteTextarea placeholder="..." value={texts[`m${index}-bem`] ?? ''} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setText(`m${index}-bem`, e.target.value)} />
+            <NoteLabel>
+              <NoteDot $green />O que correu bem
+            </NoteLabel>
+            <NoteTextarea
+              placeholder="..."
+              value={texts[`m${index}-bem`] ?? ''}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setText(`m${index}-bem`, e.target.value)
+              }
+            />
           </NoteBlock>
           <NoteBlock>
-            <NoteLabel><NoteDot />O que melhorar</NoteLabel>
-            <NoteTextarea placeholder="..." value={texts[`m${index}-melhorar`] ?? ''} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setText(`m${index}-melhorar`, e.target.value)} />
+            <NoteLabel>
+              <NoteDot />O que melhorar
+            </NoteLabel>
+            <NoteTextarea
+              placeholder="..."
+              value={texts[`m${index}-melhorar`] ?? ''}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setText(`m${index}-melhorar`, e.target.value)
+              }
+            />
           </NoteBlock>
         </MusicNotes>
       </MusicaBody>
@@ -188,75 +257,92 @@ export default function AvaliarPage() {
       supabase.from('shows').select('*').eq('id', id).single(),
       supabase.auth.getUser(),
       fetch('/api/admin/me').then(r => r.json()),
-    ]).then(([{ data: showData }, { data: { user } }, meData]: [
-      { data: ShowData | null },
-      { data: { user: { id: string; email?: string } | null } },
-      { nome?: string; papel?: string } | null
-    ]) => {
-      setShow(showData)
+    ]).then(
+      ([
+        { data: showData },
+        {
+          data: { user },
+        },
+        meData,
+      ]: [
+        { data: ShowData | null },
+        { data: { user: { id: string; email?: string } | null } },
+        { nome?: string; papel?: string } | null,
+      ]) => {
+        setShow(showData)
 
-      if (user) {
-        const p = (meData as { nome?: string })?.nome ? meData : null
-        setProfile(p ? { ...(p as { nome: string; papel: string | null }), userId: user.id } : { nome: user.email ?? '', papel: null, userId: user.id })
+        if (user) {
+          const p = (meData as { nome?: string })?.nome ? meData : null
+          setProfile(
+            p
+              ? { ...(p as { nome: string; papel: string | null }), userId: user.id }
+              : { nome: user.email ?? '', papel: null, userId: user.id }
+          )
 
-        supabase.from('avaliacoes').select('*').eq('show_id', id).eq('user_id', user.id).maybeSingle()
-          .then(({ data: existing }) => {
-            if (!existing) return
-            const ex = existing as ExistingAval
-            setExistingId(ex.id)
+          supabase
+            .from('avaliacoes')
+            .select('*')
+            .eq('show_id', id)
+            .eq('user_id', user.id)
+            .maybeSingle()
+            .then(({ data: existing }) => {
+              if (!existing) return
+              const ex = existing as ExistingAval
+              setExistingId(ex.id)
 
-            const r: RatingsMap = {}
-            const t: TextsMap = {}
-            const papel = (meData as { papel?: string })?.papel ?? ''
-            const aspectos = PAPEIS_ASPECTOS[papel] ?? []
-            const outrosPapeis = (showData?.papeis ?? []).filter((pp: string) => pp !== papel)
+              const r: RatingsMap = {}
+              const t: TextsMap = {}
+              const papel = (meData as { papel?: string })?.papel ?? ''
+              const aspectos = PAPEIS_ASPECTOS[papel] ?? []
+              const outrosPapeis = (showData?.papeis ?? []).filter((pp: string) => pp !== papel)
 
-            SET_LIST.forEach((nome, i) => {
-              const m = ex.musicas?.[nome]
-              if (!m) return
-              if (papel === 'Direção') {
-                r[`m${i}-my-direcao`] = (m.minha?.['direcao'] as number) ?? 0
-                t[`m${i}-my-direcao-txt`] = (m.minha?.['direcao_txt'] as string) ?? ''
-              } else {
-                aspectos.forEach((asp: string) => {
-                  const key = `m${i}-my-${asp.replace(/[\s/]+/g, '-').toLowerCase()}`
-                  r[key] = (m.minha?.[asp] as number) ?? 0
+              SET_LIST.forEach((nome, i) => {
+                const m = ex.musicas?.[nome]
+                if (!m) return
+                if (papel === 'Direção') {
+                  r[`m${i}-my-direcao`] = (m.minha?.['direcao'] as number) ?? 0
+                  t[`m${i}-my-direcao-txt`] = (m.minha?.['direcao_txt'] as string) ?? ''
+                } else {
+                  aspectos.forEach((asp: string) => {
+                    const key = `m${i}-my-${asp.replace(/[\s/]+/g, '-').toLowerCase()}`
+                    r[key] = (m.minha?.[asp] as number) ?? 0
+                  })
+                }
+                outrosPapeis.forEach((pp: string) => {
+                  const pkey = `m${i}-band-${pp.replace(/[\s/]+/g, '-').toLowerCase()}`
+                  r[pkey] = m.banda?.[pp]?.nota ?? 0
+                  t[`${pkey}-txt`] = m.banda?.[pp]?.comentario ?? ''
                 })
-              }
-              outrosPapeis.forEach((pp: string) => {
-                const pkey = `m${i}-band-${pp.replace(/[\s/]+/g, '-').toLowerCase()}`
-                r[pkey] = m.banda?.[pp]?.nota ?? 0
-                t[`${pkey}-txt`] = m.banda?.[pp]?.comentario ?? ''
+                t[`m${i}-bem`] = m.bem ?? ''
+                t[`m${i}-melhorar`] = m.melhorar ?? ''
               })
-              t[`m${i}-bem`] = m.bem ?? ''
-              t[`m${i}-melhorar`] = m.melhorar ?? ''
+
+              r['g-entros'] = ex.geral_entrosamento ?? 0
+              r['g-energia'] = ex.geral_energia ?? 0
+              r['g-afinacao'] = ex.geral_afinacao ?? 0
+              r['g-dinamica'] = ex.geral_dinamica ?? 0
+              t['geral-comentarios'] = ex.geral_comentarios ?? ''
+
+              r['a-pontual'] = ex.apres_pontualidade ?? 0
+              r['a-postura'] = ex.apres_postura ?? 0
+              r['a-publico'] = ex.apres_publico ?? 0
+              r['a-logistica'] = ex.apres_logistica ?? 0
+              r['a-prof'] = ex.apres_profissionalismo ?? 0
+              t['apres-comentarios'] = ex.apres_comentarios ?? ''
+
+              r['nota-final'] = ex.nota_final ?? 0
+              t['obs-bem'] = ex.obs_bem ?? ''
+              t['obs-melhorar'] = ex.obs_melhorar ?? ''
+              t['obs-livres'] = ex.obs_livres ?? ''
+
+              setRatingsState(r)
+              setTextsState(t)
             })
+        }
 
-            r['g-entros']  = ex.geral_entrosamento ?? 0
-            r['g-energia'] = ex.geral_energia ?? 0
-            r['g-afinacao']= ex.geral_afinacao ?? 0
-            r['g-dinamica']= ex.geral_dinamica ?? 0
-            t['geral-comentarios'] = ex.geral_comentarios ?? ''
-
-            r['a-pontual']  = ex.apres_pontualidade ?? 0
-            r['a-postura']  = ex.apres_postura ?? 0
-            r['a-publico']  = ex.apres_publico ?? 0
-            r['a-logistica']= ex.apres_logistica ?? 0
-            r['a-prof']     = ex.apres_profissionalismo ?? 0
-            t['apres-comentarios'] = ex.apres_comentarios ?? ''
-
-            r['nota-final']   = ex.nota_final ?? 0
-            t['obs-bem']      = ex.obs_bem ?? ''
-            t['obs-melhorar'] = ex.obs_melhorar ?? ''
-            t['obs-livres']   = ex.obs_livres ?? ''
-
-            setRatingsState(r)
-            setTextsState(t)
-          })
+        setLoadingShow(false)
       }
-
-      setLoadingShow(false)
-    })
+    )
   }, [id])
 
   const showToast = (msg: string, error = false) => {
@@ -264,15 +350,27 @@ export default function AvaliarPage() {
     setTimeout(() => setToast(t => ({ ...t, show: false })), 3500)
   }
 
-  const setRating = useCallback((key: string, val: number) => setRatingsState(r => ({ ...r, [key]: val })), [])
-  const setText   = useCallback((key: string, val: string) => setTextsState(t => ({ ...t, [key]: val })), [])
+  const setRating = useCallback(
+    (key: string, val: number) => setRatingsState(r => ({ ...r, [key]: val })),
+    []
+  )
+  const setText = useCallback(
+    (key: string, val: string) => setTextsState(t => ({ ...t, [key]: val })),
+    []
+  )
 
   const papel = profile?.papel ?? null
   const outrosPapeis = (show?.papeis ?? []).filter((p: string) => p !== papel)
 
   const handleSubmit = async () => {
-    if (!profile) { showToast('Sessão não encontrada.', true); return }
-    if (!papel) { showToast('Seu perfil não tem papel definido.', true); return }
+    if (!profile) {
+      showToast('Sessão não encontrada.', true)
+      return
+    }
+    if (!papel) {
+      showToast('Seu perfil não tem papel definido.', true)
+      return
+    }
 
     setSubmitting(true)
 
@@ -295,7 +393,12 @@ export default function AvaliarPage() {
         const pkey = `m${i}-band-${p.replace(/[\s/]+/g, '-').toLowerCase()}`
         banda[p] = { nota: ratings[pkey] ?? 0, comentario: texts[`${pkey}-txt`] ?? '' }
       })
-      musicasData[nome] = { minha, banda, bem: texts[`m${i}-bem`] ?? '', melhorar: texts[`m${i}-melhorar`] ?? '' }
+      musicasData[nome] = {
+        minha,
+        banda,
+        bem: texts[`m${i}-bem`] ?? '',
+        melhorar: texts[`m${i}-melhorar`] ?? '',
+      }
     })
 
     const payload = {
@@ -308,20 +411,20 @@ export default function AvaliarPage() {
       nome_show: show?.nome,
       musicas: musicasData,
       geral_entrosamento: ratings['g-entros'] ?? 0,
-      geral_energia:      ratings['g-energia'] ?? 0,
-      geral_afinacao:     ratings['g-afinacao'] ?? 0,
-      geral_dinamica:     ratings['g-dinamica'] ?? 0,
-      geral_comentarios:  texts['geral-comentarios'] ?? '',
-      apres_pontualidade:     ratings['a-pontual'] ?? 0,
-      apres_postura:          ratings['a-postura'] ?? 0,
-      apres_publico:          ratings['a-publico'] ?? 0,
-      apres_logistica:        ratings['a-logistica'] ?? 0,
+      geral_energia: ratings['g-energia'] ?? 0,
+      geral_afinacao: ratings['g-afinacao'] ?? 0,
+      geral_dinamica: ratings['g-dinamica'] ?? 0,
+      geral_comentarios: texts['geral-comentarios'] ?? '',
+      apres_pontualidade: ratings['a-pontual'] ?? 0,
+      apres_postura: ratings['a-postura'] ?? 0,
+      apres_publico: ratings['a-publico'] ?? 0,
+      apres_logistica: ratings['a-logistica'] ?? 0,
       apres_profissionalismo: ratings['a-prof'] ?? 0,
-      apres_comentarios:      texts['apres-comentarios'] ?? '',
-      nota_final:   ratings['nota-final'] ?? 0,
-      obs_bem:      texts['obs-bem'] ?? '',
+      apres_comentarios: texts['apres-comentarios'] ?? '',
+      nota_final: ratings['nota-final'] ?? 0,
+      obs_bem: texts['obs-bem'] ?? '',
       obs_melhorar: texts['obs-melhorar'] ?? '',
-      obs_livres:   texts['obs-livres'] ?? '',
+      obs_livres: texts['obs-livres'] ?? '',
     }
 
     const supabase = createClient()
@@ -335,7 +438,11 @@ export default function AvaliarPage() {
   }
 
   if (loadingShow) {
-    return <AdminLayout title="Avaliar Show"><p style={{ color: C.textDim, fontSize: 14 }}>Carregando...</p></AdminLayout>
+    return (
+      <AdminLayout title="Avaliar Show">
+        <p style={{ color: C.textDim, fontSize: 14 }}>Carregando...</p>
+      </AdminLayout>
+    )
   }
 
   if (!show) {
@@ -343,28 +450,85 @@ export default function AvaliarPage() {
       <AdminLayout title="Avaliar Show">
         <p style={{ color: C.textDim, fontSize: 14 }}>Show não encontrado.</p>
         <Link href="/admin/avaliacoes" passHref legacyBehavior>
-          <a style={{ fontSize: 12, color: C.gold, textDecoration: 'none', marginTop: 16, display: 'inline-block' }}>← Voltar</a>
+          <a
+            style={{
+              fontSize: 12,
+              color: C.gold,
+              textDecoration: 'none',
+              marginTop: 16,
+              display: 'inline-block',
+            }}
+          >
+            ← Voltar
+          </a>
         </Link>
       </AdminLayout>
     )
   }
 
   return (
-    <AdminLayout title={existingId ? `Editar avaliação: ${show.nome}` : `Avaliar: ${show.nome}`} subtitle={fmtDate(show.data_show) + (show.local ? ` · ${show.local}` : '')}>
-
+    <AdminLayout
+      title={existingId ? `Editar avaliação: ${show.nome}` : `Avaliar: ${show.nome}`}
+      subtitle={fmtDate(show.data_show) + (show.local ? ` · ${show.local}` : '')}
+    >
       {/* Identity banner */}
       {profile && (
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 14,
-          background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
-          borderRadius: 8, padding: '12px 16px', marginBottom: 24,
-        }}>
-          <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(200,169,110,0.15)', border: '1px solid rgba(200,169,110,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Montserrat, sans-serif', fontSize: 13, fontWeight: 700, color: C.gold, flexShrink: 0 }}>
-            {profile.nome.split(' ').map((w: string) => w[0]).slice(0, 2).join('')}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 14,
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.07)',
+            borderRadius: 8,
+            padding: '12px 16px',
+            marginBottom: 24,
+          }}
+        >
+          <div
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: '50%',
+              background: 'rgba(200,169,110,0.15)',
+              border: '1px solid rgba(200,169,110,0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontFamily: 'Montserrat, sans-serif',
+              fontSize: 13,
+              fontWeight: 700,
+              color: C.gold,
+              flexShrink: 0,
+            }}
+          >
+            {profile.nome
+              .split(' ')
+              .map((w: string) => w[0])
+              .slice(0, 2)
+              .join('')}
           </div>
           <div>
-            <div style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 14, fontWeight: 600, color: C.text }}>{profile.nome}</div>
-            <div style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 11, color: C.textDim, marginTop: 2 }}>{papel ?? 'Sem papel definido'}</div>
+            <div
+              style={{
+                fontFamily: 'Montserrat, sans-serif',
+                fontSize: 14,
+                fontWeight: 600,
+                color: C.text,
+              }}
+            >
+              {profile.nome}
+            </div>
+            <div
+              style={{
+                fontFamily: 'Montserrat, sans-serif',
+                fontSize: 11,
+                color: C.textDim,
+                marginTop: 2,
+              }}
+            >
+              {papel ?? 'Sem papel definido'}
+            </div>
           </div>
         </div>
       )}
@@ -374,7 +538,15 @@ export default function AvaliarPage() {
           <h3>✓ {existingId ? 'Avaliação atualizada!' : 'Avaliação enviada!'}</h3>
           <p>Os resultados já estão disponíveis na página do show.</p>
           <Link href={`/admin/avaliacoes/${id}`} passHref legacyBehavior>
-            <a style={{ display: 'inline-block', marginTop: 16, fontSize: 13, color: C.gold, fontWeight: 600 }}>
+            <a
+              style={{
+                display: 'inline-block',
+                marginTop: 16,
+                fontSize: 13,
+                color: C.gold,
+                fontWeight: 600,
+              }}
+            >
               Ver resultados →
             </a>
           </Link>
@@ -388,19 +560,25 @@ export default function AvaliarPage() {
           <SectionLabel>Avaliação por música</SectionLabel>
           {SET_LIST.map((nome, i) => (
             <MusicaCardItem
-              key={nome} nome={nome} index={i} papel={papel}
-              outrosPapeis={outrosPapeis} ratings={ratings} setRating={setRating}
-              texts={texts} setText={setText}
+              key={nome}
+              nome={nome}
+              index={i}
+              papel={papel}
+              outrosPapeis={outrosPapeis}
+              ratings={ratings}
+              setRating={setRating}
+              texts={texts}
+              setText={setText}
             />
           ))}
 
           <SectionLabel>Performance geral da banda</SectionLabel>
           <GeneralBlock>
             {[
-              { label: 'Entrosamento / conjunto',     key: 'g-entros' },
-              { label: 'Energia em palco',             key: 'g-energia' },
-              { label: 'Afinação geral',               key: 'g-afinacao' },
-              { label: 'Dinâmica / variação do set',   key: 'g-dinamica' },
+              { label: 'Entrosamento / conjunto', key: 'g-entros' },
+              { label: 'Energia em palco', key: 'g-energia' },
+              { label: 'Afinação geral', key: 'g-afinacao' },
+              { label: 'Dinâmica / variação do set', key: 'g-dinamica' },
             ].map(({ label, key }) => (
               <StarRow key={key}>
                 <StarLabel>{label}</StarLabel>
@@ -410,17 +588,23 @@ export default function AvaliarPage() {
           </GeneralBlock>
           <Field style={{ marginTop: 12 }}>
             <FieldLabel>Comentários gerais sobre a banda</FieldLabel>
-            <FieldTextarea placeholder="O que funcionou bem? O que ficou aquém?" value={texts['geral-comentarios'] ?? ''} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setText('geral-comentarios', e.target.value)} />
+            <FieldTextarea
+              placeholder="O que funcionou bem? O que ficou aquém?"
+              value={texts['geral-comentarios'] ?? ''}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setText('geral-comentarios', e.target.value)
+              }
+            />
           </Field>
 
           <SectionLabel>Apresentação e comportamento</SectionLabel>
           <GeneralBlock>
             {[
-              { label: 'Pontualidade / organização',    key: 'a-pontual' },
-              { label: 'Postura / presença em palco',   key: 'a-postura' },
-              { label: 'Comunicação com o público',     key: 'a-publico' },
+              { label: 'Pontualidade / organização', key: 'a-pontual' },
+              { label: 'Postura / presença em palco', key: 'a-postura' },
+              { label: 'Comunicação com o público', key: 'a-publico' },
               { label: 'Logística / material de palco', key: 'a-logistica' },
-              { label: 'Profissionalismo geral',        key: 'a-prof' },
+              { label: 'Profissionalismo geral', key: 'a-prof' },
             ].map(({ label, key }) => (
               <StarRow key={key}>
                 <StarLabel>{label}</StarLabel>
@@ -430,25 +614,53 @@ export default function AvaliarPage() {
           </GeneralBlock>
           <Field style={{ marginTop: 12 }}>
             <FieldLabel>Comentários — apresentação e comportamento</FieldLabel>
-            <FieldTextarea placeholder="Algo a melhorar para o próximo show?" value={texts['apres-comentarios'] ?? ''} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setText('apres-comentarios', e.target.value)} />
+            <FieldTextarea
+              placeholder="Algo a melhorar para o próximo show?"
+              value={texts['apres-comentarios'] ?? ''}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setText('apres-comentarios', e.target.value)
+              }
+            />
           </Field>
 
           <SectionLabel>Nota final</SectionLabel>
           <NotaRow>
             <NotaLabel>Nota geral do show</NotaLabel>
-            <StarRating value={ratings['nota-final'] ?? 0} onChange={(v: number) => setRating('nota-final', v)} size={24} />
+            <StarRating
+              value={ratings['nota-final'] ?? 0}
+              onChange={(v: number) => setRating('nota-final', v)}
+              size={24}
+            />
           </NotaRow>
           <Field style={{ marginTop: 12 }}>
             <FieldLabel>O que foi bem e deve ser mantido</FieldLabel>
-            <FieldTextarea placeholder="Pontos positivos..." value={texts['obs-bem'] ?? ''} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setText('obs-bem', e.target.value)} />
+            <FieldTextarea
+              placeholder="Pontos positivos..."
+              value={texts['obs-bem'] ?? ''}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setText('obs-bem', e.target.value)
+              }
+            />
           </Field>
           <Field>
             <FieldLabel>O que precisa melhorar</FieldLabel>
-            <FieldTextarea placeholder="Pontos a trabalhar..." value={texts['obs-melhorar'] ?? ''} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setText('obs-melhorar', e.target.value)} />
+            <FieldTextarea
+              placeholder="Pontos a trabalhar..."
+              value={texts['obs-melhorar'] ?? ''}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setText('obs-melhorar', e.target.value)
+              }
+            />
           </Field>
           <Field>
             <FieldLabel>Observações livres</FieldLabel>
-            <FieldTextarea placeholder="Qualquer outra coisa relevante..." value={texts['obs-livres'] ?? ''} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setText('obs-livres', e.target.value)} />
+            <FieldTextarea
+              placeholder="Qualquer outra coisa relevante..."
+              value={texts['obs-livres'] ?? ''}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setText('obs-livres', e.target.value)
+              }
+            />
           </Field>
 
           <SubmitArea>
@@ -459,7 +671,9 @@ export default function AvaliarPage() {
         </>
       )}
 
-      <Toast $show={toast.show} $error={toast.error}>{toast.msg}</Toast>
+      <Toast $show={toast.show} $error={toast.error}>
+        {toast.msg}
+      </Toast>
     </AdminLayout>
   )
 }

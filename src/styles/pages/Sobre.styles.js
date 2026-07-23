@@ -71,8 +71,14 @@ export const Kicker = styled.h2`
   margin: 20px 0 36px;
   color: ${({ theme }) => theme.colors.charcoal};
 
-  em      { font-style: normal; color: ${({ theme }) => theme.colors.olive}; }
-  .outline { -webkit-text-stroke: 2px ${({ theme }) => theme.colors.charcoal}; color: transparent; }
+  em {
+    font-style: normal;
+    color: ${({ theme }) => theme.colors.olive};
+  }
+  .outline {
+    -webkit-text-stroke: 2px ${({ theme }) => theme.colors.charcoal};
+    color: transparent;
+  }
 `
 
 export const BioPull = styled.div`
@@ -88,7 +94,9 @@ export const BioPull = styled.div`
 export const BioPhotoFrame = styled.div`
   background: ${({ theme }) => theme.colors.white};
   padding: 14px 14px 48px;
-  box-shadow: 0 14px 34px -12px rgba(0,0,0,.3), 0 2px 0 rgba(0,0,0,.06);
+  box-shadow:
+    0 14px 34px -12px rgba(0, 0, 0, 0.3),
+    0 2px 0 rgba(0, 0, 0, 0.06);
   transform: rotate(2.5deg);
   position: relative;
 
@@ -102,7 +110,8 @@ export const BioPhotoFrame = styled.div`
 
 export const BioPhotoCap = styled.div`
   position: absolute;
-  bottom: 12px; left: 14px;
+  bottom: 12px;
+  left: 14px;
   font-family: ${({ theme }) => theme.fonts.mono};
   font-size: 12px;
   color: ${({ theme }) => theme.colors.charcoal};
@@ -112,17 +121,25 @@ export const BioPhotoCap = styled.div`
 export const BioTape = styled.div`
   position: absolute;
   background: ${({ theme }) => theme.colors.tape};
-  box-shadow: 0 1px 2px rgba(0,0,0,.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   z-index: 5;
   opacity: 0.85;
 `
 
 export const BioTapeTop = styled(BioTape)`
-  top: -8px; right: 30px; width: 90px; height: 22px; transform: rotate(-12deg);
+  top: -8px;
+  right: 30px;
+  width: 90px;
+  height: 22px;
+  transform: rotate(-12deg);
 `
 
 export const BioTapeBottom = styled(BioTape)`
-  bottom: 30px; left: -12px; width: 80px; height: 20px; transform: rotate(8deg);
+  bottom: 30px;
+  left: -12px;
+  width: 80px;
+  height: 20px;
+  transform: rotate(8deg);
 `
 
 export const BioQuoteCard = styled.div`
@@ -136,7 +153,8 @@ export const BioQuoteCard = styled.div`
   &::before {
     content: '✦';
     position: absolute;
-    top: -14px; left: 16px;
+    top: -14px;
+    left: 16px;
     font-size: 28px;
     color: ${({ theme }) => theme.colors.tape};
   }
@@ -201,15 +219,21 @@ export const MembersHeader = styled.div`
     color: ${({ theme }) => theme.colors.charcoal};
   }
 
-  .ed:last-child { text-align: right; }
+  .ed:last-child {
+    text-align: right;
+  }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.small}) {
     flex-direction: column;
     align-items: center;
     text-align: center;
     gap: 8px;
-    h2 { flex: none; }
-    .ed:last-child { text-align: center; }
+    h2 {
+      flex: none;
+    }
+    .ed:last-child {
+      text-align: center;
+    }
   }
 `
 
@@ -274,12 +298,20 @@ export const LivePhotos = styled.div`
 export const LivePhoto = styled.div`
   background: ${({ theme }) => theme.colors.white};
   padding: 10px 10px 36px;
-  box-shadow: 0 8px 20px -8px rgba(0,0,0,.3);
+  box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.3);
   position: relative;
 
-  &:nth-child(1) { transform: rotate(-3deg); }
-  &:nth-child(2) { transform: rotate(2deg); grid-row: 1 / 3; align-self: center; }
-  &:nth-child(3) { transform: rotate(1.5deg); }
+  &:nth-child(1) {
+    transform: rotate(-3deg);
+  }
+  &:nth-child(2) {
+    transform: rotate(2deg);
+    grid-row: 1 / 3;
+    align-self: center;
+  }
+  &:nth-child(3) {
+    transform: rotate(1.5deg);
+  }
 
   img {
     width: 100%;
@@ -287,11 +319,14 @@ export const LivePhoto = styled.div`
     object-fit: cover;
   }
 
-  &:nth-child(2) img { aspect-ratio: 1/1; }
+  &:nth-child(2) img {
+    aspect-ratio: 1/1;
+  }
 
   .cap {
     position: absolute;
-    bottom: 8px; left: 10px;
+    bottom: 8px;
+    left: 10px;
     font-family: ${({ theme }) => theme.fonts.mono};
     font-size: 10px;
     color: ${({ theme }) => theme.colors.charcoal};
@@ -299,7 +334,9 @@ export const LivePhoto = styled.div`
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.small}) {
-    &:nth-child(2) { grid-row: auto; }
+    &:nth-child(2) {
+      grid-row: auto;
+    }
   }
 `
 
@@ -346,5 +383,7 @@ export const VenuesList = styled.ul`
     text-transform: uppercase;
   }
 
-  .venue-loc { color: ${({ theme }) => theme.colors.sage}; }
+  .venue-loc {
+    color: ${({ theme }) => theme.colors.sage};
+  }
 `

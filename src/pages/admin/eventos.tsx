@@ -23,9 +23,7 @@ interface EventFormData {
 }
 
 type ModalState =
-  | { type: 'add' }
-  | { type: 'edit'; item: EventRow }
-  | { type: 'delete'; item: EventRow }
+  { type: 'add' } | { type: 'edit'; item: EventRow } | { type: 'delete'; item: EventRow }
 
 // ─── List ──────────────────────────────────────────────────────────────────
 
@@ -39,7 +37,7 @@ const TopBar = styled.div`
 const Count = styled.span`
   font-family: 'Montserrat', sans-serif;
   font-size: 12px;
-  color: rgba(245,240,232,0.35);
+  color: rgba(245, 240, 232, 0.35);
 `
 
 const AddBtn = styled.button`
@@ -58,8 +56,13 @@ const AddBtn = styled.button`
   border-radius: 6px;
   cursor: pointer;
   transition: opacity 0.15s;
-  &:hover { opacity: 0.85; }
-  svg { width: 15px; height: 15px; }
+  &:hover {
+    opacity: 0.85;
+  }
+  svg {
+    width: 15px;
+    height: 15px;
+  }
 `
 
 const SectionTitle = styled.h3`
@@ -68,10 +71,12 @@ const SectionTitle = styled.h3`
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(245,240,232,0.3);
+  color: rgba(245, 240, 232, 0.3);
   margin: 28px 0 10px;
 
-  &:first-of-type { margin-top: 0; }
+  &:first-of-type {
+    margin-top: 0;
+  }
 `
 
 const UpcomingDot = styled.span`
@@ -89,7 +94,7 @@ const PastDot = styled.span`
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: rgba(245,240,232,0.2);
+  background: rgba(245, 240, 232, 0.2);
   margin-right: 8px;
   vertical-align: middle;
 `
@@ -105,12 +110,15 @@ const Card = styled.div<{ $past?: boolean }>`
   flex-direction: column;
   gap: 10px;
   padding: 14px 16px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 8px;
   transition: border-color 0.15s;
-  opacity: ${p => p.$past ? 0.6 : 1};
-  &:hover { border-color: rgba(255,255,255,0.13); opacity: 1; }
+  opacity: ${p => (p.$past ? 0.6 : 1)};
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.13);
+    opacity: 1;
+  }
 `
 
 const CardTop = styled.div`
@@ -130,7 +138,7 @@ const DateBadge = styled.div<{ $past?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: ${p => p.$past ? '#444' : '#3d3d2e'};
+  background: ${p => (p.$past ? '#444' : '#3d3d2e')};
   border-radius: 4px;
   padding: 8px 10px;
   min-width: 52px;
@@ -150,14 +158,14 @@ const DateMon = styled.span`
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.1em;
-  color: rgba(245,240,232,0.6);
+  color: rgba(245, 240, 232, 0.6);
   margin-top: 2px;
 `
 
 const DateYear = styled.span`
   font-family: 'Montserrat', sans-serif;
   font-size: 9px;
-  color: rgba(245,240,232,0.35);
+  color: rgba(245, 240, 232, 0.35);
 `
 
 const CardInfo = styled.div`
@@ -177,7 +185,7 @@ const EventName = styled.div`
 const EventVenue = styled.div`
   font-family: 'Montserrat', sans-serif;
   font-size: 11px;
-  color: rgba(245,240,232,0.4);
+  color: rgba(245, 240, 232, 0.4);
   margin-top: 2px;
   white-space: nowrap;
   overflow: hidden;
@@ -199,13 +207,9 @@ const Tag = styled.span`
   text-transform: uppercase;
   padding: 2px 6px;
   border-radius: 3px;
-  background: rgba(200,169,110,0.12);
+  background: rgba(200, 169, 110, 0.12);
   color: #c8a96e;
-  border: 1px solid rgba(200,169,110,0.2);
-`
-
-const CardMeta = styled.div`
-  display: none;
+  border: 1px solid rgba(200, 169, 110, 0.2);
 `
 
 const CardActions = styled.div`
@@ -221,17 +225,23 @@ const EditBtn = styled.button`
   align-items: center;
   gap: 5px;
   padding: 6px 10px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 5px;
-  color: rgba(245,240,232,0.7);
+  color: rgba(245, 240, 232, 0.7);
   font-family: 'Montserrat', sans-serif;
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
-  &:hover { background: rgba(255,255,255,0.1); color: #f5f0e8; }
-  svg { width: 11px; height: 11px; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f5f0e8;
+  }
+  svg {
+    width: 11px;
+    height: 11px;
+  }
 `
 
 const DeleteBtn = styled.button`
@@ -241,13 +251,20 @@ const DeleteBtn = styled.button`
   width: 28px;
   height: 28px;
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 5px;
-  color: rgba(245,240,232,0.3);
+  color: rgba(245, 240, 232, 0.3);
   cursor: pointer;
   transition: all 0.15s;
-  &:hover { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.3); color: #f87171; }
-  svg { width: 12px; height: 12px; }
+  &:hover {
+    background: rgba(248, 113, 113, 0.1);
+    border-color: rgba(248, 113, 113, 0.3);
+    color: #f87171;
+  }
+  svg {
+    width: 12px;
+    height: 12px;
+  }
 `
 
 const EmptyState = styled.div`
@@ -255,7 +272,7 @@ const EmptyState = styled.div`
   padding: 40px 32px;
   font-family: 'Montserrat', sans-serif;
   font-size: 13px;
-  color: rgba(245,240,232,0.2);
+  color: rgba(245, 240, 232, 0.2);
 `
 
 // ─── Modal ─────────────────────────────────────────────────────────────────
@@ -263,7 +280,7 @@ const EmptyState = styled.div`
 const Overlay = styled.div`
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -282,7 +299,7 @@ const ModalBox = styled.div`
   max-height: 90vh;
   overflow-y: auto;
   background: #1a1a1a;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -301,7 +318,7 @@ const ModalHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 20px 24px;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   position: sticky;
   top: 0;
   background: #1a1a1a;
@@ -321,13 +338,19 @@ const CloseBtn = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   border: none;
   border-radius: 6px;
-  color: rgba(245,240,232,0.5);
+  color: rgba(245, 240, 232, 0.5);
   cursor: pointer;
-  &:hover { background: rgba(255,255,255,0.1); color: #f5f0e8; }
-  svg { width: 16px; height: 16px; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f5f0e8;
+  }
+  svg {
+    width: 16px;
+    height: 16px;
+  }
 `
 
 const ModalBody = styled.div`
@@ -339,7 +362,7 @@ const ModalBody = styled.div`
 
 const ModalFooter = styled.div`
   padding: 16px 24px;
-  border-top: 1px solid rgba(255,255,255,0.07);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -373,13 +396,13 @@ const Label = styled.label`
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(245,240,232,0.45);
+  color: rgba(245, 240, 232, 0.45);
 `
 
 const Hint = styled.span`
   font-family: 'Montserrat', sans-serif;
   font-size: 10px;
-  color: rgba(245,240,232,0.2);
+  color: rgba(245, 240, 232, 0.2);
   font-weight: 400;
   letter-spacing: 0;
   text-transform: none;
@@ -388,17 +411,24 @@ const Hint = styled.span`
 
 const Input = styled.input`
   padding: 10px 14px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
   color: #f5f0e8;
   font-family: 'Montserrat', sans-serif;
   font-size: 14px;
   outline: none;
   transition: border-color 0.15s;
-  &:focus { border-color: #c8a96e; }
-  &::placeholder { color: rgba(245,240,232,0.2); }
-  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  &:focus {
+    border-color: #c8a96e;
+  }
+  &::placeholder {
+    color: rgba(245, 240, 232, 0.2);
+  }
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 `
 
 const ToggleRow = styled.label`
@@ -408,9 +438,9 @@ const ToggleRow = styled.label`
   cursor: pointer;
   font-family: 'Montserrat', sans-serif;
   font-size: 13px;
-  color: rgba(245,240,232,0.6);
+  color: rgba(245, 240, 232, 0.6);
 
-  input[type="checkbox"] {
+  input[type='checkbox'] {
     width: 16px;
     height: 16px;
     accent-color: #c8a96e;
@@ -438,21 +468,29 @@ const BtnPrimary = styled.button`
   border-radius: 6px;
   cursor: pointer;
   transition: opacity 0.15s;
-  &:hover { opacity: 0.85; }
-  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:hover {
+    opacity: 0.85;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `
 
 const BtnGhost = styled.button`
   padding: 10px 20px;
   background: transparent;
-  color: rgba(245,240,232,0.5);
+  color: rgba(245, 240, 232, 0.5);
   font-family: 'Montserrat', sans-serif;
   font-size: 12px;
   font-weight: 600;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
   cursor: pointer;
-  &:hover { color: #f5f0e8; border-color: rgba(255,255,255,0.2); }
+  &:hover {
+    color: #f5f0e8;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
 `
 
 const BtnDanger = styled(BtnPrimary)`
@@ -462,7 +500,9 @@ const BtnDanger = styled(BtnPrimary)`
 
 // ─── Delete confirm ─────────────────────────────────────────────────────────
 
-const ConfirmBox = styled(ModalBox)`max-width: 400px;`
+const ConfirmBox = styled(ModalBox)`
+  max-width: 400px;
+`
 
 const ConfirmBody = styled.div`
   padding: 28px 24px;
@@ -471,7 +511,11 @@ const ConfirmBody = styled.div`
   align-items: center;
   gap: 12px;
   text-align: center;
-  svg { width: 36px; height: 36px; color: #f87171; }
+  svg {
+    width: 36px;
+    height: 36px;
+    color: #f87171;
+  }
 `
 
 const ConfirmTitle = styled.h3`
@@ -483,7 +527,7 @@ const ConfirmTitle = styled.h3`
 const ConfirmText = styled.p`
   font-family: 'Montserrat', sans-serif;
   font-size: 13px;
-  color: rgba(245,240,232,0.45);
+  color: rgba(245, 240, 232, 0.45);
   line-height: 1.5;
 `
 
@@ -528,7 +572,9 @@ export default function AdminEventosPage() {
 
   useEffect(() => {
     load()
-    createClient().auth.getUser().then(({ data }) => setUser(data.user))
+    createClient()
+      .auth.getUser()
+      .then(({ data }) => setUser(data.user))
   }, [])
 
   async function load() {
@@ -600,7 +646,7 @@ export default function AdminEventosPage() {
       city: form.city.trim(),
       tags,
       link_url: form.link_url.trim() || null,
-      link_label: form.link_url.trim() ? (form.link_label.trim() || 'Ver mais →') : null,
+      link_label: form.link_url.trim() ? form.link_label.trim() || 'Ver mais →' : null,
       badge: form.badge.trim() || null,
       show_day: form.show_day,
     }
@@ -650,17 +696,37 @@ export default function AdminEventosPage() {
           </DateBadge>
           <CardInfo>
             <EventName>{item.title}</EventName>
-            <EventVenue>{item.venue}{item.city ? ` · ${item.city}` : ''}{item.time ? ` · ${item.time}` : ''}</EventVenue>
+            <EventVenue>
+              {item.venue}
+              {item.city ? ` · ${item.city}` : ''}
+              {item.time ? ` · ${item.time}` : ''}
+            </EventVenue>
           </CardInfo>
-          <DeleteBtn onClick={() => openDelete(item)} title="Excluir"><X /></DeleteBtn>
+          <DeleteBtn onClick={() => openDelete(item)} title="Excluir">
+            <X />
+          </DeleteBtn>
         </CardTop>
         <CardBottom>
           <TagList style={{ flex: 1, marginTop: 0 }}>
-            {(item.tags ?? []).map((t: string) => <Tag key={t}>{t}</Tag>)}
+            {(item.tags ?? []).map((t: string) => (
+              <Tag key={t}>{t}</Tag>
+            ))}
           </TagList>
           <CardActions>
-            <EditBtn onClick={() => router.push(`/admin/eventos/${item.id}`)} title="Ver gear do show" style={{ background: 'rgba(200,169,110,0.08)', borderColor: 'rgba(200,169,110,0.2)', color: '#c8a96e' }}><Backpack /> Gear</EditBtn>
-            <EditBtn onClick={() => openEdit(item)}><Pencil /> Editar</EditBtn>
+            <EditBtn
+              onClick={() => router.push(`/admin/eventos/${item.id}`)}
+              title="Ver gear do show"
+              style={{
+                background: 'rgba(200,169,110,0.08)',
+                borderColor: 'rgba(200,169,110,0.2)',
+                color: '#c8a96e',
+              }}
+            >
+              <Backpack /> Gear
+            </EditBtn>
+            <EditBtn onClick={() => openEdit(item)}>
+              <Pencil /> Editar
+            </EditBtn>
           </CardActions>
         </CardBottom>
       </Card>
@@ -670,36 +736,55 @@ export default function AdminEventosPage() {
   return (
     <AdminLayout title="Eventos" subtitle="Gestão de shows e concertos">
       <TopBar>
-        <Count>{items.length} evento{items.length !== 1 ? 's' : ''}</Count>
-        <AddBtn onClick={openAdd}><Plus /> Adicionar Evento</AddBtn>
+        <Count>
+          {items.length} evento{items.length !== 1 ? 's' : ''}
+        </Count>
+        <AddBtn onClick={openAdd}>
+          <Plus /> Adicionar Evento
+        </AddBtn>
       </TopBar>
 
       {loading ? (
         <EmptyState>Carregando...</EmptyState>
       ) : (
         <>
-          <SectionTitle><UpcomingDot />Próximos ({upcoming.length})</SectionTitle>
+          <SectionTitle>
+            <UpcomingDot />
+            Próximos ({upcoming.length})
+          </SectionTitle>
           <List>
-            {upcoming.length > 0
-              ? upcoming.map(e => <EventCard key={e.id} item={e} />)
-              : <EmptyState>Nenhum evento próximo.</EmptyState>
-            }
+            {upcoming.length > 0 ? (
+              upcoming.map(e => <EventCard key={e.id} item={e} />)
+            ) : (
+              <EmptyState>Nenhum evento próximo.</EmptyState>
+            )}
           </List>
 
-          <SectionTitle><PastDot />Histórico ({past.length})</SectionTitle>
+          <SectionTitle>
+            <PastDot />
+            Histórico ({past.length})
+          </SectionTitle>
           <List>
-            {past.map(e => <EventCard key={e.id} item={e} />)}
+            {past.map(e => (
+              <EventCard key={e.id} item={e} />
+            ))}
           </List>
         </>
       )}
 
       {/* ── Add / Edit modal ── */}
       {isFormModal && modal && (
-        <Overlay onClick={e => { if (e.target === e.currentTarget) closeModal() }}>
+        <Overlay
+          onClick={e => {
+            if (e.target === e.currentTarget) closeModal()
+          }}
+        >
           <ModalBox>
             <ModalHeader>
               <ModalTitle>{modal.type === 'add' ? 'Novo Evento' : 'Editar Evento'}</ModalTitle>
-              <CloseBtn onClick={closeModal}><X /></CloseBtn>
+              <CloseBtn onClick={closeModal}>
+                <X />
+              </CloseBtn>
             </ModalHeader>
 
             <ModalBody>
@@ -722,7 +807,9 @@ export default function AdminEventosPage() {
                   />
                 </Field>
                 <Field>
-                  <Label>Hora <Hint>opcional</Hint></Label>
+                  <Label>
+                    Hora <Hint>opcional</Hint>
+                  </Label>
                   <Input
                     type="time"
                     value={form.time}
@@ -762,7 +849,9 @@ export default function AdminEventosPage() {
 
               <FieldRow>
                 <Field>
-                  <Label>Tags <Hint>separadas por vírgula</Hint></Label>
+                  <Label>
+                    Tags <Hint>separadas por vírgula</Hint>
+                  </Label>
                   <Input
                     value={form.tags}
                     onChange={e => setField('tags', e.target.value)}
@@ -770,7 +859,9 @@ export default function AdminEventosPage() {
                   />
                 </Field>
                 <Field>
-                  <Label>Badge <Hint>opcional</Hint></Label>
+                  <Label>
+                    Badge <Hint>opcional</Hint>
+                  </Label>
                   <Input
                     value={form.badge}
                     onChange={e => setField('badge', e.target.value)}
@@ -781,7 +872,9 @@ export default function AdminEventosPage() {
 
               <FieldRow>
                 <Field>
-                  <Label>Link <Hint>opcional</Hint></Label>
+                  <Label>
+                    Link <Hint>opcional</Hint>
+                  </Label>
                   <Input
                     value={form.link_url}
                     onChange={e => setField('link_url', e.target.value)}
@@ -815,14 +908,18 @@ export default function AdminEventosPage() {
 
       {/* ── Delete confirm ── */}
       {isDeleteModal && modal && modal.type === 'delete' && (
-        <Overlay onClick={e => { if (e.target === e.currentTarget) closeModal() }}>
+        <Overlay
+          onClick={e => {
+            if (e.target === e.currentTarget) closeModal()
+          }}
+        >
           <ConfirmBox>
             <ConfirmBody>
               <AlertTriangle />
               <ConfirmTitle>Excluir evento?</ConfirmTitle>
               <ConfirmText>
-                Tem certeza que quer excluir <strong>&quot;{modal.item.title}&quot;</strong>?
-                Esta ação não pode ser desfeita.
+                Tem certeza que quer excluir <strong>&quot;{modal.item.title}&quot;</strong>? Esta
+                ação não pode ser desfeita.
               </ConfirmText>
             </ConfirmBody>
             <ModalFooter>

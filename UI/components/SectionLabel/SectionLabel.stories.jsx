@@ -12,7 +12,7 @@ export default {
 }
 
 export const Default = {}
-export const Dark    = {
+export const Dark = {
   args: { dark: true },
   parameters: { backgrounds: { default: 'olive', values: [{ name: 'olive', value: '#404015' }] } },
 }

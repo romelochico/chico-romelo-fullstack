@@ -15,7 +15,7 @@ export const HeroBg = styled.div`
   position: absolute;
   inset: 0;
   z-index: 0;
-  animation: hero-fade-photo 1.4s cubic-bezier(0.22,0.61,0.36,1) both;
+  animation: hero-fade-photo 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) both;
 
   picture {
     display: block;
@@ -36,9 +36,9 @@ export const HeroBg = styled.div`
     inset: 0;
     background: linear-gradient(
       180deg,
-      rgba(0,0,0,0.4) 0%,
-      rgba(0,0,0,0.15) 40%,
-      rgba(0,0,0,0.6) 100%
+      rgba(0, 0, 0, 0.4) 0%,
+      rgba(0, 0, 0, 0.15) 40%,
+      rgba(0, 0, 0, 0.6) 100%
     );
     pointer-events: none;
   }
@@ -50,7 +50,7 @@ export const HeroContent = styled.div`
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
-  animation: hero-fade-up 1s cubic-bezier(0.22,0.61,0.36,1) 0.35s both;
+  animation: hero-fade-up 1s cubic-bezier(0.22, 0.61, 0.36, 1) 0.35s both;
 `
 
 export const HeroLabel = styled.div`
@@ -63,8 +63,8 @@ export const HeroLabel = styled.div`
   text-transform: uppercase;
   color: ${({ theme }) => theme.colors.cream};
   padding: 6px 14px;
-  border: 1.5px solid rgba(255,255,255,0.5);
-  background: rgba(0,0,0,0.2);
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  background: rgba(0, 0, 0, 0.2);
   transform: rotate(-1.5deg);
   margin-bottom: 16px;
 

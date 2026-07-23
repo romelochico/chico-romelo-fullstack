@@ -2,10 +2,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { NAV_LEFT, NAV_RIGHT, NAV_ALL } from '../../lib/data'
 import { useNavDrawer } from '../../hooks/useNavDrawer'
-import {
-  NavWrapper, NavLinks, NavLogoImg,
-  BurgerBtn, Drawer, Overlay,
-} from './Nav.styles'
+import { NavWrapper, NavLinks, NavLogoImg, BurgerBtn, Drawer, Overlay } from './Nav.styles'
 
 interface NavProps {
   innerPage?: boolean
@@ -30,8 +27,11 @@ export default function Nav({ innerPage = false }: NavProps) {
 
         <NavLinks>
           {NAV_LEFT.map(({ href, label }) => (
-            <Link key={href} href={href}
-              style={{ fontWeight: pathname === href ? 700 : undefined }}>
+            <Link
+              key={href}
+              href={href}
+              style={{ fontWeight: pathname === href ? 700 : undefined }}
+            >
               {label}
             </Link>
           ))}
@@ -43,8 +43,11 @@ export default function Nav({ innerPage = false }: NavProps) {
 
         <NavLinks $right>
           {NAV_RIGHT.map(({ href, label }) => (
-            <Link key={href} href={href}
-              style={{ fontWeight: pathname === href ? 700 : undefined }}>
+            <Link
+              key={href}
+              href={href}
+              style={{ fontWeight: pathname === href ? 700 : undefined }}
+            >
               {label}
             </Link>
           ))}
@@ -53,15 +56,18 @@ export default function Nav({ innerPage = false }: NavProps) {
 
       <Drawer aria-hidden={!isOpen} className={isOpen ? 'is-open' : ''}>
         {NAV_ALL.map(({ href, label }) => (
-          <Link key={href} href={href} onClick={close} aria-current={pathname === href ? 'page' : undefined}>{label}</Link>
+          <Link
+            key={href}
+            href={href}
+            onClick={close}
+            aria-current={pathname === href ? 'page' : undefined}
+          >
+            {label}
+          </Link>
         ))}
       </Drawer>
 
-      <Overlay
-        className={isOpen ? 'is-open' : ''}
-        onClick={close}
-        aria-hidden="true"
-      />
+      <Overlay className={isOpen ? 'is-open' : ''} onClick={close} aria-hidden="true" />
     </>
   )
 }

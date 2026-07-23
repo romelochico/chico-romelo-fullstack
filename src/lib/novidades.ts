@@ -1,13 +1,28 @@
 import type { NewsRow, ClippingProps } from '../types'
 
-const PT_MONTHS = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
+const PT_MONTHS = [
+  'JAN',
+  'FEV',
+  'MAR',
+  'ABR',
+  'MAI',
+  'JUN',
+  'JUL',
+  'AGO',
+  'SET',
+  'OUT',
+  'NOV',
+  'DEZ',
+]
 
 export function formatDateLabel(dateStr: string): string {
   const d = new Date(dateStr)
   return `${PT_MONTHS[d.getMonth()]} · ${d.getFullYear()}`
 }
 
-export function getMediaUrl(media: { storage_path: string; bucket: string } | null | undefined): string | null {
+export function getMediaUrl(
+  media: { storage_path: string; bucket: string } | null | undefined
+): string | null {
   if (!media?.storage_path) return null
   return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${media.bucket}/${media.storage_path}`
 }

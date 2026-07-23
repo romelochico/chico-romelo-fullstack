@@ -13,11 +13,15 @@ export const Btn = styled.a`
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  transition: transform 0.15s, background 0.15s;
+  transition:
+    transform 0.15s,
+    background 0.15s;
   text-decoration: none;
   white-space: nowrap;
 
-  svg { flex-shrink: 0; }
+  svg {
+    flex-shrink: 0;
+  }
 
   &:hover {
     transform: translateY(-2px) rotate(-1.5deg);

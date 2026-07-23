@@ -26,7 +26,7 @@ export const BadgeBase = styled.span`
         return css`
           background: ${theme.colors.cream2};
           color: ${theme.colors.olive};
-          border: 1px solid rgba(0,0,0,0.1);
+          border: 1px solid rgba(0, 0, 0, 0.1);
           border-radius: 3px;
           font-size: 11px;
           font-weight: 700;
@@ -47,5 +47,9 @@ export const BadgeBase = styled.span`
     }
   }}
 
-  ${({ $rotate }) => $rotate && css`transform: rotate(${$rotate});`}
+  ${({ $rotate }) =>
+    $rotate &&
+    css`
+      transform: rotate(${$rotate});
+    `}
 `

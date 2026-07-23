@@ -2,7 +2,9 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 const ADMIN_WHITELIST = (process.env.ADMIN_EMAILS ?? '')
-  .split(',').map(e => e.trim().toLowerCase()).filter(Boolean)
+  .split(',')
+  .map(e => e.trim().toLowerCase())
+  .filter(Boolean)
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
@@ -26,7 +28,9 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   const { pathname } = request.nextUrl
 
   // Login page: redirect to dashboard if already authenticated

@@ -3,8 +3,19 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import {
-  LayoutDashboard, Calendar, Newspaper, Disc3,
-  Image, Link2, Mail, LogOut, X, Star, Package, MapPin, Megaphone,
+  LayoutDashboard,
+  Calendar,
+  Newspaper,
+  Disc3,
+  Image,
+  Link2,
+  Mail,
+  LogOut,
+  X,
+  Star,
+  Package,
+  MapPin,
+  Megaphone,
   type LucideIcon,
 } from 'lucide-react'
 import { createClient } from '../../lib/supabase/client'
@@ -19,10 +30,10 @@ const Overlay = styled.div<{ $open: boolean }>`
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0, 0, 0, 0.6);
     z-index: 190;
-    opacity: ${({ $open }) => $open ? 1 : 0};
-    pointer-events: ${({ $open }) => $open ? 'auto' : 'none'};
+    opacity: ${({ $open }) => ($open ? 1 : 0)};
+    pointer-events: ${({ $open }) => ($open ? 'auto' : 'none')};
     transition: opacity 0.25s;
   }
 `
@@ -32,7 +43,7 @@ const Overlay = styled.div<{ $open: boolean }>`
 const Sidebar = styled.aside<{ $open: boolean }>`
   width: 240px;
   background: ${({ theme }) => theme.colors.dark2};
-  border-right: 1px solid rgba(255,255,255,0.06);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -43,9 +54,9 @@ const Sidebar = styled.aside<{ $open: boolean }>`
     left: 0;
     height: 100dvh;
     z-index: 200;
-    transform: ${({ $open }) => $open ? 'translateX(0)' : 'translateX(-100%)'};
+    transform: ${({ $open }) => ($open ? 'translateX(0)' : 'translateX(-100%)')};
     transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: ${({ $open }) => $open ? '4px 0 32px rgba(0,0,0,0.5)' : 'none'};
+    box-shadow: ${({ $open }) => ($open ? '4px 0 32px rgba(0,0,0,0.5)' : 'none')};
   }
 `
 
@@ -53,7 +64,7 @@ const Sidebar = styled.aside<{ $open: boolean }>`
 
 const SidebarTop = styled.div`
   padding: 28px 24px 24px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -70,7 +81,7 @@ const Brand = styled.div`
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.3);
+    color: rgba(255, 255, 255, 0.3);
   }
 `
 
@@ -87,16 +98,22 @@ const CloseBtn = styled.button`
   height: 32px;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   border: none;
   border-radius: 6px;
-  color: rgba(255,255,255,0.4);
+  color: rgba(255, 255, 255, 0.4);
   cursor: pointer;
   flex-shrink: 0;
   transition: all 0.15s;
 
-  &:hover { background: rgba(255,255,255,0.1); color: ${({ theme }) => theme.colors.cream}; }
-  svg { width: 15px; height: 15px; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: ${({ theme }) => theme.colors.cream};
+  }
+  svg {
+    width: 15px;
+    height: 15px;
+  }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.admin}) {
     display: flex;
@@ -123,12 +140,16 @@ const NavItem = styled(Link)<{ $active: boolean }>`
   font-family: ${({ theme }) => theme.fonts.body};
   font-size: 13px;
   font-weight: 500;
-  color: ${({ $active, theme }) => $active ? theme.colors.cream : 'rgba(255,255,255,0.4)'};
-  background: ${({ $active, theme }) => $active ? theme.colors.sageFade : 'transparent'};
+  color: ${({ $active, theme }) => ($active ? theme.colors.cream : 'rgba(255,255,255,0.4)')};
+  background: ${({ $active, theme }) => ($active ? theme.colors.sageFade : 'transparent')};
   text-decoration: none;
   transition: all 0.15s;
 
-  svg { width: 16px; height: 16px; flex-shrink: 0; }
+  svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
 
   &:hover {
     color: ${({ theme }) => theme.colors.cream};
@@ -140,7 +161,7 @@ const NavItem = styled(Link)<{ $active: boolean }>`
 
 const SidebarBottom = styled.div`
   padding: 12px;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -174,7 +195,7 @@ const UserName = styled.div`
   font-family: ${({ theme }) => theme.fonts.body};
   font-size: 12px;
   font-weight: 600;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255, 255, 255, 0.5);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -189,16 +210,23 @@ const SignOutBtn = styled.button`
   font-family: ${({ theme }) => theme.fonts.body};
   font-size: 13px;
   font-weight: 500;
-  color: rgba(255,255,255,0.3);
+  color: rgba(255, 255, 255, 0.3);
   background: transparent;
   border: none;
   cursor: pointer;
   width: 100%;
   transition: all 0.15s;
 
-  svg { width: 16px; height: 16px; flex-shrink: 0; }
+  svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
 
-  &:hover { color: #f87171; background: rgba(248,113,113,0.06); }
+  &:hover {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.06);
+  }
 `
 
 /* ── Data ────────────────────────────────────────────────────────── */
@@ -211,15 +239,15 @@ interface NavLinkDef {
 
 const NAV_LINKS: NavLinkDef[] = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/eventos',   label: 'Eventos',   icon: Calendar },
-  { href: '/admin/lugares',   label: 'Lugares para tocar', icon: MapPin },
+  { href: '/admin/eventos', label: 'Eventos', icon: Calendar },
+  { href: '/admin/lugares', label: 'Lugares para tocar', icon: MapPin },
   { href: '/admin/open-calls', label: 'Open Calls', icon: Megaphone },
   { href: '/admin/novidades', label: 'Novidades', icon: Newspaper },
-  { href: '/admin/releases',  label: 'Releases',  icon: Disc3 },
-  { href: '/admin/media',     label: 'Imprensa',  icon: Image },
-  { href: '/admin/links',      label: 'Links e Credenciais', icon: Link2 },
-  { href: '/admin/inventario', label: 'Inventário',          icon: Package },
-  { href: '/admin/contatos',   label: 'Contatos',            icon: Mail },
+  { href: '/admin/releases', label: 'Releases', icon: Disc3 },
+  { href: '/admin/media', label: 'Imprensa', icon: Image },
+  { href: '/admin/links', label: 'Links e Credenciais', icon: Link2 },
+  { href: '/admin/inventario', label: 'Inventário', icon: Package },
+  { href: '/admin/contatos', label: 'Contatos', icon: Mail },
   { href: '/admin/avaliacoes', label: 'Avaliações', icon: Star },
 ]
 
@@ -252,11 +280,15 @@ export default function AdminSidebar({ isOpen = false, onClose = () => {} }: Adm
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
-    createClient().auth.getUser().then(({ data }) => setUser(data.user))
+    createClient()
+      .auth.getUser()
+      .then(({ data }) => setUser(data.user))
   }, [])
 
   // close drawer on route change
-  useEffect(() => { onClose() }, [router.pathname]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    onClose()
+  }, [router.pathname]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleSignOut() {
     await createClient().auth.signOut()
@@ -272,7 +304,9 @@ export default function AdminSidebar({ isOpen = false, onClose = () => {} }: Adm
             <BrandLogo src="/assets/logo-mobile.png" alt="Chico Romelo" />
             <span>Painel Admin</span>
           </Brand>
-          <CloseBtn onClick={onClose} aria-label="Fechar menu"><X /></CloseBtn>
+          <CloseBtn onClick={onClose} aria-label="Fechar menu">
+            <X />
+          </CloseBtn>
         </SidebarTop>
 
         <Nav>

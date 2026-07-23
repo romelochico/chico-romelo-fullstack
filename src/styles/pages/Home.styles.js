@@ -42,19 +42,14 @@ export const HeroBg = styled.div`
   will-change: transform;
 
   /* 3-shade brand gradient: sage (top) → olive → deep olive (bottom) */
-  background: linear-gradient(
-    148deg,
-    #878766 0%,
-    #404015 55%,
-    #1a1c0a 100%
-  );
+  background: linear-gradient(148deg, #878766 0%, #404015 55%, #1a1c0a 100%);
 
   /* halftone dots */
   &::before {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle, rgba(245,240,232,0.16) 1.5px, transparent 1.5px);
+    background-image: radial-gradient(circle, rgba(245, 240, 232, 0.16) 1.5px, transparent 1.5px);
     background-size: 13px 13px;
     z-index: 1;
     pointer-events: none;
@@ -69,8 +64,8 @@ export const HeroBg = styled.div`
       -58deg,
       transparent 0px,
       transparent 32px,
-      rgba(245,240,232,0.04) 32px,
-      rgba(245,240,232,0.04) 34px
+      rgba(245, 240, 232, 0.04) 32px,
+      rgba(245, 240, 232, 0.04) 34px
     );
     z-index: 2;
     pointer-events: none;
@@ -101,7 +96,7 @@ export const HeroBg = styled.div`
   .bg-vignette {
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.5) 100%);
+    background: radial-gradient(ellipse at center, transparent 35%, rgba(0, 0, 0, 0.5) 100%);
     z-index: 4;
     pointer-events: none;
   }
@@ -111,7 +106,7 @@ export const HeroLockup = styled.div`
   position: relative;
   z-index: 2;
   text-align: center;
-  animation: hero-fade-up 1s cubic-bezier(0.22,0.61,0.36,1) 0.35s both;
+  animation: hero-fade-up 1s cubic-bezier(0.22, 0.61, 0.36, 1) 0.35s both;
 
   img {
     width: clamp(300px, 58vw, 860px);
@@ -120,28 +115,40 @@ export const HeroLockup = styled.div`
     opacity: 0.95;
     margin: 0 auto;
     display: block;
-    drop-shadow: 0 4px 32px rgba(0,0,0,0.4);
+    drop-shadow: 0 4px 32px rgba(0, 0, 0, 0.4);
   }
 
-  .logo-full   { display: block; }
-  .logo-mobile { display: none;  }
+  .logo-full {
+    display: block;
+  }
+  .logo-mobile {
+    display: none;
+  }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     padding: 0 24px;
 
-    .logo-full   { display: none;  }
-    .logo-mobile { display: block; width: clamp(200px, 72vw, 340px); height: auto; filter: brightness(0) invert(1); }
+    .logo-full {
+      display: none;
+    }
+    .logo-mobile {
+      display: block;
+      width: clamp(200px, 72vw, 340px);
+      height: auto;
+      filter: brightness(0) invert(1);
+    }
   }
 `
 
 export const HeroCta = styled.button`
   position: absolute;
   bottom: 6vh;
-  left: 0; right: 0;
+  left: 0;
+  right: 0;
   width: 100%;
   text-align: center;
   z-index: 3;
-  animation: hero-fade-up 1s cubic-bezier(0.22,0.61,0.36,1) 0.6s both;
+  animation: hero-fade-up 1s cubic-bezier(0.22, 0.61, 0.36, 1) 0.6s both;
   font-family: ${({ theme }) => theme.fonts.body};
   font-weight: 500;
   color: ${({ theme }) => theme.colors.cream};
@@ -153,7 +160,9 @@ export const HeroCta = styled.button`
   cursor: pointer;
   transition: opacity 0.2s;
 
-  &:hover { opacity: 0.75; }
+  &:hover {
+    opacity: 0.75;
+  }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     position: static;
@@ -219,11 +228,17 @@ export const Kicker = styled.h2`
   letter-spacing: 0.02em;
   text-transform: uppercase;
   text-align: left;
-  margin: 20px 0 ${({ $noMargin }) => $noMargin ? '0' : '36px'};
+  margin: 20px 0 ${({ $noMargin }) => ($noMargin ? '0' : '36px')};
   color: ${({ theme }) => theme.colors.charcoal};
 
-  em { font-style: normal; color: ${({ theme }) => theme.colors.olive}; }
-  .outline { -webkit-text-stroke: 2px ${({ theme }) => theme.colors.charcoal}; color: transparent; }
+  em {
+    font-style: normal;
+    color: ${({ theme }) => theme.colors.olive};
+  }
+  .outline {
+    -webkit-text-stroke: 2px ${({ theme }) => theme.colors.charcoal};
+    color: transparent;
+  }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     font-size: clamp(38px, 5.5vw, 80px);
@@ -253,7 +268,9 @@ export const BodyP = styled.p`
   line-height: 1.6;
   margin: 0 0 16px;
 
-  b { font-weight: 700; }
+  b {
+    font-weight: 700;
+  }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     font-size: 14px;
@@ -282,7 +299,9 @@ export const Collage = styled.div`
 
 export const Piece = styled.div`
   position: absolute;
-  box-shadow: 0 12px 30px -10px rgba(0,0,0,.35), 0 2px 0 rgba(0,0,0,.08);
+  box-shadow:
+    0 12px 30px -10px rgba(0, 0, 0, 0.35),
+    0 2px 0 rgba(0, 0, 0, 0.08);
   background: #fff;
   padding: 12px 12px 36px;
   animation-fill-mode: forwards;
@@ -295,7 +314,7 @@ export const Piece = styled.div`
   left: ${({ $left }) => $left ?? 0}px;
   width: ${({ $width }) => $width ?? 0}px;
   height: ${({ $height }) => $height ?? 0}px;
-  ${({ $zIndex }) => $zIndex ? `z-index: ${$zIndex};` : ''}
+  ${({ $zIndex }) => ($zIndex ? `z-index: ${$zIndex};` : '')}
   animation-delay: ${({ $delay }) => $delay ?? '0s'};
 
   &.revealed {
@@ -311,17 +330,46 @@ export const Piece = styled.div`
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.small}) {
-    &.piece-1 { top: 40px;   left: 4px;   width: 155px; height: 138px; }
-    &.piece-2 { top: 0px;   left: 168px; width: 180px; height: 162px; z-index: 3; }
-    &.piece-3 { top: 180px; left: 155px; width: 195px; height: 162px; z-index: 2; }
-    &.piece-4 { top: 170px; left: -8px;  width: 158px; height: 178px; }
-    &.piece-5 { top: 355px; left: 100px; width: 172px; height: 124px; }
+    &.piece-1 {
+      top: 40px;
+      left: 4px;
+      width: 155px;
+      height: 138px;
+    }
+    &.piece-2 {
+      top: 0px;
+      left: 168px;
+      width: 180px;
+      height: 162px;
+      z-index: 3;
+    }
+    &.piece-3 {
+      top: 180px;
+      left: 155px;
+      width: 195px;
+      height: 162px;
+      z-index: 2;
+    }
+    &.piece-4 {
+      top: 170px;
+      left: -8px;
+      width: 158px;
+      height: 178px;
+    }
+    &.piece-5 {
+      top: 355px;
+      left: 100px;
+      width: 172px;
+      height: 124px;
+    }
   }
 `
 
 export const PieceCap = styled.div`
   position: absolute;
-  bottom: 8px; left: 12px; right: 12px;
+  bottom: 8px;
+  left: 12px;
+  right: 12px;
   font-family: ${({ theme }) => theme.fonts.mono};
   font-size: 11px;
   color: ${({ theme }) => theme.colors.charcoal};
@@ -331,16 +379,36 @@ export const PieceCap = styled.div`
 const Tape = styled.div`
   position: absolute;
   background: ${({ theme }) => theme.colors.tape};
-  box-shadow: 0 1px 2px rgba(0,0,0,.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   z-index: 5;
   opacity: 0;
   transition: opacity 0.5s ease 0.8s;
-  &.revealed { opacity: 0.85; }
+  &.revealed {
+    opacity: 0.85;
+  }
 `
 
-export const CollageT1 = styled(Tape)`top: 20px; left: 152px; width: 100px; height: 24px; transform: rotate(-45deg);`
-export const CollageT2 = styled(Tape)`top: 200px; left: 140px; width: 90px; height: 22px; transform: rotate(25deg);`
-export const CollageT3 = styled(Tape)`top: 370px; right: 20px; width: 110px; height: 24px; transform: rotate(-10deg);`
+export const CollageT1 = styled(Tape)`
+  top: 20px;
+  left: 152px;
+  width: 100px;
+  height: 24px;
+  transform: rotate(-45deg);
+`
+export const CollageT2 = styled(Tape)`
+  top: 200px;
+  left: 140px;
+  width: 90px;
+  height: 22px;
+  transform: rotate(25deg);
+`
+export const CollageT3 = styled(Tape)`
+  top: 370px;
+  right: 20px;
+  width: 110px;
+  height: 24px;
+  transform: rotate(-10deg);
+`
 
 export const Stamp = styled.div`
   position: absolute;
@@ -355,21 +423,37 @@ export const Stamp = styled.div`
   z-index: 6;
   opacity: 0;
   transition: opacity 0.5s ease 0.9s;
-  &.revealed { opacity: 1; }
+  &.revealed {
+    opacity: 1;
+  }
 `
 
-export const StampOuca = styled(Stamp)`top: 6px; left: 8px; transform: rotate(-3deg);`
-export const StampNovo = styled(Stamp)`bottom: 30px; left: 450px; transform: rotate(3deg);`
+export const StampOuca = styled(Stamp)`
+  top: 6px;
+  left: 8px;
+  transform: rotate(-3deg);
+`
+export const StampNovo = styled(Stamp)`
+  bottom: 30px;
+  left: 450px;
+  transform: rotate(3deg);
+`
 
 export const ScribbleArrow = styled.div`
   position: absolute;
   z-index: 7;
   opacity: 0;
   transition: opacity 0.5s ease 1s;
-  &.revealed { opacity: 1; }
+  &.revealed {
+    opacity: 1;
+  }
 `
 
-export const ColScribbleArrow = styled(ScribbleArrow)`top: 210px; left: 14px; transform: rotate(-8deg);`
+export const ColScribbleArrow = styled(ScribbleArrow)`
+  top: 210px;
+  left: 14px;
+  transform: rotate(-8deg);
+`
 
 export const ScribbleText = styled.div`
   position: absolute;
@@ -380,10 +464,16 @@ export const ScribbleText = styled.div`
   line-height: 1;
   opacity: 0;
   transition: opacity 0.5s ease 1s;
-  &.revealed { opacity: 1; }
+  &.revealed {
+    opacity: 1;
+  }
 `
 
-export const ColScribbleText = styled(ScribbleText)`bottom: 0px; right: 30px; transform: rotate(-4deg);`
+export const ColScribbleText = styled(ScribbleText)`
+  bottom: 0px;
+  right: 30px;
+  transform: rotate(-4deg);
+`
 
 // ── MÚSICAS SECTION ───────────────────────────────────────────
 export const MusicasSection = styled.section`
@@ -459,17 +549,22 @@ export const EpCoverWrap = styled.div`
   position: relative;
   aspect-ratio: 1/1;
   background: ${({ theme }) => theme.colors.charcoal};
-  box-shadow: 0 24px 40px -20px rgba(0,0,0,.4);
+  box-shadow: 0 24px 40px -20px rgba(0, 0, 0, 0.4);
   transform: rotate(-2deg);
   cursor: pointer;
 
-  img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
 
   &::after {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(rgba(0,0,0,.5) 1px, transparent 1.3px);
+    background-image: radial-gradient(rgba(0, 0, 0, 0.5) 1px, transparent 1.3px);
     background-size: 5px 5px;
     mix-blend-mode: multiply;
     opacity: 0.2;
@@ -479,8 +574,10 @@ export const EpCoverWrap = styled.div`
 
 export const EpSticker = styled.div`
   position: absolute;
-  top: -22px; right: -22px;
-  width: 130px; height: 130px;
+  top: -22px;
+  right: -22px;
+  width: 130px;
+  height: 130px;
   background: ${({ theme }) => theme.colors.olive};
   color: ${({ theme }) => theme.colors.cream};
   border-radius: 50%;
@@ -494,7 +591,7 @@ export const EpSticker = styled.div`
   text-align: center;
   line-height: 0.9;
   transform: rotate(14deg);
-  box-shadow: 0 8px 0 rgba(0,0,0,.12);
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.12);
   z-index: 3;
 
   span {
@@ -552,8 +649,14 @@ export const StreamingRow = styled.div`
     gap: 7px;
     justify-content: center;
 
-    a { padding: 8px 12px; font-size: 12px; }
-    a svg { width: 16px; height: 16px; }
+    a {
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+    a svg {
+      width: 16px;
+      height: 16px;
+    }
   }
 `
 
@@ -568,7 +671,8 @@ export const OutrosH = styled.div`
   align-items: center;
   gap: 12px;
 
-  &::before, &::after {
+  &::before,
+  &::after {
     content: '';
     height: 2px;
     flex: 1;
@@ -587,21 +691,36 @@ export const OutroCard = styled.div`
   flex: 1;
   aspect-ratio: 1/1;
   background: ${({ theme }) => theme.colors.charcoal};
-  box-shadow: 0 8px 18px -10px rgba(0,0,0,.4);
+  box-shadow: 0 8px 18px -10px rgba(0, 0, 0, 0.4);
   transition: transform 0.2s;
   cursor: pointer;
   overflow: hidden;
 
-  &:nth-child(1) { transform: rotate(-3deg); }
-  &:nth-child(2) { transform: rotate(2deg); }
-  &:nth-child(3) { transform: rotate(-1.5deg); }
-  &:hover { transform: rotate(0) scale(1.04); z-index: 2; }
+  &:nth-child(1) {
+    transform: rotate(-3deg);
+  }
+  &:nth-child(2) {
+    transform: rotate(2deg);
+  }
+  &:nth-child(3) {
+    transform: rotate(-1.5deg);
+  }
+  &:hover {
+    transform: rotate(0) scale(1.04);
+    z-index: 2;
+  }
 
-  img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
 
   .cap {
     position: absolute;
-    bottom: 6px; left: 6px;
+    bottom: 6px;
+    left: 6px;
     background: ${({ theme }) => theme.colors.cream};
     color: ${({ theme }) => theme.colors.charcoal};
     padding: 3px 7px;
@@ -657,7 +776,9 @@ export const NewsHead = styled.div`
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.small}) {
-    h2 { font-size: clamp(44px, 13vw, 80px); }
+    h2 {
+      font-size: clamp(44px, 13vw, 80px);
+    }
   }
 `
 

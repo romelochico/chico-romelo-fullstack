@@ -10,13 +10,25 @@ const base = css`
   text-decoration: none;
   white-space: nowrap;
   border: 2px solid transparent;
-  transition: transform 0.15s, background 0.15s, border-color 0.15s, color 0.15s;
+  transition:
+    transform 0.15s,
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
   line-height: 1;
 
-  &:hover { transform: translateY(-2px) rotate(-1.5deg); }
-  &:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+  &:hover {
+    transform: translateY(-2px) rotate(-1.5deg);
+  }
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none !important;
+  }
 
-  svg { flex-shrink: 0; }
+  svg {
+    flex-shrink: 0;
+  }
 `
 
 // ── Variants ──────────────────────────────────
@@ -56,22 +68,35 @@ const olive = css`
 const ghost = css`
   background: transparent;
   color: ${({ theme }) => theme.colors.cream};
-  border-color: rgba(255,255,255,0.5);
+  border-color: rgba(255, 255, 255, 0.5);
 
   &:hover {
-    background: rgba(255,255,255,0.12);
+    background: rgba(255, 255, 255, 0.12);
     border-color: ${({ theme }) => theme.colors.cream};
   }
 `
 
 // ── Sizes ──────────────────────────────────────
-const sm = css`font-size: 12px; padding: 7px 14px; border-radius: 999px;`
-const md = css`font-size: 14px; padding: 10px 18px; border-radius: 999px;`
-const lg = css`font-size: 16px; padding: 14px 28px; border-radius: 999px;`
+const sm = css`
+  font-size: 12px;
+  padding: 7px 14px;
+  border-radius: 999px;
+`
+const md = css`
+  font-size: 14px;
+  padding: 10px 18px;
+  border-radius: 999px;
+`
+const lg = css`
+  font-size: 16px;
+  padding: 14px 28px;
+  border-radius: 999px;
+`
 const square = css`
   padding: 10px;
   border-radius: 50%;
-  width: 40px; height: 40px;
+  width: 40px;
+  height: 40px;
   justify-content: center;
 `
 
@@ -79,13 +104,13 @@ export const ButtonBase = styled.button`
   ${base}
   ${({ $variant }) => {
     if ($variant === 'secondary') return secondary
-    if ($variant === 'olive')     return olive
-    if ($variant === 'ghost')     return ghost
+    if ($variant === 'olive') return olive
+    if ($variant === 'ghost') return ghost
     return primary
   }}
   ${({ $size }) => {
-    if ($size === 'sm')     return sm
-    if ($size === 'lg')     return lg
+    if ($size === 'sm') return sm
+    if ($size === 'lg') return lg
     if ($size === 'square') return square
     return md
   }}

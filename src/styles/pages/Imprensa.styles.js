@@ -14,7 +14,9 @@ export const PressIntro = styled.section`
   padding: 100px 5vw;
   overflow: hidden;
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.small}) { padding: 60px 5vw; }
+  @media (max-width: ${({ theme }) => theme.breakpoints.small}) {
+    padding: 60px 5vw;
+  }
 `
 
 export const PressIntroInner = styled.div`
@@ -24,23 +26,43 @@ export const PressIntroInner = styled.div`
   gap: 80px;
   align-items: flex-start;
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) { flex-direction: column; gap: 40px; }
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    flex-direction: column;
+    gap: 40px;
+  }
 `
 
 export const PressBio = styled.div`
-  flex: 1.2; min-width: 0;
+  flex: 1.2;
+  min-width: 0;
 
-  .lead { font-size: 22px; line-height: 1.5; font-weight: 600; margin: 24px 0 20px; }
-  p { font-size: 16px; line-height: 1.7; margin: 0 0 16px; text-wrap: pretty; }
+  .lead {
+    font-size: 22px;
+    line-height: 1.5;
+    font-weight: 600;
+    margin: 24px 0 20px;
+  }
+  p {
+    font-size: 16px;
+    line-height: 1.7;
+    margin: 0 0 16px;
+    text-wrap: pretty;
+  }
 `
 
 export const Kicker = styled.h2`
   font-family: ${({ theme }) => theme.fonts.display};
-  font-size: clamp(52px, 9vw, 140px); line-height: 0.88;
-  letter-spacing: 0.02em; text-transform: uppercase;
-  margin: 20px 0 36px; color: ${({ theme }) => theme.colors.charcoal};
+  font-size: clamp(52px, 9vw, 140px);
+  line-height: 0.88;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin: 20px 0 36px;
+  color: ${({ theme }) => theme.colors.charcoal};
 
-  .outline { -webkit-text-stroke: 2px ${({ theme }) => theme.colors.charcoal}; color: transparent; }
+  .outline {
+    -webkit-text-stroke: 2px ${({ theme }) => theme.colors.charcoal};
+    color: transparent;
+  }
 `
 
 export const KickerLogos = styled(Kicker)`
@@ -53,20 +75,23 @@ export const LogoStampImg = styled.img`
 `
 
 export const PressSidebar = styled.div`
-  flex: 0.6; min-width: 0;
+  flex: 0.6;
+  min-width: 0;
 `
 
 export const PressFactCard = styled.div`
   background: ${({ theme }) => theme.colors.white};
   padding: 28px 24px;
-  box-shadow: 0 8px 20px -8px rgba(0,0,0,.2);
+  box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.2);
   transform: rotate(1.5deg);
   margin-bottom: 24px;
 
   h4 {
     font-family: ${({ theme }) => theme.fonts.display};
-    font-size: 20px; text-transform: uppercase;
-    margin: 0 0 16px; letter-spacing: 0.02em;
+    font-size: 20px;
+    text-transform: uppercase;
+    margin: 0 0 16px;
+    letter-spacing: 0.02em;
   }
 `
 
@@ -76,17 +101,22 @@ export const FactRow = styled.div`
   padding: 8px 0;
   border-bottom: 1px dashed ${({ theme }) => theme.colors.sage};
   font-size: 14px;
-  &:last-child { border-bottom: none; }
+  &:last-child {
+    border-bottom: none;
+  }
 `
 
 export const FactLabel = styled.span`
   font-family: ${({ theme }) => theme.fonts.mono};
-  font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
   color: ${({ theme }) => theme.colors.sage};
 `
 
 export const FactValue = styled.span`
-  font-weight: 600; text-align: right;
+  font-weight: 600;
+  text-align: right;
 `
 
 export const PressDownloadCard = styled.div`
@@ -96,23 +126,50 @@ export const PressDownloadCard = styled.div`
   transform: rotate(-1deg);
   position: relative;
 
-  &::before { content: '✦'; position: absolute; top: -14px; right: 16px; font-size: 28px; color: ${({ theme }) => theme.colors.tape}; }
+  &::before {
+    content: '✦';
+    position: absolute;
+    top: -14px;
+    right: 16px;
+    font-size: 28px;
+    color: ${({ theme }) => theme.colors.tape};
+  }
 
-  h4 { font-family: ${({ theme }) => theme.fonts.display}; font-size: 20px; text-transform: uppercase; margin: 0 0 8px; }
-  p  { font-size: 13px; line-height: 1.5; opacity: 0.8; margin: 0 0 16px; }
+  h4 {
+    font-family: ${({ theme }) => theme.fonts.display};
+    font-size: 20px;
+    text-transform: uppercase;
+    margin: 0 0 8px;
+  }
+  p {
+    font-size: 13px;
+    line-height: 1.5;
+    opacity: 0.8;
+    margin: 0 0 16px;
+  }
 `
 
 export const DownloadBtn = styled.a`
-  display: inline-flex; align-items: center; gap: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   padding: 10px 18px;
   background: ${({ theme }) => theme.colors.cream};
   color: ${({ theme }) => theme.colors.olive};
   border-radius: 999px;
-  font-family: ${({ theme }) => theme.fonts.body}; font-weight: 600; font-size: 13px;
-  cursor: pointer; transition: transform 0.15s;
+  font-family: ${({ theme }) => theme.fonts.body};
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform 0.15s;
 
-  svg { width: 16px; height: 16px; }
-  &:hover { transform: translateY(-2px) rotate(-1.5deg); }
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+  &:hover {
+    transform: translateY(-2px) rotate(-1.5deg);
+  }
 `
 
 // ── PHOTOS SECTION ────────────────────────────────────────────
@@ -122,31 +179,54 @@ export const PhotosSection = styled.section`
   padding: 100px 5vw;
   overflow: hidden;
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.small}) { padding: 60px 5vw; }
+  @media (max-width: ${({ theme }) => theme.breakpoints.small}) {
+    padding: 60px 5vw;
+  }
 `
 
 export const PhotosHeader = styled.div`
   max-width: 1400px;
   margin: 0 auto 50px;
-  display: flex; align-items: center;
+  display: flex;
+  align-items: center;
   border-top: 4px double ${({ theme }) => theme.colors.charcoal};
   border-bottom: 4px double ${({ theme }) => theme.colors.charcoal};
   padding: 14px 0;
 
-  .ed { font-family: ${({ theme }) => theme.fonts.mono}; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: ${({ theme }) => theme.colors.sage}; }
+  .ed {
+    font-family: ${({ theme }) => theme.fonts.mono};
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: ${({ theme }) => theme.colors.sage};
+  }
 
   h2 {
     font-family: ${({ theme }) => theme.fonts.display};
-    font-size: clamp(48px, 8vw, 120px); line-height: 0.88;
-    text-align: center; margin: 0; flex: 1; text-transform: uppercase; color: ${({ theme }) => theme.colors.charcoal};
+    font-size: clamp(48px, 8vw, 120px);
+    line-height: 0.88;
+    text-align: center;
+    margin: 0;
+    flex: 1;
+    text-transform: uppercase;
+    color: ${({ theme }) => theme.colors.charcoal};
   }
 
-  .ed:last-child { text-align: right; }
+  .ed:last-child {
+    text-align: right;
+  }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.small}) {
-    flex-direction: column; align-items: center; text-align: center; gap: 8px;
-    h2 { flex: none; }
-    .ed:last-child { text-align: center; }
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    h2 {
+      flex: none;
+    }
+    .ed:last-child {
+      text-align: center;
+    }
   }
 `
 
@@ -157,45 +237,89 @@ export const PhotosGrid = styled.div`
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) { grid-template-columns: repeat(2, 1fr); }
-  @media (max-width: ${({ theme }) => theme.breakpoints.small}) { grid-template-columns: 1fr; }
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: ${({ theme }) => theme.breakpoints.small}) {
+    grid-template-columns: 1fr;
+  }
 `
 
 export const PressPhoto = styled.div`
   position: relative;
   background: ${({ theme }) => theme.colors.white};
   padding: 10px 10px 40px;
-  box-shadow: 0 8px 20px -8px rgba(0,0,0,.25);
-  transition: transform 0.3s cubic-bezier(0.22,0.61,0.36,1);
+  box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
   cursor: pointer;
 
-  &:nth-child(1) { transform: rotate(-2deg); }
-  &:nth-child(2) { transform: rotate(1.5deg); }
-  &:nth-child(3) { transform: rotate(-1deg); }
-  &:nth-child(4) { transform: rotate(2deg); }
-  &:nth-child(5) { transform: rotate(-1.5deg); }
-  &:nth-child(6) { transform: rotate(0.8deg); }
-  &:hover { transform: rotate(0) scale(1.03); z-index: 3; }
+  &:nth-child(1) {
+    transform: rotate(-2deg);
+  }
+  &:nth-child(2) {
+    transform: rotate(1.5deg);
+  }
+  &:nth-child(3) {
+    transform: rotate(-1deg);
+  }
+  &:nth-child(4) {
+    transform: rotate(2deg);
+  }
+  &:nth-child(5) {
+    transform: rotate(-1.5deg);
+  }
+  &:nth-child(6) {
+    transform: rotate(0.8deg);
+  }
+  &:hover {
+    transform: rotate(0) scale(1.03);
+    z-index: 3;
+  }
 
-  img { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+  img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+  }
 
   .cap {
-    position: absolute; bottom: 10px; left: 10px;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
     font-family: ${({ theme }) => theme.fonts.mono};
-    font-size: 10px; letter-spacing: 0.08em; color: ${({ theme }) => theme.colors.charcoal};
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: ${({ theme }) => theme.colors.charcoal};
   }
 `
 
 export const DlBadge = styled.a`
-  position: absolute; top: -8px; right: 8px;
-  background: ${({ theme }) => theme.colors.olive}; color: ${({ theme }) => theme.colors.cream};
-  width: 28px; height: 28px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  transform: rotate(6deg); z-index: 2; cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease;
+  position: absolute;
+  top: -8px;
+  right: 8px;
+  background: ${({ theme }) => theme.colors.olive};
+  color: ${({ theme }) => theme.colors.cream};
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(6deg);
+  z-index: 2;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
 
-  svg { width: 14px; height: 14px; }
-  &:hover { transform: rotate(6deg) scale(1.15); background: ${({ theme }) => theme.colors.charcoal}; }
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+  &:hover {
+    transform: rotate(6deg) scale(1.15);
+    background: ${({ theme }) => theme.colors.charcoal};
+  }
 `
 
 // ── VIDEO SECTION ─────────────────────────────────────────────
@@ -217,16 +341,24 @@ export const VideoHeader = styled.div`
 
 export const VideoSub = styled.p`
   font-family: ${({ theme }) => theme.fonts.mono};
-  font-size: 13px; letter-spacing: 0.04em; color: ${({ theme }) => theme.colors.sage};
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: ${({ theme }) => theme.colors.sage};
   margin: 8px 0 0;
 `
 
 export const VideoKicker = styled.h2`
   font-family: ${({ theme }) => theme.fonts.display};
-  font-size: clamp(40px, 6vw, 80px); line-height: 0.88;
-  text-transform: uppercase; margin: 16px 0 0; color: ${({ theme }) => theme.colors.charcoal};
+  font-size: clamp(40px, 6vw, 80px);
+  line-height: 0.88;
+  text-transform: uppercase;
+  margin: 16px 0 0;
+  color: ${({ theme }) => theme.colors.charcoal};
 
-  .outline { -webkit-text-stroke: 2px ${({ theme }) => theme.colors.charcoal}; color: transparent; }
+  .outline {
+    -webkit-text-stroke: 2px ${({ theme }) => theme.colors.charcoal};
+    color: transparent;
+  }
 `
 
 export const VideoWrap = styled.div`
@@ -237,8 +369,10 @@ export const VideoWrap = styled.div`
 
   iframe {
     position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     border: 0;
   }
 `
@@ -252,7 +386,8 @@ export const LogosSection = styled.section`
 `
 
 export const LogosInner = styled.div`
-  max-width: 1400px; margin: 0 auto;
+  max-width: 1400px;
+  margin: 0 auto;
 `
 
 export const LogosGrid = styled.div`
@@ -261,28 +396,42 @@ export const LogosGrid = styled.div`
   gap: 28px;
   margin-top: 40px;
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) { grid-template-columns: repeat(2, 1fr); }
-  @media (max-width: ${({ theme }) => theme.breakpoints.small}) { grid-template-columns: 1fr; }
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: ${({ theme }) => theme.breakpoints.small}) {
+    grid-template-columns: 1fr;
+  }
 `
 
 export const LogoCard = styled.div`
   background: ${({ $dark, $olive, theme }) =>
     $dark ? theme.colors.charcoal : $olive ? theme.colors.olive : theme.colors.white};
-  color: ${({ $dark, $olive, theme }) => ($dark || $olive) ? theme.colors.cream : 'inherit'};
+  color: ${({ $dark, $olive, theme }) => ($dark || $olive ? theme.colors.cream : 'inherit')};
   padding: 40px 30px;
-  display: flex; flex-direction: column; align-items: center; gap: 20px;
-  box-shadow: 0 6px 16px -8px rgba(0,0,0,.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.18);
   transition: transform 0.2s;
 
-  &:hover { transform: translateY(-4px); }
+  &:hover {
+    transform: translateY(-4px);
+  }
 
   img {
-    height: 50px; width: auto; object-fit: contain;
-    ${({ $dark, $olive }) => ($dark || $olive) ? 'filter: brightness(0) invert(1);' : ''}
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+    ${({ $dark, $olive }) => ($dark || $olive ? 'filter: brightness(0) invert(1);' : '')}
   }
 
   span {
     font-family: ${({ theme }) => theme.fonts.mono};
-    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.6;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.6;
   }
 `

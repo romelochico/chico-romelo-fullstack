@@ -12,10 +12,10 @@ export default {
   args: { children: '★ Prémio' },
 }
 
-export const Dark    = { args: { variant: 'dark' } }
-export const Olive   = { args: { variant: 'olive' } }
-export const Cream   = { args: { variant: 'cream' } }
-export const Tag     = { args: { variant: 'tag', children: 'Lisboa' } }
+export const Dark = { args: { variant: 'dark' } }
+export const Olive = { args: { variant: 'olive' } }
+export const Cream = { args: { variant: 'cream' } }
+export const Tag = { args: { variant: 'tag', children: 'Lisboa' } }
 export const Success = { args: { variant: 'success', children: 'Grátis' } }
 export const Rotated = { args: { variant: 'olive', rotate: '4deg', children: '★ Ao Vivo' } }
 

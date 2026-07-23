@@ -14,13 +14,32 @@ import { useStreamingModal } from '../hooks/useStreamingModal'
 import { EP, SINGLES } from '../lib/data'
 import DecoStamp from '../components/DecoStamp/DecoStamp'
 import {
-  EpSection, EpInner, EpCoverWrap, EpCover, EpSticker, EpDetail,
-  EpEyebrow, EpTitle, EpSub, StreamingRow,
-  SinglesSection, SinglesHeader, SinglesGrid, SingleCard, SingleStrap,
-  SingleInfo, SingleName, SingleMeta, SingleLinks,
+  EpSection,
+  EpInner,
+  EpCoverWrap,
+  EpCover,
+  EpSticker,
+  EpDetail,
+  EpEyebrow,
+  EpTitle,
+  EpSub,
+  StreamingRow,
+  SinglesSection,
+  SinglesHeader,
+  SinglesGrid,
+  SingleCard,
+  SingleStrap,
+  SingleInfo,
+  SingleName,
+  SingleMeta,
+  SingleLinks,
 } from '../styles/pages/Lancamentos.styles'
 
-const MARQUEE_1 = ['EP · Chico Romelo', '4 faixas', '2 de Fevereiro · Teste Drive · Passatempo · Beira do Rio']
+const MARQUEE_1 = [
+  'EP · Chico Romelo',
+  '4 faixas',
+  '2 de Fevereiro · Teste Drive · Passatempo · Beira do Rio',
+]
 const MARQUEE_2 = ['Singles · 2024–2025', '2 de Fevereiro · Passatempo · Teste Drive']
 
 export default function LancamentosPage() {
@@ -31,27 +50,52 @@ export default function LancamentosPage() {
     <>
       <Head>
         <title>Chico Romelo | Lançamentos e Discografia</title>
-        <meta name="description" content="Discografia de Chico Romelo: EP, singles e todos os lançamentos. Ouça no Spotify, Apple Music e YouTube." />
+        <meta
+          name="description"
+          content="Discografia de Chico Romelo: EP, singles e todos os lançamentos. Ouça no Spotify, Apple Music e YouTube."
+        />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://www.chicoromelo.com/lancamentos" />
         <meta property="og:type" content="music.album" />
         <meta property="og:title" content="Chico Romelo — Lançamentos e Discografia" />
-        <meta property="og:description" content="Discografia de Chico Romelo: EP, singles e todos os lançamentos. Ouça no Spotify, Apple Music e YouTube." />
+        <meta
+          property="og:description"
+          content="Discografia de Chico Romelo: EP, singles e todos os lançamentos. Ouça no Spotify, Apple Music e YouTube."
+        />
         <meta property="og:url" content="https://www.chicoromelo.com/lancamentos" />
-        <meta property="og:image" content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg" />
+        <meta
+          property="og:image"
+          content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg"
+        />
         <meta property="og:site_name" content="Chico Romelo" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Chico Romelo — Lançamentos e Discografia" />
-        <meta name="twitter:description" content="Discografia de Chico Romelo: EP, singles e todos os lançamentos. Ouça no Spotify, Apple Music e YouTube." />
-        <meta name="twitter:image" content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg" />
-        <link rel="preload" as="image" href="/uploads/_MG_2546.webp" type="image/webp" fetchPriority="high" />
+        <meta
+          name="twitter:description"
+          content="Discografia de Chico Romelo: EP, singles e todos os lançamentos. Ouça no Spotify, Apple Music e YouTube."
+        />
+        <meta
+          name="twitter:image"
+          content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/uploads/_MG_2546.webp"
+          type="image/webp"
+          fetchPriority="high"
+        />
       </Head>
 
       <Nav innerPage />
 
       <PageHero
         label="Discografia"
-        title={<>Lança<span className="outline">mentos</span></>}
+        title={
+          <>
+            Lança<span className="outline">mentos</span>
+          </>
+        }
         imageSrc="/uploads/_MG_2546.webp"
         imageJpg="/uploads/_MG_2546.jpg"
         imageAlt="Chico Romelo ao vivo"
@@ -67,7 +111,15 @@ export default function LancamentosPage() {
         <EpInner>
           <EpCoverWrap
             data-reveal
-            onClick={() => openModal({ cover: EP.cover, title: 'Chico Romelo — EP', spotify: EP.spotify, apple: EP.apple, youtube: EP.youtube })}
+            onClick={() =>
+              openModal({
+                cover: EP.cover,
+                title: 'Chico Romelo — EP',
+                spotify: EP.spotify,
+                apple: EP.apple,
+                youtube: EP.youtube,
+              })
+            }
           >
             <EpCover>
               <picture>
@@ -75,20 +127,28 @@ export default function LancamentosPage() {
                 <img src={EP.coverJpg} alt="Chico Romelo — EP" loading="lazy" decoding="async" />
               </picture>
             </EpCover>
-            <EpSticker>OUT<br />NOW<span>★ 2025 ★</span></EpSticker>
+            <EpSticker>
+              OUT
+              <br />
+              NOW<span>★ 2025 ★</span>
+            </EpSticker>
           </EpCoverWrap>
 
           <EpDetail data-reveal>
             <SectionLabel>01 · EP de Estreia</SectionLabel>
             <EpEyebrow>EP · 2025</EpEyebrow>
-            <EpTitle>Chico<br />Romelo</EpTitle>
+            <EpTitle>
+              Chico
+              <br />
+              Romelo
+            </EpTitle>
             <EpSub>4 faixas · gravado em Lisboa · 2025</EpSub>
 
             <TrackList tracks={EP.tracks} onTrackClick={openModal} />
 
             <StreamingRow>
               <StreamBtn platform="spotify" href={EP.spotify} />
-              <StreamBtn platform="apple"   href={EP.apple} />
+              <StreamBtn platform="apple" href={EP.apple} />
               <StreamBtn platform="youtube" href={EP.youtube} />
             </StreamingRow>
           </EpDetail>
@@ -108,11 +168,19 @@ export default function LancamentosPage() {
         </SinglesHeader>
 
         <SinglesGrid>
-          {SINGLES.map((s) => (
+          {SINGLES.map(s => (
             <SingleCard
               key={s.name}
               data-reveal
-              onClick={() => openModal({ cover: s.cover, title: s.name, spotify: s.spotify, apple: s.apple, youtube: s.youtube })}
+              onClick={() =>
+                openModal({
+                  cover: s.cover,
+                  title: s.name,
+                  spotify: s.spotify,
+                  apple: s.apple,
+                  youtube: s.youtube,
+                })
+              }
             >
               <SingleStrap>{s.strap}</SingleStrap>
               <picture>
@@ -123,10 +191,20 @@ export default function LancamentosPage() {
                 <SingleName>{s.name}</SingleName>
                 <SingleMeta>{s.meta}</SingleMeta>
                 <SingleLinks>
-                  <a href={s.spotify} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+                  <a
+                    href={s.spotify}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={e => e.stopPropagation()}
+                  >
                     <IconSpotify size={14} /> Spotify
                   </a>
-                  <a href={s.apple} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+                  <a
+                    href={s.apple}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={e => e.stopPropagation()}
+                  >
                     <IconAppleMusic size={14} /> Apple
                   </a>
                 </SingleLinks>

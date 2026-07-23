@@ -14,8 +14,14 @@ import DecoStamp from '../components/DecoStamp/DecoStamp'
 import type { GetStaticProps } from 'next'
 import type { EventRow } from '../types'
 import {
-  AgendaSection, AgendaHeader, Kicker, EmptyShows,
-  ShowList, CtaStrip, CtaInner, BtnPrimary,
+  AgendaSection,
+  AgendaHeader,
+  Kicker,
+  EmptyShows,
+  ShowList,
+  CtaStrip,
+  CtaInner,
+  BtnPrimary,
 } from '../styles/pages/Agenda.styles'
 
 const MARQUEE_1 = ['Ao vivo em Lisboa e Portugal', '2026', 'Próximos shows']
@@ -33,20 +39,41 @@ export default function AgendaPage({ upcoming, past }: AgendaPageProps) {
     <>
       <Head>
         <title>Chico Romelo | Agenda de Shows</title>
-        <meta name="description" content="Agenda de shows da Chico Romelo em 2026: próximos concertos e histórico de apresentações ao vivo." />
+        <meta
+          name="description"
+          content="Agenda de shows da Chico Romelo em 2026: próximos concertos e histórico de apresentações ao vivo."
+        />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://www.chicoromelo.com/agenda" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Chico Romelo — Agenda de Shows" />
-        <meta property="og:description" content="Agenda de shows da Chico Romelo em 2026: próximos concertos e histórico de apresentações ao vivo." />
+        <meta
+          property="og:description"
+          content="Agenda de shows da Chico Romelo em 2026: próximos concertos e histórico de apresentações ao vivo."
+        />
         <meta property="og:url" content="https://www.chicoromelo.com/agenda" />
-        <meta property="og:image" content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg" />
+        <meta
+          property="og:image"
+          content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg"
+        />
         <meta property="og:site_name" content="Chico Romelo" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Chico Romelo — Agenda de Shows" />
-        <meta name="twitter:description" content="Agenda de shows da Chico Romelo em 2026: próximos concertos e histórico de apresentações ao vivo." />
-        <meta name="twitter:image" content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg" />
-        <link rel="preload" as="image" href="/uploads/_MG_2808.webp" type="image/webp" fetchPriority="high" />
+        <meta
+          name="twitter:description"
+          content="Agenda de shows da Chico Romelo em 2026: próximos concertos e histórico de apresentações ao vivo."
+        />
+        <meta
+          name="twitter:image"
+          content="https://www.chicoromelo.com/uploads/thumbnail-photo.jpg"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/uploads/_MG_2808.webp"
+          type="image/webp"
+          fetchPriority="high"
+        />
       </Head>
 
       <Nav innerPage />
@@ -68,14 +95,19 @@ export default function AgendaPage({ upcoming, past }: AgendaPageProps) {
 
         <AgendaHeader>
           <SectionLabel>Próximos Shows</SectionLabel>
-          <Kicker>Próximas<br /><span className="outline">datas.</span></Kicker>
+          <Kicker>
+            Próximas
+            <br />
+            <span className="outline">datas.</span>
+          </Kicker>
         </AgendaHeader>
 
         <ShowList>
-          {upcoming.length > 0
-            ? upcoming.map(e => <ShowCard key={e.id} {...toShowCardProps(e)} />)
-            : <EmptyShows>Novos shows em breve.</EmptyShows>
-          }
+          {upcoming.length > 0 ? (
+            upcoming.map(e => <ShowCard key={e.id} {...toShowCardProps(e)} />)
+          ) : (
+            <EmptyShows>Novos shows em breve.</EmptyShows>
+          )}
         </ShowList>
       </AgendaSection>
 
@@ -85,11 +117,17 @@ export default function AgendaPage({ upcoming, past }: AgendaPageProps) {
       <AgendaSection>
         <AgendaHeader>
           <SectionLabel>Histórico</SectionLabel>
-          <Kicker>Shows<br /><span className="outline">anteriores.</span></Kicker>
+          <Kicker>
+            Shows
+            <br />
+            <span className="outline">anteriores.</span>
+          </Kicker>
         </AgendaHeader>
 
         <ShowList className="past">
-          {past.map(e => <ShowCard key={e.id} {...toShowCardProps(e)} />)}
+          {past.map(e => (
+            <ShowCard key={e.id} {...toShowCardProps(e)} />
+          ))}
         </ShowList>
       </AgendaSection>
 

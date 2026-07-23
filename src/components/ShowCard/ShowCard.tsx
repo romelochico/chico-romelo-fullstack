@@ -1,12 +1,32 @@
 import Link from 'next/link'
 import {
-  CardRow, DateBox, Day, Month, Year,
-  ShowInfo, ShowName, ShowVenue, ShowTags, ShowTag,
-  ShowCta, ShowLink, ShowBadge,
+  CardRow,
+  DateBox,
+  Day,
+  Month,
+  Year,
+  ShowInfo,
+  ShowName,
+  ShowVenue,
+  ShowTags,
+  ShowTag,
+  ShowCta,
+  ShowLink,
+  ShowBadge,
 } from './ShowCard.styles'
 import type { ShowCardProps } from '../../types'
 
-export default function ShowCard({ day, month, year, name, venue, tags = [], link, badge, past = false }: ShowCardProps) {
+export default function ShowCard({
+  day,
+  month,
+  year,
+  name,
+  venue,
+  tags = [],
+  link,
+  badge,
+  past = false,
+}: ShowCardProps) {
   return (
     <CardRow $past={past} data-reveal>
       <DateBox $past={past}>
@@ -20,17 +40,24 @@ export default function ShowCard({ day, month, year, name, venue, tags = [], lin
         <ShowVenue>{venue}</ShowVenue>
         {tags.length > 0 && (
           <ShowTags>
-            {tags.map((t) => <ShowTag key={t}>{t}</ShowTag>)}
+            {tags.map(t => (
+              <ShowTag key={t}>{t}</ShowTag>
+            ))}
           </ShowTags>
         )}
       </ShowInfo>
 
       <ShowCta>
-        {link && (
-          link.external
-            ? <ShowLink href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</ShowLink>
-            : <Link href={link.href} passHref legacyBehavior><ShowLink as="a">{link.label}</ShowLink></Link>
-        )}
+        {link &&
+          (link.external ? (
+            <ShowLink href={link.href} target="_blank" rel="noopener noreferrer">
+              {link.label}
+            </ShowLink>
+          ) : (
+            <Link href={link.href} passHref legacyBehavior>
+              <ShowLink as="a">{link.label}</ShowLink>
+            </Link>
+          ))}
         {badge && <ShowBadge>{badge}</ShowBadge>}
       </ShowCta>
     </CardRow>

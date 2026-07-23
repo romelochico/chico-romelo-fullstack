@@ -1,16 +1,16 @@
 import styled from 'styled-components'
 
 const C = {
-  text:       '#f5f0e8',
-  textDim:    'rgba(245,240,232,0.45)',
-  textFaint:  'rgba(245,240,232,0.25)',
-  border:     'rgba(255,255,255,0.07)',
-  borderHov:  'rgba(255,255,255,0.13)',
-  card:       'rgba(255,255,255,0.03)',
-  gold:       '#c8a96e',
-  red:        '#f87171',
-  redBg:      'rgba(248,113,113,0.08)',
-  greenBg:    'rgba(64,64,21,0.15)',
+  text: '#f5f0e8',
+  textDim: 'rgba(245,240,232,0.45)',
+  textFaint: 'rgba(245,240,232,0.25)',
+  border: 'rgba(255,255,255,0.07)',
+  borderHov: 'rgba(255,255,255,0.13)',
+  card: 'rgba(255,255,255,0.03)',
+  gold: '#c8a96e',
+  red: '#f87171',
+  redBg: 'rgba(248,113,113,0.08)',
+  greenBg: 'rgba(64,64,21,0.15)',
 }
 
 // ── STATS BAR ───────────────────────────────────────────────────
@@ -18,7 +18,7 @@ export const StatsBar = styled.div`
   display: flex;
   align-items: center;
   gap: 0;
-  background: rgba(255,255,255,0.03);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid ${C.border};
   border-radius: 10px;
   margin-bottom: 28px;
@@ -69,12 +69,16 @@ export const SortBtn = styled.button`
   text-transform: uppercase;
   padding: 5px 12px;
   border-radius: 20px;
-  border: 1px solid ${({ $active }) => $active ? 'rgba(200,169,110,0.6)' : 'rgba(255,255,255,0.10)'};
-  background: ${({ $active }) => $active ? 'rgba(200,169,110,0.12)' : 'transparent'};
-  color: ${({ $active }) => $active ? '#c8a96e' : 'rgba(245,240,232,0.45)'};
+  border: 1px solid
+    ${({ $active }) => ($active ? 'rgba(200,169,110,0.6)' : 'rgba(255,255,255,0.10)')};
+  background: ${({ $active }) => ($active ? 'rgba(200,169,110,0.12)' : 'transparent')};
+  color: ${({ $active }) => ($active ? '#c8a96e' : 'rgba(245,240,232,0.45)')};
   cursor: pointer;
   transition: all 0.15s ease;
-  &:hover { border-color: rgba(200,169,110,0.4); color: rgba(245,240,232,0.75); }
+  &:hover {
+    border-color: rgba(200, 169, 110, 0.4);
+    color: rgba(245, 240, 232, 0.75);
+  }
 `
 
 // ── SECTION HEAD ────────────────────────────────────────────────
@@ -117,11 +121,13 @@ export const ShowCard = styled.a`
   padding: 16px 48px 16px 18px;
   text-decoration: none;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
 
   &:hover {
     border-color: ${C.borderHov};
-    background: rgba(255,255,255,0.05);
+    background: rgba(255, 255, 255, 0.05);
   }
 `
 
@@ -154,8 +160,8 @@ export const Badge = styled.span`
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: ${C.gold};
-  background: rgba(200,169,110,0.1);
-  border: 1px solid rgba(200,169,110,0.2);
+  background: rgba(200, 169, 110, 0.1);
+  border: 1px solid rgba(200, 169, 110, 0.2);
   border-radius: 4px;
   padding: 2px 7px;
 `
@@ -167,7 +173,9 @@ export const ShowArrow = styled.span`
   transform: translateY(-50%);
   font-size: 16px;
   color: ${C.textFaint};
-  transition: color 0.15s, right 0.15s;
+  transition:
+    color 0.15s,
+    right 0.15s;
 
   ${ShowCard}:hover & {
     color: ${C.gold};
@@ -236,7 +244,7 @@ export const FieldLabel = styled.label`
 
 export const FieldInput = styled.input`
   padding: 10px 14px;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid ${C.border};
   border-radius: 6px;
   color: ${C.text};
@@ -245,8 +253,12 @@ export const FieldInput = styled.input`
   outline: none;
   transition: border-color 0.15s;
 
-  &:focus { border-color: ${C.gold}; }
-  &::placeholder { color: ${C.textFaint}; }
+  &:focus {
+    border-color: ${C.gold};
+  }
+  &::placeholder {
+    color: ${C.textFaint};
+  }
 `
 
 export const PapeisGrid = styled.div`
@@ -259,16 +271,19 @@ export const PapeisGrid = styled.div`
 export const PapelToggle = styled.button`
   padding: 9px 12px;
   border-radius: 6px;
-  border: 1px solid ${({ $on }) => $on ? C.gold : C.border};
-  background: ${({ $on }) => $on ? 'rgba(200,169,110,0.12)' : 'transparent'};
-  color: ${({ $on }) => $on ? C.gold : C.textDim};
+  border: 1px solid ${({ $on }) => ($on ? C.gold : C.border)};
+  background: ${({ $on }) => ($on ? 'rgba(200,169,110,0.12)' : 'transparent')};
+  color: ${({ $on }) => ($on ? C.gold : C.textDim)};
   font-family: ${({ theme }) => theme.fonts.body};
   font-size: 12px;
   cursor: pointer;
   text-align: left;
   transition: all 0.15s;
 
-  &:hover { border-color: ${C.gold}; color: ${C.gold}; }
+  &:hover {
+    border-color: ${C.gold};
+    color: ${C.gold};
+  }
 `
 
 export const SubmitBtn = styled.button`
@@ -285,8 +300,13 @@ export const SubmitBtn = styled.button`
   text-transform: uppercase;
   transition: opacity 0.2s;
 
-  &:hover { opacity: 0.85; }
-  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  &:hover {
+    opacity: 0.85;
+  }
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 `
 
 export const ExistingShows = styled.div`
@@ -330,29 +350,31 @@ export const DeleteBtn = styled.button`
   letter-spacing: 0.06em;
   text-transform: uppercase;
   border-radius: 5px;
-  border: 1px solid rgba(248,113,113,0.25);
+  border: 1px solid rgba(248, 113, 113, 0.25);
   background: none;
   color: ${C.red};
   cursor: pointer;
   font-family: ${({ theme }) => theme.fonts.body};
   transition: background 0.15s;
 
-  &:hover { background: ${C.redBg}; }
+  &:hover {
+    background: ${C.redBg};
+  }
 `
 
 export const Toast = styled.div`
   position: fixed;
   bottom: 2rem;
   left: 50%;
-  transform: translateX(-50%) translateY(${({ $show }) => $show ? '0' : '10px'});
-  background: ${({ $error }) => $error ? '#7f1d1d' : '#404015'};
-  border: 1px solid ${({ $error }) => $error ? 'rgba(248,113,113,0.3)' : 'rgba(200,169,110,0.3)'};
+  transform: translateX(-50%) translateY(${({ $show }) => ($show ? '0' : '10px')});
+  background: ${({ $error }) => ($error ? '#7f1d1d' : '#404015')};
+  border: 1px solid ${({ $error }) => ($error ? 'rgba(248,113,113,0.3)' : 'rgba(200,169,110,0.3)')};
   border-radius: 8px;
   padding: 11px 20px;
   font-family: ${({ theme }) => theme.fonts.body};
   font-size: 13px;
   color: ${C.text};
-  opacity: ${({ $show }) => $show ? 1 : 0};
+  opacity: ${({ $show }) => ($show ? 1 : 0)};
   transition: all 0.3s;
   pointer-events: none;
   white-space: nowrap;

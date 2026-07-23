@@ -21,8 +21,8 @@ const Wrap = styled.div`
 const Card = styled.div`
   width: 100%;
   max-width: 400px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 48px 40px;
   display: flex;
@@ -49,7 +49,7 @@ const Title = styled.h1`
 
 const Sub = styled.p`
   font-size: 13px;
-  color: rgba(245,240,232,0.4);
+  color: rgba(245, 240, 232, 0.4);
   text-align: center;
   margin-top: -20px;
 `
@@ -69,21 +69,23 @@ const Label = styled.label`
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(245,240,232,0.5);
+  color: rgba(245, 240, 232, 0.5);
   font-family: 'Montserrat', sans-serif;
 `
 
 const Input = styled.input`
   padding: 12px 16px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
   color: #f5f0e8;
   font-size: 15px;
   font-family: 'Montserrat', sans-serif;
   outline: none;
   transition: border-color 0.2s;
-  &:focus { border-color: #c8a96e; }
+  &:focus {
+    border-color: #c8a96e;
+  }
 `
 
 const Btn = styled.button`
@@ -100,24 +102,31 @@ const Btn = styled.button`
   border-radius: 6px;
   cursor: pointer;
   transition: opacity 0.2s;
-  &:hover { opacity: 0.85; }
-  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:hover {
+    opacity: 0.85;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `
 
 const Msg = styled.p<{ $error?: boolean }>`
   font-size: 13px;
   text-align: center;
   font-family: 'Montserrat', sans-serif;
-  color: ${({ $error }) => $error ? '#f87171' : '#4ade80'};
+  color: ${({ $error }) => ($error ? '#f87171' : '#4ade80')};
 `
 
 const BackLink = styled.a`
   font-size: 12px;
-  color: rgba(245,240,232,0.4);
+  color: rgba(245, 240, 232, 0.4);
   font-family: 'Montserrat', sans-serif;
   text-decoration: none;
   cursor: pointer;
-  &:hover { color: rgba(245,240,232,0.7); }
+  &:hover {
+    color: rgba(245, 240, 232, 0.7);
+  }
 `
 
 export default function ForgotPasswordPage() {
@@ -141,7 +150,9 @@ export default function ForgotPasswordPage() {
       setError('Erro ao enviar email. Verifique o endereço e tente novamente.')
     } else {
       setSent(true)
-      setMsg('Email enviado! Verifique sua caixa de entrada e clique no link para redefinir a senha.')
+      setMsg(
+        'Email enviado! Verifique sua caixa de entrada e clique no link para redefinir a senha.'
+      )
     }
 
     setLoading(false)

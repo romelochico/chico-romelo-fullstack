@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import Image from 'next/image'
 import styled from 'styled-components'
 import { Plus, Pencil, X, AlertTriangle, ImageOff, Upload } from 'lucide-react'
 import AdminLayout from '../../components/Admin/AdminLayout'
@@ -45,7 +46,7 @@ const TopBar = styled.div`
 const Count = styled.span`
   font-family: 'Montserrat', sans-serif;
   font-size: 12px;
-  color: rgba(245,240,232,0.35);
+  color: rgba(245, 240, 232, 0.35);
 `
 
 const AddBtn = styled.button`
@@ -64,8 +65,13 @@ const AddBtn = styled.button`
   border-radius: 6px;
   cursor: pointer;
   transition: opacity 0.15s;
-  &:hover { opacity: 0.85; }
-  svg { width: 15px; height: 15px; }
+  &:hover {
+    opacity: 0.85;
+  }
+  svg {
+    width: 15px;
+    height: 15px;
+  }
 `
 
 const List = styled.div`
@@ -81,11 +87,13 @@ const Card = styled.div`
   flex-direction: row;
   align-items: stretch;
   overflow: hidden;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 10px;
   transition: border-color 0.15s;
-  &:hover { border-color: rgba(255,255,255,0.13); }
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.13);
+  }
 `
 
 const CardContent = styled.div`
@@ -112,22 +120,25 @@ const CardBottom = styled.div`
 `
 
 const Thumb = styled.div`
+  position: relative;
   width: 90px;
   align-self: stretch;
   flex-shrink: 0;
-  background: rgba(255,255,255,0.03);
+  background: rgba(255, 255, 255, 0.03);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 8px;
 
-  img { width: 100%; height: 100%; object-fit: cover; border-radius: 5px; }
-  svg { width: 22px; height: 22px; color: rgba(245,240,232,0.15); }
-`
-
-const CardInfo = styled.div`
-  flex: 1;
-  min-width: 0;
+  img {
+    object-fit: cover;
+    border-radius: 5px;
+  }
+  svg {
+    width: 22px;
+    height: 22px;
+    color: rgba(245, 240, 232, 0.15);
+  }
 `
 
 const TagBadge = styled.span`
@@ -154,7 +165,7 @@ const CardTitle = styled.h3`
 const CardMeta = styled.p`
   font-family: 'Montserrat', sans-serif;
   font-size: 11px;
-  color: rgba(245,240,232,0.3);
+  color: rgba(245, 240, 232, 0.3);
   margin: 0;
 `
 
@@ -163,7 +174,7 @@ const Unpublished = styled.span`
   margin-left: 8px;
   padding: 1px 6px;
   border-radius: 3px;
-  background: rgba(248,113,113,0.15);
+  background: rgba(248, 113, 113, 0.15);
   color: #f87171;
   font-size: 10px;
   font-weight: 600;
@@ -182,17 +193,23 @@ const EditBtn = styled.button`
   align-items: center;
   gap: 6px;
   padding: 7px 12px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 5px;
-  color: rgba(245,240,232,0.7);
+  color: rgba(245, 240, 232, 0.7);
   font-family: 'Montserrat', sans-serif;
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
-  &:hover { background: rgba(255,255,255,0.1); color: #f5f0e8; }
-  svg { width: 12px; height: 12px; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f5f0e8;
+  }
+  svg {
+    width: 12px;
+    height: 12px;
+  }
 `
 
 const DeleteBtn = styled.button`
@@ -207,11 +224,17 @@ const DeleteBtn = styled.button`
   background: transparent;
   border: none;
   border-radius: 5px;
-  color: rgba(245,240,232,0.25);
+  color: rgba(245, 240, 232, 0.25);
   cursor: pointer;
   transition: all 0.15s;
-  &:hover { background: rgba(248,113,113,0.1); color: #f87171; }
-  svg { width: 13px; height: 13px; }
+  &:hover {
+    background: rgba(248, 113, 113, 0.1);
+    color: #f87171;
+  }
+  svg {
+    width: 13px;
+    height: 13px;
+  }
 `
 
 const EmptyState = styled.div`
@@ -219,7 +242,7 @@ const EmptyState = styled.div`
   padding: 64px 32px;
   font-family: 'Montserrat', sans-serif;
   font-size: 14px;
-  color: rgba(245,240,232,0.25);
+  color: rgba(245, 240, 232, 0.25);
 `
 
 // ─── Modal ─────────────────────────────────────────────────────────────────
@@ -227,7 +250,7 @@ const EmptyState = styled.div`
 const Overlay = styled.div`
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -246,7 +269,7 @@ const ModalBox = styled.div`
   max-height: 90vh;
   overflow-y: auto;
   background: #1a1a1a;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -265,7 +288,7 @@ const ModalHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 20px 24px;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   position: sticky;
   top: 0;
   background: #1a1a1a;
@@ -285,14 +308,20 @@ const CloseBtn = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   border: none;
   border-radius: 6px;
-  color: rgba(245,240,232,0.5);
+  color: rgba(245, 240, 232, 0.5);
   cursor: pointer;
   transition: all 0.15s;
-  &:hover { background: rgba(255,255,255,0.1); color: #f5f0e8; }
-  svg { width: 16px; height: 16px; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f5f0e8;
+  }
+  svg {
+    width: 16px;
+    height: 16px;
+  }
 `
 
 const ModalBody = styled.div`
@@ -304,7 +333,7 @@ const ModalBody = styled.div`
 
 const ModalFooter = styled.div`
   padding: 16px 24px;
-  border-top: 1px solid rgba(255,255,255,0.07);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -338,7 +367,7 @@ const Label = styled.label`
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(245,240,232,0.45);
+  color: rgba(245, 240, 232, 0.45);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -346,23 +375,30 @@ const Label = styled.label`
 
 const Input = styled.input`
   padding: 10px 14px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
   color: #f5f0e8;
   font-family: 'Montserrat', sans-serif;
   font-size: 14px;
   outline: none;
   transition: border-color 0.15s;
-  &:focus { border-color: #c8a96e; }
-  &::placeholder { color: rgba(245,240,232,0.2); }
-  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  &:focus {
+    border-color: #c8a96e;
+  }
+  &::placeholder {
+    color: rgba(245, 240, 232, 0.2);
+  }
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 `
 
 const Textarea = styled.textarea`
   padding: 10px 14px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
   color: #f5f0e8;
   font-family: 'Montserrat', sans-serif;
@@ -371,14 +407,18 @@ const Textarea = styled.textarea`
   resize: vertical;
   min-height: 100px;
   transition: border-color 0.15s;
-  &:focus { border-color: #c8a96e; }
-  &::placeholder { color: rgba(245,240,232,0.2); }
+  &:focus {
+    border-color: #c8a96e;
+  }
+  &::placeholder {
+    color: rgba(245, 240, 232, 0.2);
+  }
 `
 
 const CharCount = styled.span<{ $over?: boolean }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 11px;
-  color: ${p => p.$over ? '#f87171' : 'rgba(245,240,232,0.3)'};
+  color: ${p => (p.$over ? '#f87171' : 'rgba(245,240,232,0.3)')};
 `
 
 const ToggleRow = styled.label`
@@ -388,9 +428,9 @@ const ToggleRow = styled.label`
   cursor: pointer;
   font-family: 'Montserrat', sans-serif;
   font-size: 13px;
-  color: rgba(245,240,232,0.6);
+  color: rgba(245, 240, 232, 0.6);
 
-  input[type="checkbox"] {
+  input[type='checkbox'] {
     width: 16px;
     height: 16px;
     accent-color: #c8a96e;
@@ -409,7 +449,7 @@ const ImageUploadArea = styled.div`
   position: relative;
   width: 100%;
   height: 140px;
-  border: 2px dashed rgba(255,255,255,0.12);
+  border: 2px dashed rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   overflow: hidden;
   display: flex;
@@ -417,9 +457,11 @@ const ImageUploadArea = styled.div`
   justify-content: center;
   cursor: pointer;
   transition: border-color 0.15s;
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
 
-  &:hover { border-color: rgba(200,169,110,0.4); }
+  &:hover {
+    border-color: rgba(200, 169, 110, 0.4);
+  }
 `
 
 const ImagePreview = styled.img`
@@ -433,7 +475,7 @@ const ImagePreview = styled.img`
 const UploadOverlay = styled.div`
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -441,7 +483,9 @@ const UploadOverlay = styled.div`
   gap: 6px;
   opacity: 0;
   transition: opacity 0.15s;
-  ${ImageUploadArea}:hover & { opacity: 1; }
+  ${ImageUploadArea}:hover & {
+    opacity: 1;
+  }
 `
 
 const UploadHint = styled.div`
@@ -449,11 +493,15 @@ const UploadHint = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  svg { width: 24px; height: 24px; color: rgba(245,240,232,0.3); }
+  svg {
+    width: 24px;
+    height: 24px;
+    color: rgba(245, 240, 232, 0.3);
+  }
   span {
     font-family: 'Montserrat', sans-serif;
     font-size: 12px;
-    color: rgba(245,240,232,0.4);
+    color: rgba(245, 240, 232, 0.4);
   }
 `
 
@@ -478,22 +526,30 @@ const BtnPrimary = styled.button`
   border-radius: 6px;
   cursor: pointer;
   transition: opacity 0.15s;
-  &:hover { opacity: 0.85; }
-  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:hover {
+    opacity: 0.85;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `
 
 const BtnGhost = styled.button`
   padding: 10px 20px;
   background: transparent;
-  color: rgba(245,240,232,0.5);
+  color: rgba(245, 240, 232, 0.5);
   font-family: 'Montserrat', sans-serif;
   font-size: 12px;
   font-weight: 600;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s;
-  &:hover { color: #f5f0e8; border-color: rgba(255,255,255,0.2); }
+  &:hover {
+    color: #f5f0e8;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
 `
 
 const BtnDanger = styled(BtnPrimary)`
@@ -515,7 +571,11 @@ const ConfirmBody = styled.div`
   gap: 12px;
   text-align: center;
 
-  svg { width: 36px; height: 36px; color: #f87171; }
+  svg {
+    width: 36px;
+    height: 36px;
+    color: #f87171;
+  }
 `
 
 const ConfirmTitle = styled.h3`
@@ -527,7 +587,7 @@ const ConfirmTitle = styled.h3`
 const ConfirmText = styled.p`
   font-family: 'Montserrat', sans-serif;
   font-size: 13px;
-  color: rgba(245,240,232,0.45);
+  color: rgba(245, 240, 232, 0.45);
   line-height: 1.5;
 `
 
@@ -548,7 +608,7 @@ const EMPTY_FORM: NewsFormData = {
 }
 
 function defaultDateLabel(): string {
-  const PT = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ']
+  const PT = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
   const d = new Date()
   return `${PT[d.getMonth()]} · ${d.getFullYear()}`
 }
@@ -577,7 +637,9 @@ export default function AdminNovidadesPage() {
 
   useEffect(() => {
     load()
-    createClient().auth.getUser().then(({ data }) => setUser(data.user))
+    createClient()
+      .auth.getUser()
+      .then(({ data }) => setUser(data.user))
   }, [])
 
   async function load() {
@@ -649,7 +711,12 @@ export default function AdminNovidadesPage() {
 
     const { data: mediaRow, error: mediaErr } = await client
       .from('media')
-      .insert({ filename: file.name, storage_path: path, bucket: 'media', alt_text: form.title || file.name })
+      .insert({
+        filename: file.name,
+        storage_path: path,
+        bucket: 'media',
+        alt_text: form.title || file.name,
+      })
       .select()
       .single()
 
@@ -684,7 +751,9 @@ export default function AdminNovidadesPage() {
       body: form.body.toString().trim(),
       image_id: form.image_id || null,
       link_url: form.link_url.toString().trim() || null,
-      link_label: form.link_url.toString().trim() ? (form.link_label.toString().trim() || 'Ler mais →') : null,
+      link_label: form.link_url.toString().trim()
+        ? form.link_label.toString().trim() || 'Ler mais →'
+        : null,
       order: Number(form.order) || 0,
       published: form.published,
     }
@@ -724,14 +793,20 @@ export default function AdminNovidadesPage() {
   return (
     <AdminLayout title="Novidades" subtitle="Gestão de notícias e atualizações">
       <TopBar>
-        <Count>{items.length} novidade{items.length !== 1 ? 's' : ''}</Count>
-        <AddBtn onClick={openAdd}><Plus /> Adicionar Novidade</AddBtn>
+        <Count>
+          {items.length} novidade{items.length !== 1 ? 's' : ''}
+        </Count>
+        <AddBtn onClick={openAdd}>
+          <Plus /> Adicionar Novidade
+        </AddBtn>
       </TopBar>
 
       {loading ? (
         <EmptyState>Carregando...</EmptyState>
       ) : items.length === 0 ? (
-        <EmptyState>Nenhuma novidade ainda. Clique em &quot;Adicionar Novidade&quot; para começar.</EmptyState>
+        <EmptyState>
+          Nenhuma novidade ainda. Clique em &quot;Adicionar Novidade&quot; para começar.
+        </EmptyState>
       ) : (
         <List>
           {items.map(item => {
@@ -739,12 +814,20 @@ export default function AdminNovidadesPage() {
             return (
               <Card key={item.id}>
                 <Thumb>
-                  {imgUrl ? <img src={imgUrl} alt={item.title} /> : <ImageOff />}
+                  {imgUrl ? (
+                    <Image src={imgUrl} alt={item.title} fill sizes="90px" />
+                  ) : (
+                    <ImageOff />
+                  )}
                 </Thumb>
                 <CardContent>
-                  <DeleteBtn onClick={() => openDelete(item)} title="Excluir"><X /></DeleteBtn>
+                  <DeleteBtn onClick={() => openDelete(item)} title="Excluir">
+                    <X />
+                  </DeleteBtn>
                   <CardActions>
-                    <EditBtn onClick={() => openEdit(item)}><Pencil /> Editar</EditBtn>
+                    <EditBtn onClick={() => openEdit(item)}>
+                      <Pencil /> Editar
+                    </EditBtn>
                   </CardActions>
                   <CardTop>
                     {item.strap && <TagBadge>{item.strap}</TagBadge>}
@@ -765,11 +848,17 @@ export default function AdminNovidadesPage() {
 
       {/* ── Add / Edit modal ── */}
       {isFormModal && modal && (
-        <Overlay onClick={e => { if (e.target === e.currentTarget) closeModal() }}>
+        <Overlay
+          onClick={e => {
+            if (e.target === e.currentTarget) closeModal()
+          }}
+        >
           <ModalBox>
             <ModalHeader>
               <ModalTitle>{modal.type === 'add' ? 'Nova Novidade' : 'Editar Novidade'}</ModalTitle>
-              <CloseBtn onClick={closeModal}><X /></CloseBtn>
+              <CloseBtn onClick={closeModal}>
+                <X />
+              </CloseBtn>
             </ModalHeader>
 
             <ModalBody>
@@ -903,14 +992,18 @@ export default function AdminNovidadesPage() {
 
       {/* ── Delete confirm ── */}
       {isDeleteModal && modal && modal.type === 'delete' && (
-        <Overlay onClick={e => { if (e.target === e.currentTarget) closeModal() }}>
+        <Overlay
+          onClick={e => {
+            if (e.target === e.currentTarget) closeModal()
+          }}
+        >
           <ConfirmBox>
             <ConfirmBody>
               <AlertTriangle />
               <ConfirmTitle>Excluir novidade?</ConfirmTitle>
               <ConfirmText>
-                Tem certeza que quer excluir <strong>&quot;{modal.item.title}&quot;</strong>?
-                Esta ação não pode ser desfeita.
+                Tem certeza que quer excluir <strong>&quot;{modal.item.title}&quot;</strong>? Esta
+                ação não pode ser desfeita.
               </ConfirmText>
             </ConfirmBody>
             <ModalFooter>

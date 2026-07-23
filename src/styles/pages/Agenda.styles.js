@@ -13,7 +13,9 @@ export const AgendaSection = styled.section`
   padding: 80px 6vw;
   overflow: hidden;
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.small}) { padding: 50px 5vw; }
+  @media (max-width: ${({ theme }) => theme.breakpoints.small}) {
+    padding: 50px 5vw;
+  }
 `
 
 export const AgendaHeader = styled.div`
@@ -29,7 +31,10 @@ export const Kicker = styled.h2`
   margin: 20px 0 0;
   color: ${({ theme }) => theme.colors.charcoal};
 
-  .outline { -webkit-text-stroke: 2px ${({ theme }) => theme.colors.charcoal}; color: transparent; }
+  .outline {
+    -webkit-text-stroke: 2px ${({ theme }) => theme.colors.charcoal};
+    color: transparent;
+  }
 `
 
 export const ShowList = styled.div`
@@ -38,7 +43,9 @@ export const ShowList = styled.div`
   gap: 0;
   max-width: 860px;
 
-  &.past { opacity: 0.75; }
+  &.past {
+    opacity: 0.75;
+  }
 `
 
 export const CtaStrip = styled.section`
@@ -76,7 +83,9 @@ export const BtnPrimary = styled.a`
   letter-spacing: 0.06em;
   text-transform: uppercase;
   border-radius: 2px;
-  transition: transform 0.15s, background 0.15s;
+  transition:
+    transform 0.15s,
+    background 0.15s;
 
   &:hover {
     transform: translateY(-2px) rotate(-0.5deg);
