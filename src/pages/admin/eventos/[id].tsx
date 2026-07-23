@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, type FormEvent } from 'react'
 import { useRouter } from 'next/router'
 import styled, { keyframes } from 'styled-components'
-import { ArrowLeft, Plus, Minus, Check, Trash2, PackageCheck, PackageOpen, Search, X, ChevronDown, ChevronUp } from 'lucide-react'
+import { ArrowLeft, Plus, Minus, Check, Trash2, PackageCheck, PackageOpen, Search, X, ChevronDown, ChevronUp, Users, Music, Pencil } from 'lucide-react'
 import AdminLayout from '../../../components/Admin/AdminLayout'
+import SetlistModal from '../../../components/Admin/SetlistModal'
 import { createClient } from '../../../lib/supabase/client'
 import { CATEGORIES } from '../../../lib/inventory-categories'
 
@@ -37,6 +38,39 @@ interface ShowGearRow {
   quantity_returned: number
   created_at: string
   inventory: InventoryItem
+}
+
+interface StaffRow {
+  id: string
+  event_id: string
+  name: string
+  role: string | null
+  created_at: string
+}
+
+interface SpeechLine {
+  id: string
+  song_id: string
+  timing: 'before' | 'after'
+  position: number
+  speaker: string
+  text: string
+}
+
+interface SetlistSong {
+  id: string
+  block_id: string
+  position: number
+  title: string
+  speeches: SpeechLine[]
+}
+
+interface SetlistBlock {
+  id: string
+  event_id: string
+  position: number
+  name: string | null
+  songs: SetlistSong[]
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -96,6 +130,20 @@ const EventMeta = styled.div`
   display: flex; flex-wrap: wrap; gap: 6px 16px;
   font-family: 'Montserrat', sans-serif;
   font-size: 12px; color: ${C.dim};
+`
+
+const GhostBtn = styled.button`
+  display: flex; align-items: center; gap: 6px;
+  padding: 9px 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid ${C.border};
+  color: ${C.dim};
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  border-radius: 6px; cursor: pointer;
+  transition: all 0.15s;
+  svg { width: 13px; height: 13px; }
+  &:hover { color: ${C.cream}; border-color: rgba(255,255,255,0.2); }
 `
 
 const TagChip = styled.span`
@@ -206,6 +254,16 @@ const RemoveBtn = styled.button`
   &:hover { background: rgba(248,113,113,0.1); color: ${C.red}; }
 `
 
+const EditIconBtn = styled.button`
+  width: 28px; height: 28px;
+  border: none; border-radius: 6px; background: transparent;
+  color: ${C.dim}; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, color 0.15s;
+  svg { width: 13px; height: 13px; }
+  &:hover { background: rgba(200,169,110,0.1); color: ${C.gold}; }
+`
+
 const EmptyState = styled.div`
   text-align: center; padding: 32px 24px;
   color: ${C.dim}; font-family: 'Montserrat', sans-serif; font-size: 13px;
@@ -242,6 +300,24 @@ const CloseBtn = styled.button`
   transition: background 0.15s, color 0.15s;
   svg { width: 18px; height: 18px; }
   &:hover { background: rgba(255,255,255,0.1); color: ${C.cream}; }
+`
+
+const ConcludeRow = styled.div`
+  display: flex; justify-content: flex-end;
+  padding: 12px 28px 0;
+  background: #0d0d0d;
+  flex-shrink: 0;
+`
+
+const ConcludeBtn = styled.button`
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 20px;
+  background: ${C.gold}; color: #0d0d0d;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  border: none; border-radius: 6px; cursor: pointer;
+  transition: opacity 0.15s;
+  &:hover { opacity: 0.85; }
 `
 
 const SearchBar = styled.div`
@@ -329,6 +405,63 @@ const AddItemBtn = styled.button<{ $added?: boolean }>`
   &:hover { opacity: 0.85; }
 `
 
+// ─── Staff modal styled ────────────────────────────────────────────────────────
+
+const StaffOverlay = styled.div`
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+`
+
+const StaffBox = styled.div`
+  width: 100%; max-width: 420px;
+  background: #0d0d0d;
+  border: 1px solid ${C.border};
+  border-radius: 12px;
+  display: flex; flex-direction: column;
+`
+
+const StaffBody = styled.div`
+  padding: 20px 28px 28px;
+  display: flex; flex-direction: column; gap: 14px;
+`
+
+const StaffField = styled.div`
+  display: flex; flex-direction: column; gap: 6px;
+`
+
+const StaffLabel = styled.label`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: ${C.dim};
+`
+
+const StaffInput = styled.input`
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: ${C.cream}; font-family: 'Montserrat', sans-serif; font-size: 13px;
+  outline: none;
+  &:focus { border-color: ${C.gold}; }
+  &::placeholder { color: ${C.dim}; }
+`
+
+const StaffSubmitBtn = styled.button`
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 16px;
+  background: ${C.gold}; color: #0d0d0d;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  border: none; border-radius: 6px; cursor: pointer;
+  transition: opacity 0.15s;
+  svg { width: 13px; height: 13px; }
+  &:hover { opacity: 0.85; }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+`
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function ShowDetailPage() {
@@ -343,17 +476,29 @@ export default function ShowDetailPage() {
   const [quantities, setQuantities] = useState<Record<string, number>>({})
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
 
+  const [staff, setStaff]       = useState<StaffRow[]>([])
+  const [staffModal, setStaffModal] = useState<{ type: 'add' } | { type: 'edit'; item: StaffRow } | null>(null)
+  const [staffName, setStaffName] = useState('')
+  const [staffRole, setStaffRole] = useState('')
+
+  const [setlist, setSetlist] = useState<SetlistBlock[]>([])
+  const [showSetlistModal, setShowSetlistModal] = useState(false)
+
   const supabase = createClient()
 
   const load = useCallback(async () => {
     if (!id) return
-    const [eventRes, gearRes, invRes] = await Promise.all([
+    const [eventRes, gearRes, staffRes, setlistRes, invRes] = await Promise.all([
       supabase.from('events').select('*').eq('id', id).single(),
       fetch(`/api/admin/show-gear?event_id=${id}`, { headers: await authHeaders() }),
+      fetch(`/api/admin/show-staff?event_id=${id}`, { headers: await authHeaders() }),
+      fetch(`/api/admin/setlist?event_id=${id}`, { headers: await authHeaders() }),
       supabase.from('inventory').select('*').order('category').order('name'),
     ])
     setEvent(eventRes.data as EventRow)
     if (gearRes.ok) setGear(await gearRes.json())
+    if (staffRes.ok) setStaff(await staffRes.json())
+    if (setlistRes.ok) setSetlist(await setlistRes.json())
     setInventory((invRes.data as InventoryItem[]) ?? [])
   }, [id, supabase])
 
@@ -404,6 +549,51 @@ export default function ShowDetailPage() {
   async function removeGear(gearRow: ShowGearRow) {
     await fetch(`/api/admin/show-gear/${gearRow.id}`, { method: 'DELETE', headers: await authHeaders() })
     setGear(g => g.filter(x => x.id !== gearRow.id))
+  }
+
+  async function saveStaff() {
+    if (!staffName.trim() || !staffModal) return
+    if (staffModal.type === 'add') {
+      const res = await fetch('/api/admin/show-staff', {
+        method: 'POST',
+        headers: await authHeaders(),
+        body: JSON.stringify({ event_id: id, name: staffName, role: staffRole }),
+      })
+      if (res.ok) {
+        const row = await res.json() as StaffRow
+        setStaff(s => [...s, row])
+      }
+    } else {
+      const res = await fetch(`/api/admin/show-staff/${staffModal.item.id}`, {
+        method: 'PUT',
+        headers: await authHeaders(),
+        body: JSON.stringify({ name: staffName, role: staffRole }),
+      })
+      if (res.ok) {
+        const row = await res.json() as StaffRow
+        setStaff(s => s.map(x => x.id === row.id ? row : x))
+      }
+    }
+    setStaffName('')
+    setStaffRole('')
+    setStaffModal(null)
+  }
+
+  async function removeStaff(staffRow: StaffRow) {
+    await fetch(`/api/admin/show-staff/${staffRow.id}`, { method: 'DELETE', headers: await authHeaders() })
+    setStaff(s => s.filter(x => x.id !== staffRow.id))
+  }
+
+  function openAddStaff() {
+    setStaffName('')
+    setStaffRole('')
+    setStaffModal({ type: 'add' })
+  }
+
+  function openEditStaff(item: StaffRow) {
+    setStaffName(item.name)
+    setStaffRole(item.role ?? '')
+    setStaffModal({ type: 'edit', item })
   }
 
   function openModal() {
@@ -517,12 +707,71 @@ export default function ShowDetailPage() {
         </>
       )}
 
+      {/* Staff */}
+      <SectionRow>
+        <SectionTitle><Users /> Staff</SectionTitle>
+        <AddGearBtn onClick={openAddStaff}><Plus /> Adicionar staff</AddGearBtn>
+      </SectionRow>
+
+      <GearList>
+        {staff.length === 0 ? (
+          <EmptyState>Nenhum staff adicionado — clica em "Adicionar staff" para começar</EmptyState>
+        ) : staff.map(s => (
+          <GearRow key={s.id}>
+            <GearName>{s.name}</GearName>
+            {s.role && <SubBadge>{s.role}</SubBadge>}
+            <EditIconBtn onClick={() => openEditStaff(s)} title="Editar"><Pencil /></EditIconBtn>
+            <RemoveBtn onClick={() => removeStaff(s)} title="Remover"><Trash2 /></RemoveBtn>
+          </GearRow>
+        ))}
+      </GearList>
+
+      {/* Setlist */}
+      <SectionRow>
+        <SectionTitle><Music /> Setlist</SectionTitle>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <GhostBtn onClick={() => router.push(`/admin/eventos/${id}/setlist`)}>Ver setlist completo</GhostBtn>
+          <AddGearBtn onClick={() => setShowSetlistModal(true)}><Pencil /> Editar setlist</AddGearBtn>
+        </div>
+      </SectionRow>
+
+      <GearList>
+        {setlist.length === 0 ? (
+          <EmptyState>Nenhum bloco criado — clica em "Editar setlist" para montar o repertório</EmptyState>
+        ) : (() => {
+          let songCounter = 0
+          return setlist.map(block => (
+            <GearRow key={block.id} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 6 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <QtyBadge>{block.songs.length}×</QtyBadge>
+                <GearName>{block.name || `Bloco ${block.position + 1}`}</GearName>
+              </div>
+              {block.songs.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 2, marginTop: 10 }}>
+                  {block.songs.map(s => {
+                    songCounter += 1
+                    return (
+                      <div key={s.id} style={{ display: 'flex', gap: 8, fontSize: 12, color: C.dim }}>
+                        <span style={{ minWidth: 16, color: C.sage, fontWeight: 700 }}>{songCounter}.</span>
+                        <span>{s.title}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : (
+                <div style={{ fontSize: 12, color: C.dim, paddingLeft: 2, marginTop: 10 }}>Sem músicas</div>
+              )}
+            </GearRow>
+          ))
+        })()}
+      </GearList>
+
       {/* Inventory selection modal */}
       {showModal && (
         <ModalOverlay>
           <ModalHeader>
             <ModalHeading>Adicionar equipamento ao show</ModalHeading>
-            <CloseBtn onClick={() => setShowModal(false)}><X /></CloseBtn>
+            <CloseBtn onClick={() => setShowModal(false)} title="Fechar"><X /></CloseBtn>
           </ModalHeader>
 
           <SearchBar>
@@ -534,6 +783,12 @@ export default function ShowDetailPage() {
               autoFocus
             />
           </SearchBar>
+
+          <ConcludeRow>
+            <ConcludeBtn onClick={() => { setShowModal(false); router.push(`/admin/eventos/${id}`) }}>
+              <Check /> Concluir
+            </ConcludeBtn>
+          </ConcludeRow>
 
           <ModalBody>
             {inventoryGroups.length === 0 ? (
@@ -588,6 +843,50 @@ export default function ShowDetailPage() {
             })}
           </ModalBody>
         </ModalOverlay>
+      )}
+
+      {/* Staff modal */}
+      {staffModal && (
+        <StaffOverlay onClick={e => { if (e.target === e.currentTarget) setStaffModal(null) }}>
+          <StaffBox>
+            <ModalHeader>
+              <ModalHeading>{staffModal.type === 'add' ? 'Adicionar staff' : 'Editar staff'}</ModalHeading>
+              <CloseBtn onClick={() => setStaffModal(null)} title="Fechar"><X /></CloseBtn>
+            </ModalHeader>
+            <StaffBody as="form" onSubmit={(e: FormEvent) => { e.preventDefault(); saveStaff() }}>
+              <StaffField>
+                <StaffLabel>Nome *</StaffLabel>
+                <StaffInput
+                  value={staffName}
+                  onChange={e => setStaffName(e.target.value)}
+                  placeholder="Nome da pessoa"
+                  autoFocus
+                />
+              </StaffField>
+              <StaffField>
+                <StaffLabel>Função (opcional)</StaffLabel>
+                <StaffInput
+                  value={staffRole}
+                  onChange={e => setStaffRole(e.target.value)}
+                  placeholder="Técnico de som, Roadie..."
+                />
+              </StaffField>
+              <StaffSubmitBtn type="submit" disabled={!staffName.trim()}>
+                {staffModal.type === 'add' ? <><Plus /> Adicionar</> : <><Check /> Salvar</>}
+              </StaffSubmitBtn>
+            </StaffBody>
+          </StaffBox>
+        </StaffOverlay>
+      )}
+
+      {/* Setlist modal */}
+      {showSetlistModal && (
+        <SetlistModal
+          eventId={id}
+          blocks={setlist}
+          onClose={() => setShowSetlistModal(false)}
+          reload={load}
+        />
       )}
     </AdminLayout>
   )

@@ -7,10 +7,6 @@ import AdminSidebar from './AdminSidebar'
 import { createClient } from '../../lib/supabase/client'
 import type { ReactNode } from 'react'
 
-const AdminReset = createGlobalStyle`
-  body { background: ${({ theme }) => theme.colors.dark} !important; }
-`
-
 const Shell = styled.div`
   display: flex;
   height: 100vh;
@@ -119,6 +115,19 @@ const Content = styled.div`
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     padding: 0 16px 16px;
+  }
+`
+
+const AdminReset = createGlobalStyle`
+  body { background: ${({ theme }) => theme.colors.dark} !important; }
+
+  @media print {
+    aside { display: none !important; }
+    ${TopBar} { display: none !important; }
+    ${Header} { display: none !important; }
+    ${Shell} { height: auto !important; overflow: visible !important; }
+    ${Main} { overflow: visible !important; }
+    ${Content} { padding: 0 !important; }
   }
 `
 

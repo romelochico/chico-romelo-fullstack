@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import styled, { keyframes } from 'styled-components'
-import { Calendar, Newspaper, Disc3, Image, Link2, MessageSquare, Star, Package } from 'lucide-react'
+import { Calendar, Newspaper, Disc3, Image, Link2, MessageSquare, Star, Package, AlertTriangle } from 'lucide-react'
 import AdminLayout from '../../components/Admin/AdminLayout'
 import { createClient } from '../../lib/supabase/client'
 import { splitEvents } from '../../lib/events'
@@ -22,9 +22,9 @@ const Grid = styled.div`
   }
 `
 
-const Card = styled.div`
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.13);
+const Card = styled.div<{ $alert?: boolean }>`
+  background: ${({ $alert }) => $alert ? 'rgba(248,113,113,0.08)' : 'rgba(255,255,255,0.06)'};
+  border: 1px solid ${({ $alert }) => $alert ? 'rgba(248,113,113,0.35)' : 'rgba(255,255,255,0.13)'};
   border-radius: 12px;
   padding: 24px;
   display: flex;
@@ -34,12 +34,12 @@ const Card = styled.div`
   transition: background 0.15s, border-color 0.15s, transform 0.1s;
 
   &:hover {
-    background: rgba(255,255,255,0.09);
-    border-color: rgba(200,169,110,0.35);
+    background: ${({ $alert }) => $alert ? 'rgba(248,113,113,0.12)' : 'rgba(255,255,255,0.09)'};
+    border-color: ${({ $alert }) => $alert ? 'rgba(248,113,113,0.55)' : 'rgba(200,169,110,0.35)'};
     transform: translateY(-1px);
   }
 
-  svg { color: #c8a96e; width: 22px; height: 22px; }
+  svg { color: ${({ $alert }) => $alert ? '#f87171' : '#c8a96e'}; width: 22px; height: 22px; }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     aspect-ratio: 1;
@@ -100,20 +100,29 @@ const Spinner = styled.span`
   margin: 9px 0;
 `
 
-const SubStat = styled.span<{ $green?: boolean }>`
+const SubStat = styled.span<{ $green?: boolean; $red?: boolean }>`
   font-family: ${({ theme }) => theme.fonts.body};
   font-size: 11px;
   color: rgba(245,240,232,0.45);
 
   strong {
     font-weight: 700;
-    color: ${({ $green }) => $green ? '#4ade80' : 'rgba(245,240,232,0.85)'};
+    color: ${({ $green, $red }) => $red ? '#f87171' : $green ? '#4ade80' : 'rgba(245,240,232,0.85)'};
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     font-size: 10px;
   }
 `
+
+const ALERT_WINDOW_DAYS = 7
+
+function daysUntil(dateStr: string): number {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const target = new Date(`${dateStr}T00:00:00`)
+  return Math.round((target.getTime() - today.getTime()) / 86400000)
+}
 
 interface DashStats {
   upcomingCount: number
@@ -131,6 +140,9 @@ interface DashStats {
   credsCount: number
   inventoryItems: number
   inventoryUnits: number
+  openCallsTotal: number
+  openCallsUrgent: number
+  nextUrgentOpenCall: { name: string; days: number } | null
 }
 
 export default function DashboardPage() {
@@ -144,7 +156,7 @@ export default function DashboardPage() {
   async function loadStats() {
     const supabase = createClient()
 
-    const [eventsRes, newsRes, releasesRes, showsRes, avalsRes, contatosRes, linksRes, credsRes, inventoryRes] = await Promise.all([
+    const [eventsRes, newsRes, releasesRes, showsRes, avalsRes, contatosRes, linksRes, credsRes, inventoryRes, openCallsRes] = await Promise.all([
       supabase.from('events').select('date'),
       supabase.from('news').select('id', { count: 'exact', head: true }).eq('published', true),
       supabase.from('releases').select('type'),
@@ -154,7 +166,16 @@ export default function DashboardPage() {
       supabase.from('links').select('id', { count: 'exact', head: true }),
       supabase.from('credentials').select('id', { count: 'exact', head: true }),
       supabase.from('inventory').select('id, quantity'),
+      supabase.from('open_calls').select('id, name, application_date'),
     ])
+
+    const openCallsData = (openCallsRes.data ?? []) as { id: string; name: string; application_date: string }[]
+    const currentOpenCalls = openCallsData
+      .map(oc => ({ name: oc.name, days: daysUntil(oc.application_date) }))
+      .filter(oc => oc.days >= 0)
+    const urgentCalls = currentOpenCalls
+      .filter(oc => oc.days <= ALERT_WINDOW_DAYS)
+      .sort((a, b) => a.days - b.days)
 
     const rawEvents = (eventsRes.data ?? []) as unknown as EventRow[]
     const { upcoming, past } = splitEvents(rawEvents)
@@ -184,6 +205,9 @@ export default function DashboardPage() {
       credsCount: credsRes.count ?? 0,
       inventoryItems: (inventoryRes.data ?? []).length,
       inventoryUnits: (inventoryRes.data ?? [] as { quantity: number }[]).reduce((s: number, i: { quantity: number }) => s + (i.quantity ?? 0), 0),
+      openCallsTotal: currentOpenCalls.length,
+      openCallsUrgent: urgentCalls.length,
+      nextUrgentOpenCall: urgentCalls[0] ?? null,
     })
   }
 
@@ -269,13 +293,27 @@ export default function DashboardPage() {
         </CardSub>
       ) : null,
     },
+    {
+      href: '/admin/open-calls',
+      label: 'Open Calls',
+      icon: AlertTriangle,
+      value: s ? s.openCallsTotal : undefined,
+      alert: !!s && s.openCallsUrgent > 0,
+      sub: s && s.nextUrgentOpenCall ? (
+        <CardSub>
+          <SubStat $red>
+            <strong>{s.nextUrgentOpenCall.name}</strong> fecha em {s.nextUrgentOpenCall.days} dia{s.nextUrgentOpenCall.days !== 1 ? 's' : ''}
+          </SubStat>
+        </CardSub>
+      ) : null,
+    },
   ], [s])
 
   return (
     <AdminLayout title="Dashboard" subtitle="Bem-vindo ao painel de administração">
       <Grid>
-        {SECTIONS.map(({ href, label, icon: Icon, value, sub }) => (
-          <Card key={href} onClick={() => router.push(href)}>
+        {SECTIONS.map(({ href, label, icon: Icon, value, sub, alert }) => (
+          <Card key={href} $alert={alert} onClick={() => router.push(href)}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Icon />
             </div>

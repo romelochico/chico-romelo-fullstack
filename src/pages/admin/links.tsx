@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from 'react'
 import styled, { keyframes } from 'styled-components'
-import { Plus, Pencil, Trash2, Eye, EyeOff, Copy, Check, Link2, KeyRound, Image, FileText, Music, Share2 } from 'lucide-react'
+import { Plus, Pencil, Trash2, Eye, EyeOff, Copy, Check, Link2, KeyRound, Image, FileText, Music, Share2, Video } from 'lucide-react'
 import AdminLayout from '../../components/Admin/AdminLayout'
 import { createClient } from '../../lib/supabase/client'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type LinkCategory = 'photos' | 'documents' | 'songs' | 'social'
+type LinkCategory = 'photos' | 'documents' | 'songs' | 'videos' | 'social'
 
 interface LinkRow {
   id: string
@@ -44,6 +44,7 @@ const CATEGORIES: { key: LinkCategory; label: string; Icon: React.ElementType }[
   { key: 'photos',    label: 'Fotos',        Icon: Image   },
   { key: 'documents', label: 'Documentos',   Icon: FileText },
   { key: 'songs',     label: 'Músicas',      Icon: Music   },
+  { key: 'videos',    label: 'Vídeos',       Icon: Video   },
   { key: 'social',    label: 'Redes Sociais', Icon: Share2  },
 ]
 
@@ -454,6 +455,7 @@ function getCategoryIcon(cat: string | null): React.ReactNode {
     case 'photos':    return <Image size={15} />
     case 'documents': return <FileText size={15} />
     case 'songs':     return <Music size={15} />
+    case 'videos':    return <Video size={15} />
     case 'social':    return <Share2 size={15} />
     default:          return <Link2 size={15} />
   }
