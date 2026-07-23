@@ -359,7 +359,7 @@ export default function AvaliacoesShowPage() {
 
   const eventDate = new Date(show.data_show + 'T00:00:00')
   const hoursElapsed = (Date.now() - eventDate.getTime()) / 36e5
-  const canEvaluate = hoursElapsed >= 24 && hoursElapsed < 96
+  const canEvaluate = hoursElapsed >= 24 && hoursElapsed < 24 * 10
 
   return (
     <AdminLayout
