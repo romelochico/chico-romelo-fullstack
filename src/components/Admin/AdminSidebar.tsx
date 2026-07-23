@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import AvatarImage from 'next/image'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import {
@@ -175,9 +176,11 @@ const UserRow = styled.div`
 `
 
 const Avatar = styled.div`
+  position: relative;
   width: 32px;
   height: 32px;
   border-radius: 50%;
+  overflow: hidden;
   background: ${({ theme }) => `${theme.colors.sage}22`};
   border: 1px solid ${({ theme }) => `${theme.colors.sage}55`};
   display: flex;
@@ -189,6 +192,10 @@ const Avatar = styled.div`
   color: ${({ theme }) => theme.colors.sage};
   flex-shrink: 0;
   letter-spacing: 0.04em;
+
+  img {
+    object-fit: cover;
+  }
 `
 
 const UserName = styled.div`
@@ -268,6 +275,11 @@ function getInitials(user: User): string {
     .join('')
 }
 
+function getAvatarUrl(user: User): string | null {
+  const meta = user.user_metadata as Record<string, string> | undefined
+  return meta?.avatar_url || meta?.picture || null
+}
+
 /* ── Component ───────────────────────────────────────────────────── */
 
 interface AdminSidebarProps {
@@ -321,7 +333,13 @@ export default function AdminSidebar({ isOpen = false, onClose = () => {} }: Adm
         <SidebarBottom>
           {user && (
             <UserRow>
-              <Avatar>{getInitials(user)}</Avatar>
+              <Avatar>
+                {getAvatarUrl(user) ? (
+                  <AvatarImage src={getAvatarUrl(user)!} alt="" fill sizes="32px" />
+                ) : (
+                  getInitials(user)
+                )}
+              </Avatar>
               <UserName>{getDisplayName(user)}</UserName>
             </UserRow>
           )}

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import AdminLayout from '../../../components/Admin/AdminLayout'
 import { useEffect, useState } from 'react'
@@ -24,6 +25,7 @@ import {
   Th,
   Td,
   PersonName,
+  AuthorAvatar,
   NotasGrid,
   NotaColTitle,
   NotaDot,
@@ -34,6 +36,21 @@ import {
   CommentBody,
   Loading,
 } from '../../../styles/pages/AvaliacoesShowAdmin.styles'
+
+function Author({ name, avatarUrl }: { name: string; avatarUrl?: string | null }) {
+  return (
+    <>
+      <AuthorAvatar>
+        {avatarUrl ? (
+          <Image src={avatarUrl} alt="" fill sizes="18px" />
+        ) : (
+          name.trim().charAt(0).toUpperCase()
+        )}
+      </AuthorAvatar>
+      {name}
+    </>
+  )
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -54,6 +71,7 @@ interface AvaliacaoRow {
   show_id: string
   user_id: string
   avaliador: string
+  avatar_url?: string | null
   papel?: string | null
   nota_final: number
   geral_entrosamento: number
@@ -103,10 +121,10 @@ function MusicaSection({ nome, index, data }: MusicaSectionProps) {
 
   const bems = data
     .filter(r => r.musicas?.[nome]?.bem)
-    .map(r => ({ texto: r.musicas![nome].bem!, autor: r.avaliador }))
+    .map(r => ({ texto: r.musicas![nome].bem!, autor: r.avaliador, avatarUrl: r.avatar_url }))
   const mels = data
     .filter(r => r.musicas?.[nome]?.melhorar)
-    .map(r => ({ texto: r.musicas![nome].melhorar!, autor: r.avaliador }))
+    .map(r => ({ texto: r.musicas![nome].melhorar!, autor: r.avaliador, avatarUrl: r.avatar_url }))
 
   return (
     <MusicaBlock>
@@ -137,7 +155,9 @@ function MusicaSection({ nome, index, data }: MusicaSectionProps) {
               return (
                 <tr key={r.id}>
                   <Td>
-                    <PersonName>{r.avaliador}</PersonName>
+                    <PersonName>
+                      <Author name={r.avaliador} avatarUrl={r.avatar_url} />
+                    </PersonName>
                   </Td>
                   <Td style={{ fontSize: 12, color: '#878766' }}>{r.papel ?? ''}</Td>
                   <Td>
@@ -183,7 +203,9 @@ function MusicaSection({ nome, index, data }: MusicaSectionProps) {
               if (!entradas.length) return null
               return (
                 <CommentCard key={r.id} style={{ marginBottom: 6 }}>
-                  <CommentAuthor>{r.avaliador} avaliou:</CommentAuthor>
+                  <CommentAuthor>
+                    <Author name={r.avaliador} avatarUrl={r.avatar_url} /> avaliou:
+                  </CommentAuthor>
                   {entradas.map(([papel, v]) => (
                     <div
                       key={papel}
@@ -219,7 +241,9 @@ function MusicaSection({ nome, index, data }: MusicaSectionProps) {
                 bems.map((n, i) => (
                   <NotaItem key={i} $green>
                     {n.texto}
-                    <NotaAuthor>{n.autor}</NotaAuthor>
+                    <NotaAuthor>
+                      <Author name={n.autor} avatarUrl={n.avatarUrl} />
+                    </NotaAuthor>
                   </NotaItem>
                 ))
               ) : (
@@ -234,7 +258,9 @@ function MusicaSection({ nome, index, data }: MusicaSectionProps) {
                 mels.map((n, i) => (
                   <NotaItem key={i}>
                     {n.texto}
-                    <NotaAuthor>{n.autor}</NotaAuthor>
+                    <NotaAuthor>
+                      <Author name={n.autor} avatarUrl={n.avatarUrl} />
+                    </NotaAuthor>
                   </NotaItem>
                 ))
               ) : (
@@ -402,7 +428,9 @@ export default function AvaliacoesShowPage() {
                 {data.map(r => (
                   <tr key={r.id}>
                     <Td>
-                      <PersonName>{r.avaliador}</PersonName>
+                      <PersonName>
+                        <Author name={r.avaliador} avatarUrl={r.avatar_url} />
+                      </PersonName>
                     </Td>
                     <Td>
                       {(r.geral_entrosamento ?? 0) > 0 ? (
@@ -434,7 +462,9 @@ export default function AvaliacoesShowPage() {
             </Table>
             {geralComents.map(r => (
               <CommentCard key={r.id}>
-                <CommentAuthor>{r.avaliador}</CommentAuthor>
+                <CommentAuthor>
+                  <Author name={r.avaliador} avatarUrl={r.avatar_url} />
+                </CommentAuthor>
                 <CommentBody>{r.geral_comentarios}</CommentBody>
               </CommentCard>
             ))}
@@ -455,7 +485,9 @@ export default function AvaliacoesShowPage() {
                 {data.map(r => (
                   <tr key={r.id}>
                     <Td>
-                      <PersonName>{r.avaliador}</PersonName>
+                      <PersonName>
+                        <Author name={r.avaliador} avatarUrl={r.avatar_url} />
+                      </PersonName>
                     </Td>
                     <Td>
                       {(r.apres_pontualidade ?? 0) > 0 ? (
@@ -490,7 +522,9 @@ export default function AvaliacoesShowPage() {
             </Table>
             {apresComents.map(r => (
               <CommentCard key={r.id}>
-                <CommentAuthor>{r.avaliador}</CommentAuthor>
+                <CommentAuthor>
+                  <Author name={r.avaliador} avatarUrl={r.avatar_url} />
+                </CommentAuthor>
                 <CommentBody>{r.apres_comentarios}</CommentBody>
               </CommentCard>
             ))}
@@ -506,7 +540,9 @@ export default function AvaliacoesShowPage() {
                     {obsBems.map(r => (
                       <NotaItem key={r.id} $green>
                         {r.obs_bem}
-                        <NotaAuthor>{r.avaliador}</NotaAuthor>
+                        <NotaAuthor>
+                          <Author name={r.avaliador} avatarUrl={r.avatar_url} />
+                        </NotaAuthor>
                       </NotaItem>
                     ))}
                   </div>
@@ -517,7 +553,9 @@ export default function AvaliacoesShowPage() {
                     {obsMels.map(r => (
                       <NotaItem key={r.id}>
                         {r.obs_melhorar}
-                        <NotaAuthor>{r.avaliador}</NotaAuthor>
+                        <NotaAuthor>
+                          <Author name={r.avaliador} avatarUrl={r.avatar_url} />
+                        </NotaAuthor>
                       </NotaItem>
                     ))}
                   </div>
@@ -527,7 +565,9 @@ export default function AvaliacoesShowPage() {
 
             {obsLivres.map(r => (
               <CommentCard key={r.id}>
-                <CommentAuthor>{r.avaliador} — observações livres</CommentAuthor>
+                <CommentAuthor>
+                  <Author name={r.avaliador} avatarUrl={r.avatar_url} /> — observações livres
+                </CommentAuthor>
                 <CommentBody>{r.obs_livres}</CommentBody>
               </CommentCard>
             ))}

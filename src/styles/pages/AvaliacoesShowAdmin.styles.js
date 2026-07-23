@@ -197,8 +197,33 @@ export const Td = styled.td`
 `
 
 export const PersonName = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-weight: 700;
   color: ${C.gold};
+`
+
+export const AuthorAvatar = styled.span`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: rgba(200, 169, 110, 0.15);
+  color: ${C.gold};
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+
+  img {
+    object-fit: cover;
+  }
 `
 
 // ── NOTAS GRID ──────────────────────────────────────────────────
@@ -246,6 +271,9 @@ export const NotaItem = styled.div`
 `
 
 export const NotaAuthor = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-family: ${({ theme }) => theme.fonts.body};
   font-size: 10px;
   color: ${C.textDim};
@@ -263,6 +291,9 @@ export const CommentCard = styled.div`
 `
 
 export const CommentAuthor = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-family: ${({ theme }) => theme.fonts.body};
   font-size: 10px;
   font-weight: 700;

@@ -60,6 +60,7 @@ interface UserProfile {
   nome: string
   papel: string | null
   userId: string
+  avatarUrl: string | null
 }
 
 interface ShowData {
@@ -266,17 +267,22 @@ export default function AvaliarPage() {
         meData,
       ]: [
         { data: ShowData | null },
-        { data: { user: { id: string; email?: string } | null } },
+        {
+          data: {
+            user: { id: string; email?: string; user_metadata?: Record<string, string> } | null
+          }
+        },
         { nome?: string; papel?: string } | null,
       ]) => {
         setShow(showData)
 
         if (user) {
+          const avatarUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture || null
           const p = (meData as { nome?: string })?.nome ? meData : null
           setProfile(
             p
-              ? { ...(p as { nome: string; papel: string | null }), userId: user.id }
-              : { nome: user.email ?? '', papel: null, userId: user.id }
+              ? { ...(p as { nome: string; papel: string | null }), userId: user.id, avatarUrl }
+              : { nome: user.email ?? '', papel: null, userId: user.id, avatarUrl }
           )
 
           supabase
@@ -403,6 +409,7 @@ export default function AvaliarPage() {
 
     const payload = {
       avaliador: profile.nome,
+      avatar_url: profile.avatarUrl,
       papel,
       user_id: profile.userId,
       show_id: id,

@@ -19,6 +19,7 @@ export const Table: StyledComponent<'table', DefaultTheme>
 export const Th: StyledComponent<'th', DefaultTheme>
 export const Td: StyledComponent<'td', DefaultTheme>
 export const PersonName: StyledComponent<'span', DefaultTheme>
+export const AuthorAvatar: StyledComponent<'span', DefaultTheme>
 export const NotasGrid: StyledComponent<'div', DefaultTheme>
 export const NotaColTitle: StyledComponent<'div', DefaultTheme>
 export const NotaDot: StyledComponent<'span', DefaultTheme, { $green?: boolean }>
