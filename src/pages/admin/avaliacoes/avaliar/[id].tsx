@@ -155,18 +155,28 @@ function MusicaCardItem({
                 />
               </>
             ) : (
-              aspectosProprios.map((asp: string) => {
-                const key = `m${index}-my-${asp.replace(/[\s/]+/g, '-').toLowerCase()}`
-                return (
-                  <StarRow key={asp}>
-                    <StarLabel>{asp}</StarLabel>
-                    <StarRating
-                      value={ratings[key] ?? 0}
-                      onChange={(v: number) => setRating(key, v)}
-                    />
-                  </StarRow>
-                )
-              })
+              <>
+                {aspectosProprios.map((asp: string) => {
+                  const key = `m${index}-my-${asp.replace(/[\s/]+/g, '-').toLowerCase()}`
+                  return (
+                    <StarRow key={asp}>
+                      <StarLabel>{asp}</StarLabel>
+                      <StarRating
+                        value={ratings[key] ?? 0}
+                        onChange={(v: number) => setRating(key, v)}
+                      />
+                    </StarRow>
+                  )
+                })}
+                <NoteTextarea
+                  placeholder="Comentário sobre a sua performance (opcional)..."
+                  style={{ minHeight: 38, fontSize: 12 }}
+                  value={texts[`m${index}-my-txt`] ?? ''}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    setText(`m${index}-my-txt`, e.target.value)
+                  }
+                />
+              </>
             )}
           </div>
 
@@ -235,6 +245,10 @@ function MusicaCardItem({
   )
 }
 
+function draftKey(showId: string, userId: string): string {
+  return `avaliacao_draft_${showId}_${userId}`
+}
+
 export default function AvaliarPage() {
   const router = useRouter()
   const { id } = router.query
@@ -285,6 +299,19 @@ export default function AvaliarPage() {
               : { nome: user.email ?? '', papel: null, userId: user.id, avatarUrl }
           )
 
+          let hasDraft = false
+          const draftRaw = localStorage.getItem(draftKey(String(id), user.id))
+          if (draftRaw) {
+            try {
+              const draft = JSON.parse(draftRaw) as { ratings: RatingsMap; texts: TextsMap }
+              setRatingsState(draft.ratings ?? {})
+              setTextsState(draft.texts ?? {})
+              hasDraft = true
+            } catch {
+              localStorage.removeItem(draftKey(String(id), user.id))
+            }
+          }
+
           supabase
             .from('avaliacoes')
             .select('*')
@@ -295,6 +322,8 @@ export default function AvaliarPage() {
               if (!existing) return
               const ex = existing as ExistingAval
               setExistingId(ex.id)
+
+              if (hasDraft) return
 
               const r: RatingsMap = {}
               const t: TextsMap = {}
@@ -313,6 +342,7 @@ export default function AvaliarPage() {
                     const key = `m${i}-my-${asp.replace(/[\s/]+/g, '-').toLowerCase()}`
                     r[key] = (m.minha?.[asp] as number) ?? 0
                   })
+                  t[`m${i}-my-txt`] = (m.minha?.['minha_txt'] as string) ?? ''
                 }
                 outrosPapeis.forEach((pp: string) => {
                   const pkey = `m${i}-band-${pp.replace(/[\s/]+/g, '-').toLowerCase()}`
@@ -350,6 +380,11 @@ export default function AvaliarPage() {
       }
     )
   }, [id])
+
+  useEffect(() => {
+    if (!id || !profile || loadingShow) return
+    localStorage.setItem(draftKey(String(id), profile.userId), JSON.stringify({ ratings, texts }))
+  }, [id, profile, loadingShow, ratings, texts])
 
   const showToast = (msg: string, error = false) => {
     setToast({ show: true, msg, error })
@@ -393,6 +428,7 @@ export default function AvaliarPage() {
           const key = `m${i}-my-${asp.replace(/[\s/]+/g, '-').toLowerCase()}`
           minha[asp] = ratings[key] ?? 0
         })
+        minha['minha_txt'] = texts[`m${i}-my-txt`] ?? ''
       }
       const banda: Record<string, { nota: number; comentario: string }> = {}
       outrosPapeis.forEach((p: string) => {
@@ -439,8 +475,12 @@ export default function AvaliarPage() {
       ? await supabase.from('avaliacoes').update(payload).eq('id', existingId)
       : await supabase.from('avaliacoes').insert(payload)
 
-    if (error) showToast('Erro ao enviar. Tente novamente.', true)
-    else setSubmitted(true)
+    if (error) {
+      showToast('Erro ao enviar. Tente novamente.', true)
+    } else {
+      if (id) localStorage.removeItem(draftKey(String(id), profile.userId))
+      setSubmitted(true)
+    }
     setSubmitting(false)
   }
 

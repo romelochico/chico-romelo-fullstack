@@ -152,6 +152,7 @@ function MusicaSection({ nome, index, data }: MusicaSectionProps) {
                 .filter(([, v]) => typeof v === 'number' && (v as number) > 0)
                 .map(([k, v]) => `${k}: ${fmtAvg(v as number)}★`)
                 .join('  ')
+              const nota = minha['direcao_txt'] ?? minha['minha_txt']
               return (
                 <tr key={r.id}>
                   <Td>
@@ -162,19 +163,18 @@ function MusicaSection({ nome, index, data }: MusicaSectionProps) {
                   <Td style={{ fontSize: 12, color: '#878766' }}>{r.papel ?? ''}</Td>
                   <Td>
                     {aspectos || '—'}
-                    {typeof minha['direcao_txt'] === 'string' &&
-                      (minha['direcao_txt'] as string).trim() && (
-                        <div
-                          style={{
-                            fontSize: 12,
-                            color: '#878766',
-                            fontStyle: 'italic',
-                            marginTop: 4,
-                          }}
-                        >
-                          {minha['direcao_txt'] as string}
-                        </div>
-                      )}
+                    {typeof nota === 'string' && nota.trim() && (
+                      <div
+                        style={{
+                          fontSize: 12,
+                          color: '#878766',
+                          fontStyle: 'italic',
+                          marginTop: 4,
+                        }}
+                      >
+                        {nota}
+                      </div>
+                    )}
                   </Td>
                 </tr>
               )
