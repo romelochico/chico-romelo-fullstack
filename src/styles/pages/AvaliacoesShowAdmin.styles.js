@@ -55,6 +55,61 @@ export const AvaliarLink = styled.a`
   }
 `
 
+export const AiSummaryBtn = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: transparent;
+  color: ${C.gold};
+  border: 1px solid ${C.gold};
+  border-radius: 6px;
+  font-family: ${({ theme }) => theme.fonts.body};
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    background: rgba(200, 169, 110, 0.1);
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`
+
+export const AiSummaryBox = styled.div`
+  background: ${C.card};
+  border: 1px solid ${C.border};
+  border-radius: 10px;
+  padding: 20px 22px;
+  margin-bottom: 32px;
+  font-family: ${({ theme }) => theme.fonts.body};
+  font-size: 14px;
+  line-height: 1.6;
+  color: ${C.text};
+  white-space: pre-wrap;
+`
+
+export const AiSummarySubheading = styled.h4`
+  font-family: 'Special Elite', serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: ${C.gold};
+  margin: 0 0 10px;
+`
+
+export const AiSummaryError = styled.p`
+  font-family: ${({ theme }) => theme.fonts.body};
+  font-size: 13px;
+  color: ${C.red};
+  margin-bottom: 24px;
+`
+
 export const SummaryGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));

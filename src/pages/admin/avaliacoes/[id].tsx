@@ -2,13 +2,17 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import AdminLayout from '../../../components/Admin/AdminLayout'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createClient } from '../../../lib/supabase/client'
 import { StarsDisplay } from '../../../components/StarRating/StarRating'
 import { SET_LIST, avg, fmtAvg, fmtDate } from '../../../lib/avaliacoes'
 import {
   BackLink,
   AvaliarLink,
+  AiSummaryBtn,
+  AiSummaryBox,
+  AiSummarySubheading,
+  AiSummaryError,
   SummaryGrid,
   SummaryCard,
   SummaryVal,
@@ -97,6 +101,19 @@ interface ShowRow {
   nome: string
   data_show: string
   local?: string | null
+  resumo_ia?: string | null
+}
+
+const MIN_AVALIACOES_PARA_RESUMO = 5
+const ACOES_HEADER = 'Ações para o próximo show'
+const RECLAMACOES_HEADER = 'Reclamações recorrentes'
+
+function splitSummary(text: string): { reclamacoes: string; acoes: string } | null {
+  const idx = text.indexOf(ACOES_HEADER)
+  if (idx === -1) return null
+  const reclamacoes = text.slice(0, idx).replace(RECLAMACOES_HEADER, '').trim()
+  const acoes = text.slice(idx).replace(ACOES_HEADER, '').trim()
+  return { reclamacoes, acoes }
 }
 
 // ─── MusicaSection ────────────────────────────────────────────────────────────
@@ -282,6 +299,67 @@ export default function AvaliacoesShowPage() {
   const [data, setData] = useState<AvaliacaoRow[]>([])
   const [loading, setLoading] = useState(true)
   const [userEval, setUserEval] = useState<AvaliacaoRow | null>(null)
+  const [summary, setSummary] = useState('')
+  const [loadingSummary, setLoadingSummary] = useState(false)
+  const [summaryError, setSummaryError] = useState('')
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  function downloadFile(filename: string, content: string, type: string) {
+    const blob = new Blob([content], { type })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  async function handleDownloadResumo() {
+    setLoadingSummary(true)
+    setSummaryError('')
+    try {
+      const res = await fetch(`/api/admin/avaliacoes/${id}/summary`)
+      const body = await res.json()
+      if (!res.ok) throw new Error(body.error ?? 'Erro ao gerar arquivos.')
+      downloadFile(`resumo-${id}.json`, JSON.stringify(body.digest, null, 2), 'application/json')
+      downloadFile(`prompt-${id}.txt`, body.prompt as string, 'text/plain')
+    } catch (e) {
+      setSummaryError(e instanceof Error ? e.message : 'Erro ao gerar arquivos.')
+    } finally {
+      setLoadingSummary(false)
+    }
+  }
+
+  function handleUploadClick() {
+    fileInputRef.current?.click()
+  }
+
+  async function handleFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+
+    setLoadingSummary(true)
+    setSummaryError('')
+    try {
+      const parsed = JSON.parse(await file.text())
+      if (typeof parsed.summary !== 'string') {
+        throw new Error('JSON inválido: campo "summary" não encontrado.')
+      }
+      const res = await fetch(`/api/admin/avaliacoes/${id}/summary`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ summary: parsed.summary }),
+      })
+      const body = await res.json()
+      if (!res.ok) throw new Error(body.error ?? 'Erro ao salvar resumo.')
+      setSummary(body.summary as string)
+    } catch (e) {
+      setSummaryError(e instanceof Error ? e.message : 'Erro ao processar arquivo.')
+    } finally {
+      setLoadingSummary(false)
+    }
+  }
 
   useEffect(() => {
     if (!id) return
@@ -302,7 +380,9 @@ export default function AvaliacoesShowPage() {
           data: { user },
         },
       ]) => {
-        setShow(showData as ShowRow | null)
+        const showRow = showData as ShowRow | null
+        setShow(showRow)
+        if (showRow?.resumo_ia) setSummary(showRow.resumo_ia)
         const avals = (avalsData ?? []) as AvaliacaoRow[]
         setData(avals)
         if (user) {
@@ -371,11 +451,33 @@ export default function AvaliacoesShowPage() {
           <BackLink>← Todos os shows</BackLink>
         </Link>
 
-        {canEvaluate && (
-          <Link href={`/admin/avaliacoes/avaliar/${id}`} passHref legacyBehavior>
-            <AvaliarLink>{userEval ? 'Editar avaliação →' : 'Avaliar este show →'}</AvaliarLink>
-          </Link>
-        )}
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12 }}>
+          {canEvaluate && (
+            <Link href={`/admin/avaliacoes/avaliar/${id}`} passHref legacyBehavior>
+              <AvaliarLink>{userEval ? 'Editar avaliação →' : 'Avaliar este show →'}</AvaliarLink>
+            </Link>
+          )}
+
+          {!summary && data.length >= MIN_AVALIACOES_PARA_RESUMO && (
+            <>
+              <AiSummaryBtn onClick={handleDownloadResumo} disabled={loadingSummary}>
+                {loadingSummary ? 'Gerando...' : 'Baixar Resumo'}
+              </AiSummaryBtn>
+              <AiSummaryBtn onClick={handleUploadClick} disabled={loadingSummary}>
+                Carregar Resumo
+              </AiSummaryBtn>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="application/json"
+                style={{ display: 'none' }}
+                onChange={handleFileSelected}
+              />
+            </>
+          )}
+        </div>
+
+        {summaryError && <AiSummaryError>{summaryError}</AiSummaryError>}
 
         {data.length === 0 ? (
           <Loading>Nenhuma avaliação submetida ainda.</Loading>
@@ -571,6 +673,26 @@ export default function AvaliacoesShowPage() {
                 <CommentBody>{r.obs_livres}</CommentBody>
               </CommentCard>
             ))}
+
+            {summary &&
+              (() => {
+                const parts = splitSummary(summary)
+                return (
+                  <>
+                    <SectionLabel>Resumo Médio das Avaliações</SectionLabel>
+                    {parts ? (
+                      <>
+                        <AiSummarySubheading>{RECLAMACOES_HEADER}</AiSummarySubheading>
+                        <AiSummaryBox>{parts.reclamacoes}</AiSummaryBox>
+                        <AiSummarySubheading>{ACOES_HEADER}</AiSummarySubheading>
+                        <AiSummaryBox>{parts.acoes}</AiSummaryBox>
+                      </>
+                    ) : (
+                      <AiSummaryBox>{summary}</AiSummaryBox>
+                    )}
+                  </>
+                )
+              })()}
           </>
         )}
       </div>

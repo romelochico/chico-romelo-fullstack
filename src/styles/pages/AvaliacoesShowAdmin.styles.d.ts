@@ -3,6 +3,10 @@ import type { DefaultTheme } from 'styled-components'
 
 export const BackLink: StyledComponent<'a', DefaultTheme>
 export const AvaliarLink: StyledComponent<'a', DefaultTheme>
+export const AiSummaryBtn: StyledComponent<'button', DefaultTheme>
+export const AiSummaryBox: StyledComponent<'div', DefaultTheme>
+export const AiSummarySubheading: StyledComponent<'h4', DefaultTheme>
+export const AiSummaryError: StyledComponent<'p', DefaultTheme>
 export const SummaryGrid: StyledComponent<'div', DefaultTheme>
 export const SummaryCard: StyledComponent<'div', DefaultTheme>
 export const SummaryVal: StyledComponent<'div', DefaultTheme>
