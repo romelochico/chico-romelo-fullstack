@@ -63,6 +63,22 @@ export interface ShowCardProps {
   past: boolean
 }
 
+// ── Calendário ─────────────────────────────────────────────────────────────
+
+export type CalendarioTipo = 'ensaio' | 'show' | 'publicidade' | 'suporte_eventos'
+
+/** A row from the `calendario_eventos` Supabase table */
+export interface CalendarioEventoRow {
+  id: string
+  nome: string
+  tipo: CalendarioTipo
+  data_inicio: string
+  data_fim: string | null
+  descricao: string | null
+  created_by?: string | null
+  created_at?: string
+}
+
 // ── News ───────────────────────────────────────────────────────────────────
 
 export interface NewsLink {
