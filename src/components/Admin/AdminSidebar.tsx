@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import {
   LayoutDashboard,
   Calendar,
+  CalendarDays,
   Newspaper,
   Disc3,
   Image,
@@ -246,6 +247,7 @@ interface NavLinkDef {
 
 const NAV_LINKS: NavLinkDef[] = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/calendario', label: 'Calendário', icon: CalendarDays },
   { href: '/admin/eventos', label: 'Eventos', icon: Calendar },
   { href: '/admin/lugares', label: 'Lugares para tocar', icon: MapPin },
   { href: '/admin/open-calls', label: 'Open Calls', icon: Megaphone },

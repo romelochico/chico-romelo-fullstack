@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
-import styled, { createGlobalStyle } from 'styled-components'
+import styled, { createGlobalStyle, css } from 'styled-components'
 import { Menu } from 'lucide-react'
 import AdminSidebar from './AdminSidebar'
 import { createClient } from '../../lib/supabase/client'
@@ -75,12 +75,20 @@ const TopBarSpacer = styled.div`
 
 /* ── Main content area ────────────────────────────────────────────── */
 
-const Main = styled.main`
+const Main = styled.main<{ $fullHeight?: boolean }>`
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
   background: ${({ theme }) => theme.colors.dark};
   min-width: 0;
+
+  ${({ $fullHeight }) =>
+    $fullHeight &&
+    css`
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    `}
 
   @media (max-width: ${({ theme }) => theme.breakpoints.admin}) {
     padding-top: 56px;
@@ -117,8 +125,18 @@ const PageSub = styled.p`
   letter-spacing: 0.04em;
 `
 
-const Content = styled.div`
+const Content = styled.div<{ $fullHeight?: boolean }>`
   padding: 0 32px 40px;
+
+  ${({ $fullHeight }) =>
+    $fullHeight &&
+    css`
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 0 32px 24px;
+    `}
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     padding: 0 16px 16px;
@@ -142,9 +160,11 @@ interface AdminLayoutProps {
   children: ReactNode
   title?: string
   subtitle?: string
+  /** Makes <Main>/<Content> fill the remaining viewport height instead of growing with content — for pages that manage their own internal scrolling (e.g. the calendar). */
+  fullHeight?: boolean
 }
 
-export default function AdminLayout({ children, title, subtitle }: AdminLayoutProps) {
+export default function AdminLayout({ children, title, subtitle, fullHeight }: AdminLayoutProps) {
   const router = useRouter()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [authed, setAuthed] = useState(false)
@@ -182,14 +202,14 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
 
       <Shell>
         <AdminSidebar isOpen={drawerOpen} onClose={() => setDrawerOpen(false)} />
-        <Main>
+        <Main $fullHeight={fullHeight}>
           {(title || subtitle) && (
             <Header>
               {title && <PageTitle>{title}</PageTitle>}
               {subtitle && <PageSub>{subtitle}</PageSub>}
             </Header>
           )}
-          <Content>{children}</Content>
+          <Content $fullHeight={fullHeight}>{children}</Content>
         </Main>
       </Shell>
     </>
