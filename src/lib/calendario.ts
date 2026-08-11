@@ -109,3 +109,10 @@ export function formatShort(d: Date): string {
 export function todayStr(): string {
   return toKey(new Date())
 }
+
+export function formatTimeRange(ev: CalendarioEventoRow): string | null {
+  const start = ev.hora_inicio ? ev.hora_inicio.slice(0, 5) : null
+  const end = ev.hora_fim ? ev.hora_fim.slice(0, 5) : null
+  if (start && end) return `${start} – ${end}`
+  return start
+}
