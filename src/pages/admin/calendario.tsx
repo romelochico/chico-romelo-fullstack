@@ -20,6 +20,7 @@ import {
   eventsForDay,
   formatDatePt,
   formatShort,
+  formatTimeRange,
   todayStr,
 } from '../../lib/calendario'
 import type { CalendarioEventoRow, CalendarioTipo } from '../../types'
@@ -33,6 +34,8 @@ interface CalendarioFormData {
   tipo: CalendarioTipo
   data_inicio: string
   data_fim: string
+  hora_inicio: string
+  hora_fim: string
   descricao: string
 }
 
@@ -46,6 +49,8 @@ const EMPTY_FORM: CalendarioFormData = {
   tipo: 'ensaio',
   data_inicio: '',
   data_fim: '',
+  hora_inicio: '',
+  hora_fim: '',
   descricao: '',
 }
 
@@ -379,6 +384,12 @@ const ChipIcon = styled.span<{ $color: string }>`
     width: 10px;
     height: 10px;
   }
+`
+
+const ChipTime = styled.span`
+  font-variant-numeric: tabular-nums;
+  color: rgba(245, 240, 232, 0.55);
+  flex-shrink: 0;
 `
 
 const ChipMore = styled.div`
@@ -1072,6 +1083,8 @@ export default function AdminCalendarioPage() {
       tipo: item.tipo,
       data_inicio: item.data_inicio,
       data_fim: item.data_fim ?? '',
+      hora_inicio: item.hora_inicio ?? '',
+      hora_fim: item.hora_fim ?? '',
       descricao: item.descricao ?? '',
     })
     setFormError('')
@@ -1102,6 +1115,11 @@ export default function AdminCalendarioPage() {
       setFormError('A data final não pode ser anterior à data de início.')
       return
     }
+    const sameDate = !form.data_fim || form.data_fim === form.data_inicio
+    if (sameDate && form.hora_inicio && form.hora_fim && form.hora_fim < form.hora_inicio) {
+      setFormError('A hora final não pode ser anterior à hora de início.')
+      return
+    }
     setSaving(true)
     setFormError('')
 
@@ -1110,6 +1128,8 @@ export default function AdminCalendarioPage() {
       tipo: form.tipo,
       data_inicio: form.data_inicio,
       data_fim: form.data_fim || null,
+      hora_inicio: form.hora_inicio || null,
+      hora_fim: form.hora_fim || null,
       descricao: form.descricao.trim() || null,
     }
 
@@ -1309,9 +1329,28 @@ export default function AdminCalendarioPage() {
                 </Field>
                 <Field>
                   <Label>
+                    Hora de início <Hint>opcional</Hint>
+                  </Label>
+                  <Input
+                    type="time"
+                    value={form.hora_inicio}
+                    onChange={e => setField('hora_inicio', e.target.value)}
+                  />
+                </Field>
+              </FieldRow>
+
+              <FieldRow>
+                <Field>
+                  <Label>
                     Data final <Hint>opcional</Hint>
                   </Label>
                   <Input type="date" value={form.data_fim} onChange={e => setField('data_fim', e.target.value)} />
+                </Field>
+                <Field>
+                  <Label>
+                    Hora final <Hint>opcional</Hint>
+                  </Label>
+                  <Input type="time" value={form.hora_fim} onChange={e => setField('hora_fim', e.target.value)} />
                 </Field>
               </FieldRow>
 
@@ -1411,6 +1450,7 @@ function MonthSingle({
               <ChipList>
                 {shown.map(ev => {
                   const Icon = TIPOS[ev.tipo].icon
+                  const time = ev.hora_inicio ? ev.hora_inicio.slice(0, 5) : null
                   return (
                     <Chip
                       key={ev.id}
@@ -1423,6 +1463,7 @@ function MonthSingle({
                       <ChipIcon $color={TIPOS[ev.tipo].color}>
                         <Icon />
                       </ChipIcon>
+                      {time && <ChipTime>{time}</ChipTime>}
                       {ev.nome}
                     </Chip>
                   )
@@ -1516,6 +1557,7 @@ function WeekView({
               {dayEvents.length ? (
                 dayEvents.map(ev => {
                   const Icon = TIPOS[ev.tipo].icon
+                  const time = formatTimeRange(ev)
                   return (
                     <WeekChip key={ev.id} $color={TIPOS[ev.tipo].color} onClick={() => onEventClick(ev)}>
                       <WeekChipIcon $color={TIPOS[ev.tipo].color}>
@@ -1523,7 +1565,9 @@ function WeekView({
                       </WeekChipIcon>
                       <div>
                         <WeekChipName>{ev.nome}</WeekChipName>
-                        <WeekChipType $color={TIPOS[ev.tipo].color}>{TIPOS[ev.tipo].label}</WeekChipType>
+                        <WeekChipType $color={TIPOS[ev.tipo].color}>
+                          {time ? `${time} · ${TIPOS[ev.tipo].label}` : TIPOS[ev.tipo].label}
+                        </WeekChipType>
                       </div>
                     </WeekChip>
                   )
@@ -1567,6 +1611,7 @@ function DayViewPanel({
             ev.data_fim && ev.data_fim !== ev.data_inicio
               ? `${formatDatePt(parseKey(ev.data_inicio))} – ${formatDatePt(parseKey(ev.data_fim))}`
               : formatDatePt(parseKey(ev.data_inicio))
+          const time = formatTimeRange(ev)
           const Icon = TIPOS[ev.tipo].icon
           return (
             <DayEventCard key={ev.id} $color={TIPOS[ev.tipo].color} onClick={() => onEventClick(ev)}>
@@ -1577,6 +1622,7 @@ function DayViewPanel({
                 <DayEventName>{ev.nome}</DayEventName>
                 <DayEventMeta $color={TIPOS[ev.tipo].color}>
                   {TIPOS[ev.tipo].label} · {range}
+                  {time ? ` · ${time}` : ''}
                 </DayEventMeta>
                 {ev.descricao && <DayEventDesc>{ev.descricao}</DayEventDesc>}
               </div>

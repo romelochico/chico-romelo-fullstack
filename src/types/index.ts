@@ -74,6 +74,8 @@ export interface CalendarioEventoRow {
   tipo: CalendarioTipo
   data_inicio: string
   data_fim: string | null
+  hora_inicio: string | null
+  hora_fim: string | null
   descricao: string | null
   created_by?: string | null
   created_at?: string
