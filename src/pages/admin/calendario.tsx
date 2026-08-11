@@ -1061,13 +1061,31 @@ export default function AdminCalendarioPage() {
       .then(({ data }) => setUser(data.user))
   }, [])
 
+  async function authHeaders(): Promise<Record<string, string>> {
+    const {
+      data: { session },
+    } = await createClient().auth.getSession()
+    return {
+      'Content-Type': 'application/json',
+      ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+    }
+  }
+
   async function load() {
     setLoading(true)
-    const { data } = await createClient()
-      .from('calendario_eventos')
-      .select('*')
-      .order('data_inicio', { ascending: true })
-    setEvents((data ?? []) as unknown as CalendarioEventoRow[])
+    const [{ data: local }, ensaiosRes] = await Promise.all([
+      createClient()
+        .from('calendario_eventos')
+        .select('*')
+        .neq('tipo', 'ensaio')
+        .order('data_inicio', { ascending: true }),
+      fetch('/api/admin/calendario/ensaios', { headers: await authHeaders() }),
+    ])
+    const ensaios = ensaiosRes.ok ? ((await ensaiosRes.json()) as CalendarioEventoRow[]) : []
+    const merged = [...((local ?? []) as unknown as CalendarioEventoRow[]), ...ensaios].sort((a, b) =>
+      a.data_inicio.localeCompare(b.data_inicio)
+    )
+    setEvents(merged)
     setLoading(false)
   }
 
@@ -1120,8 +1138,35 @@ export default function AdminCalendarioPage() {
       setFormError('A hora final não pode ser anterior à hora de início.')
       return
     }
+    if (form.tipo === 'ensaio' && !form.hora_inicio) {
+      setFormError('Hora inicial é obrigatória para ensaios (agendados via nboxes).')
+      return
+    }
     setSaving(true)
     setFormError('')
+
+    // Ensaios são derivados do nboxes — não vivem em calendario_eventos.
+    if (form.tipo === 'ensaio') {
+      const requestBody = JSON.stringify({
+        nome: form.nome.trim(),
+        data_inicio: form.data_inicio,
+        hora_inicio: form.hora_inicio,
+        hora_fim: form.hora_fim || null,
+      })
+      const res = await fetch(
+        modal.type === 'add' ? '/api/admin/calendario/ensaios' : `/api/admin/calendario/ensaios/${modal.item.id}`,
+        { method: modal.type === 'add' ? 'POST' : 'PATCH', headers: await authHeaders(), body: requestBody }
+      )
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => null)
+        setFormError(errBody?.error || 'Falha ao agendar ensaio no nboxes.')
+        setSaving(false)
+        return
+      }
+      closeModal()
+      load()
+      return
+    }
 
     const payload: Record<string, unknown> = {
       nome: form.nome.trim(),
@@ -1155,7 +1200,11 @@ export default function AdminCalendarioPage() {
 
   async function handleDelete() {
     if (!modal || modal.type !== 'delete') return
-    await createClient().from('calendario_eventos').delete().eq('id', modal.item.id)
+    if (modal.item.tipo === 'ensaio') {
+      await fetch(`/api/admin/calendario/ensaios/${modal.item.id}`, { method: 'DELETE', headers: await authHeaders() })
+    } else {
+      await createClient().from('calendario_eventos').delete().eq('id', modal.item.id)
+    }
     closeModal()
     load()
   }
