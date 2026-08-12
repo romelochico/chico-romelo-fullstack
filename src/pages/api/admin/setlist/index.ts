@@ -1,26 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { createClient } from '@supabase/supabase-js'
-
-function adminClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } }
-  )
-}
-
-async function getUser(req: NextApiRequest) {
-  const token = req.headers.authorization?.replace('Bearer ', '')
-  if (!token) return null
-  const { data: { user } } = await adminClient().auth.getUser(token)
-  return user
-}
+import { requireAccess } from '../../../../lib/api-auth'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const user = await getUser(req)
-  if (!user) return res.status(401).json({ error: 'Não autenticado.' })
-
-  const supabase = adminClient()
+  const auth = await requireAccess(req, res)
+  if (!auth) return
+  const { supabase } = auth
 
   if (req.method === 'GET') {
     const { event_id } = req.query
@@ -35,13 +19,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const blockIds = (blocks ?? []).map(b => b.id)
     const { data: songs, error: songsErr } = blockIds.length
-      ? await supabase.from('show_setlist_songs').select('*').in('block_id', blockIds).order('position')
+      ? await supabase
+          .from('show_setlist_songs')
+          .select('*')
+          .in('block_id', blockIds)
+          .order('position')
       : { data: [] as { id: string; block_id: string }[], error: null }
     if (songsErr) return res.status(500).json({ error: songsErr.message })
 
     const songIds = (songs ?? []).map(s => s.id)
     const { data: speeches, error: speechesErr } = songIds.length
-      ? await supabase.from('show_setlist_speeches').select('*').in('song_id', songIds).order('position')
+      ? await supabase
+          .from('show_setlist_speeches')
+          .select('*')
+          .in('song_id', songIds)
+          .order('position')
       : { data: [] as { id: string; song_id: string }[], error: null }
     if (speechesErr) return res.status(500).json({ error: speechesErr.message })
 

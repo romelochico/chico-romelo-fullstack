@@ -11,6 +11,7 @@ import {
   Star,
   Package,
   AlertTriangle,
+  Users,
 } from 'lucide-react'
 import AdminLayout from '../../components/Admin/AdminLayout'
 import { createClient } from '../../lib/supabase/client'
@@ -165,6 +166,7 @@ interface DashStats {
   openCallsTotal: number
   openCallsUrgent: number
   nextUrgentOpenCall: { name: string; days: number } | null
+  teamCount: number
 }
 
 export default function DashboardPage() {
@@ -189,6 +191,7 @@ export default function DashboardPage() {
       credsRes,
       inventoryRes,
       openCallsRes,
+      teamRes,
     ] = await Promise.all([
       supabase.from('events').select('date'),
       supabase.from('news').select('id', { count: 'exact', head: true }).eq('published', true),
@@ -200,6 +203,7 @@ export default function DashboardPage() {
       supabase.from('credentials').select('id', { count: 'exact', head: true }),
       supabase.from('inventory').select('id, quantity'),
       supabase.from('open_calls').select('id, name, application_date'),
+      supabase.from('team_members').select('id', { count: 'exact', head: true }),
     ])
 
     const openCallsData = (openCallsRes.data ?? []) as {
@@ -254,6 +258,7 @@ export default function DashboardPage() {
       openCallsTotal: currentOpenCalls.length,
       openCallsUrgent: urgentCalls.length,
       nextUrgentOpenCall: urgentCalls[0] ?? null,
+      teamCount: teamRes.count ?? 0,
     })
   }
 
@@ -331,6 +336,13 @@ export default function DashboardPage() {
           ) : null,
       },
       { href: '/admin/media', label: 'Imprensa', icon: Image, value: null, sub: null },
+      {
+        href: '/admin/equipe',
+        label: 'Banda e Equipe',
+        icon: Users,
+        value: s ? s.teamCount : undefined,
+        sub: null,
+      },
       {
         href: '/admin/inventario',
         label: 'Inventário',

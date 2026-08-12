@@ -18,9 +18,11 @@ import {
   Package,
   MapPin,
   Megaphone,
+  Users,
   type LucideIcon,
 } from 'lucide-react'
 import { createClient } from '../../lib/supabase/client'
+import { syncTeamMemberFromGoogle } from '../../lib/equipe'
 import type { User } from '@supabase/supabase-js'
 
 /* ── Overlay (mobile only) ────────────────────────────────────────── */
@@ -258,6 +260,7 @@ const NAV_LINKS: NavLinkDef[] = [
   { href: '/admin/inventario', label: 'Inventário', icon: Package },
   { href: '/admin/contatos', label: 'Contatos', icon: Mail },
   { href: '/admin/avaliacoes', label: 'Avaliações', icon: Star },
+  { href: '/admin/equipe', label: 'Banda e Equipe', icon: Users },
 ]
 
 function getDisplayName(user: User): string {
@@ -296,7 +299,10 @@ export default function AdminSidebar({ isOpen = false, onClose = () => {} }: Adm
   useEffect(() => {
     createClient()
       .auth.getUser()
-      .then(({ data }) => setUser(data.user))
+      .then(({ data }) => {
+        setUser(data.user)
+        if (data.user) syncTeamMemberFromGoogle(data.user)
+      })
   }, [])
 
   // close drawer on route change

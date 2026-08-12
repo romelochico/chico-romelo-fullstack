@@ -613,6 +613,7 @@ export default function LinksPage() {
   const [linkModal, setLinkModal] = useState<LinkModal | null>(null)
   const [credModal, setCredModal] = useState<CredModal | null>(null)
   const [saving, setSaving] = useState(false)
+  const [canSeeCredentials, setCanSeeCredentials] = useState(false)
 
   // Link form state
   const [linkForm, setLinkForm] = useState({
@@ -626,18 +627,31 @@ export default function LinksPage() {
 
   const supabase = createClient()
 
+  const authHeaders = useCallback(
+    async (extra: Record<string, string> = {}): Promise<Record<string, string>> => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+      return {
+        'Content-Type': 'application/json',
+        ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        ...extra,
+      }
+    },
+    [supabase]
+  )
+
   const loadLinks = useCallback(async () => {
     const { data } = await supabase.from('links').select('*').order('order')
     setLinks((data as LinkRow[]) ?? [])
   }, [supabase])
 
   const loadCredentials = useCallback(async () => {
-    const { data } = await supabase
-      .from('credentials')
-      .select('*')
-      .order('created_at', { ascending: false })
+    const res = await fetch('/api/admin/credentials', { headers: await authHeaders() })
+    if (!res.ok) return
+    const data = await res.json()
     setCredentials((data as CredentialRow[]) ?? [])
-  }, [supabase])
+  }, [authHeaders])
 
   useEffect(() => {
     loadLinks()
@@ -645,6 +659,13 @@ export default function LinksPage() {
   useEffect(() => {
     loadCredentials()
   }, [loadCredentials])
+
+  useEffect(() => {
+    supabase.rpc('get_my_tier').then(({ data: tier }) => {
+      setCanSeeCredentials(tier === 'admin' || tier === 'diretoria' || tier === 'marketing')
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // ── Link CRUD ──────────────────────────────────────────────────────────────
 
@@ -660,17 +681,6 @@ export default function LinksPage() {
       category: (item.category ?? 'photos') as LinkCategory,
     })
     setLinkModal({ type: 'edit', item })
-  }
-
-  async function authHeaders(extra: Record<string, string> = {}): Promise<Record<string, string>> {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
-    return {
-      'Content-Type': 'application/json',
-      ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
-      ...extra,
-    }
   }
 
   async function saveLink() {
@@ -736,9 +746,11 @@ export default function LinksPage() {
         <SectionTab $active={section === 'links'} onClick={() => setSection('links')}>
           <Link2 /> Links
         </SectionTab>
-        <SectionTab $active={section === 'credentials'} onClick={() => setSection('credentials')}>
-          <KeyRound /> Credenciais
-        </SectionTab>
+        {canSeeCredentials && (
+          <SectionTab $active={section === 'credentials'} onClick={() => setSection('credentials')}>
+            <KeyRound /> Credenciais
+          </SectionTab>
+        )}
       </SectionTabs>
 
       {/* ── LINKS SECTION ── */}
@@ -920,7 +932,7 @@ export default function LinksPage() {
               <Input
                 value={credForm.login}
                 onChange={e => setCredForm(f => ({ ...f, login: e.target.value }))}
-                placeholder="romelochico@gmail.com"
+                placeholder="nome@gmail.com"
               />
             </Field>
             <Field>

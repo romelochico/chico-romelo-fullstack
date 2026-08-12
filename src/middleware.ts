@@ -1,10 +1,20 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
-const ADMIN_WHITELIST = (process.env.ADMIN_EMAILS ?? '')
-  .split(',')
-  .map(e => e.trim().toLowerCase())
-  .filter(Boolean)
+const SUPER_ADMIN_EMAIL = (process.env.SUPER_ADMIN_EMAIL ?? '').toLowerCase()
+
+/**
+ * The super admin's email (env var, never in source) is always allowed in,
+ * regardless of the database — a bootstrap safety net so a bad row can never
+ * lock the admin out. Everyone else needs a tier assigned in team_members
+ * (get_my_tier() RPC); no tier means they haven't been invited yet.
+ */
+async function hasAccess(supabase: SupabaseClient, email: string): Promise<boolean> {
+  if (SUPER_ADMIN_EMAIL && email === SUPER_ADMIN_EMAIL) return true
+  const { data } = await supabase.rpc('get_my_tier')
+  return !!data
+}
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
@@ -37,15 +47,14 @@ export async function middleware(request: NextRequest) {
   if (pathname === '/admin/login') {
     if (user) {
       const email = user.email?.toLowerCase() ?? ''
-      const allowed = ADMIN_WHITELIST.length === 0 || ADMIN_WHITELIST.includes(email)
-      if (allowed) {
+      if (await hasAccess(supabase, email)) {
         return NextResponse.redirect(new URL('/admin/dashboard', request.url))
       }
     }
     return supabaseResponse
   }
 
-  // All other /admin/* routes: require auth + whitelist
+  // All other /admin/* routes: require auth + an assigned tier
   if (pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) {
     if (!user) {
       if (pathname.startsWith('/api/')) {
@@ -56,7 +65,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(loginUrl)
     }
     const email = user.email?.toLowerCase() ?? ''
-    if (ADMIN_WHITELIST.length > 0 && !ADMIN_WHITELIST.includes(email)) {
+    if (!(await hasAccess(supabase, email))) {
       await supabase.auth.signOut()
       if (pathname.startsWith('/api/')) {
         return NextResponse.json({ error: 'Acesso negado.' }, { status: 403 })

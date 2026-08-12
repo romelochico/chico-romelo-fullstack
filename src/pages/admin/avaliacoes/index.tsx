@@ -127,9 +127,9 @@ export default function AvaliacoesPage() {
   useEffect(() => {
     loadData()
     createClient()
-      .auth.getUser()
-      .then(({ data: { user } }) => {
-        setIsSuperAdmin(user?.email === 'romelochico@gmail.com')
+      .rpc('get_my_tier')
+      .then(({ data: tier }) => {
+        setIsSuperAdmin(tier === 'admin')
       })
   }, [loadData])
 

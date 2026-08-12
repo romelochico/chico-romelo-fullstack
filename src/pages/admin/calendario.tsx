@@ -1053,12 +1053,16 @@ export default function AdminCalendarioPage() {
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
   const [user, setUser] = useState<{ email?: string } | null>(null)
+  const [canAddEvent, setCanAddEvent] = useState(false)
 
   useEffect(() => {
     load()
-    createClient()
-      .auth.getUser()
-      .then(({ data }) => setUser(data.user))
+    const supabase = createClient()
+    supabase.auth.getUser().then(async ({ data }) => {
+      setUser(data.user)
+      const { data: tier } = await supabase.rpc('get_my_tier')
+      setCanAddEvent(tier === 'admin' || tier === 'membro_da_banda')
+    })
   }, [])
 
   async function authHeaders(): Promise<Record<string, string>> {
@@ -1082,14 +1086,15 @@ export default function AdminCalendarioPage() {
       fetch('/api/admin/calendario/ensaios', { headers: await authHeaders() }),
     ])
     const ensaios = ensaiosRes.ok ? ((await ensaiosRes.json()) as CalendarioEventoRow[]) : []
-    const merged = [...((local ?? []) as unknown as CalendarioEventoRow[]), ...ensaios].sort((a, b) =>
-      a.data_inicio.localeCompare(b.data_inicio)
+    const merged = [...((local ?? []) as unknown as CalendarioEventoRow[]), ...ensaios].sort(
+      (a, b) => a.data_inicio.localeCompare(b.data_inicio)
     )
     setEvents(merged)
     setLoading(false)
   }
 
   function openAdd(dateKey?: string) {
+    if (!canAddEvent) return
     setForm({ ...EMPTY_FORM, data_inicio: dateKey || todayStr() })
     setFormError('')
     setModal({ type: 'add' })
@@ -1154,8 +1159,14 @@ export default function AdminCalendarioPage() {
         hora_fim: form.hora_fim || null,
       })
       const res = await fetch(
-        modal.type === 'add' ? '/api/admin/calendario/ensaios' : `/api/admin/calendario/ensaios/${modal.item.id}`,
-        { method: modal.type === 'add' ? 'POST' : 'PATCH', headers: await authHeaders(), body: requestBody }
+        modal.type === 'add'
+          ? '/api/admin/calendario/ensaios'
+          : `/api/admin/calendario/ensaios/${modal.item.id}`,
+        {
+          method: modal.type === 'add' ? 'POST' : 'PATCH',
+          headers: await authHeaders(),
+          body: requestBody,
+        }
       )
       if (!res.ok) {
         const errBody = await res.json().catch(() => null)
@@ -1201,7 +1212,10 @@ export default function AdminCalendarioPage() {
   async function handleDelete() {
     if (!modal || modal.type !== 'delete') return
     if (modal.item.tipo === 'ensaio') {
-      await fetch(`/api/admin/calendario/ensaios/${modal.item.id}`, { method: 'DELETE', headers: await authHeaders() })
+      await fetch(`/api/admin/calendario/ensaios/${modal.item.id}`, {
+        method: 'DELETE',
+        headers: await authHeaders(),
+      })
     } else {
       await createClient().from('calendario_eventos').delete().eq('id', modal.item.id)
     }
@@ -1221,7 +1235,10 @@ export default function AdminCalendarioPage() {
     setView('day')
   }
 
-  const periodLabel = useMemo(() => buildPeriodLabel(view, current, monthCount), [view, current, monthCount])
+  const periodLabel = useMemo(
+    () => buildPeriodLabel(view, current, monthCount),
+    [view, current, monthCount]
+  )
   const isFormModal = modal?.type === 'add' || modal?.type === 'edit'
   const isDeleteModal = modal?.type === 'delete'
 
@@ -1269,9 +1286,11 @@ export default function AdminCalendarioPage() {
             </ViewBtn>
           </ViewSwitch>
 
-          <AddBtn onClick={() => openAdd()}>
-            <Plus /> Novo evento
-          </AddBtn>
+          {canAddEvent && (
+            <AddBtn onClick={() => openAdd()}>
+              <Plus /> Novo evento
+            </AddBtn>
+          )}
         </Toolbar>
 
         <Legend>
@@ -1302,20 +1321,29 @@ export default function AdminCalendarioPage() {
               />
             ) : (
               <MiniGridWrap>
-                {Array.from({ length: monthCount }, (_, i) => addMonths(startOfMonth(current), i)).map(m => (
+                {Array.from({ length: monthCount }, (_, i) =>
+                  addMonths(startOfMonth(current), i)
+                ).map(m => (
                   <MiniMonth key={toKey(m)} monthRef={m} events={events} onDayClick={goToDay} />
                 ))}
               </MiniGridWrap>
             )
           ) : view === 'week' ? (
-            <WeekView start={startOfWeek(current)} events={events} onCellClick={openAdd} onEventClick={openEdit} />
+            <WeekView
+              start={startOfWeek(current)}
+              events={events}
+              onCellClick={openAdd}
+              onEventClick={openEdit}
+            />
           ) : view === 'day' ? (
             <DayViewPanel date={current} events={events} onEventClick={openEdit} />
           ) : (
             <MiniGridWrap>
-              {Array.from({ length: 12 }, (_, i) => new Date(current.getFullYear(), i, 1)).map(m => (
-                <MiniMonth key={toKey(m)} monthRef={m} events={events} onDayClick={goToDay} />
-              ))}
+              {Array.from({ length: 12 }, (_, i) => new Date(current.getFullYear(), i, 1)).map(
+                m => (
+                  <MiniMonth key={toKey(m)} monthRef={m} events={events} onDayClick={goToDay} />
+                )
+              )}
             </MiniGridWrap>
           )}
         </Board>
@@ -1393,13 +1421,21 @@ export default function AdminCalendarioPage() {
                   <Label>
                     Data final <Hint>opcional</Hint>
                   </Label>
-                  <Input type="date" value={form.data_fim} onChange={e => setField('data_fim', e.target.value)} />
+                  <Input
+                    type="date"
+                    value={form.data_fim}
+                    onChange={e => setField('data_fim', e.target.value)}
+                  />
                 </Field>
                 <Field>
                   <Label>
                     Hora final <Hint>opcional</Hint>
                   </Label>
-                  <Input type="time" value={form.hora_fim} onChange={e => setField('hora_fim', e.target.value)} />
+                  <Input
+                    type="time"
+                    value={form.hora_fim}
+                    onChange={e => setField('hora_fim', e.target.value)}
+                  />
                 </Field>
               </FieldRow>
 
@@ -1446,8 +1482,8 @@ export default function AdminCalendarioPage() {
               <AlertTriangle />
               <ConfirmTitle>Excluir evento?</ConfirmTitle>
               <ConfirmText>
-                Tem certeza que quer excluir <strong>&quot;{modal.item.nome}&quot;</strong>? Esta ação não pode ser
-                desfeita.
+                Tem certeza que quer excluir <strong>&quot;{modal.item.nome}&quot;</strong>? Esta
+                ação não pode ser desfeita.
               </ConfirmText>
             </ConfirmBody>
             <ModalFooter>
@@ -1608,7 +1644,11 @@ function WeekView({
                   const Icon = TIPOS[ev.tipo].icon
                   const time = formatTimeRange(ev)
                   return (
-                    <WeekChip key={ev.id} $color={TIPOS[ev.tipo].color} onClick={() => onEventClick(ev)}>
+                    <WeekChip
+                      key={ev.id}
+                      $color={TIPOS[ev.tipo].color}
+                      onClick={() => onEventClick(ev)}
+                    >
                       <WeekChipIcon $color={TIPOS[ev.tipo].color}>
                         <Icon />
                       </WeekChipIcon>
@@ -1663,7 +1703,11 @@ function DayViewPanel({
           const time = formatTimeRange(ev)
           const Icon = TIPOS[ev.tipo].icon
           return (
-            <DayEventCard key={ev.id} $color={TIPOS[ev.tipo].color} onClick={() => onEventClick(ev)}>
+            <DayEventCard
+              key={ev.id}
+              $color={TIPOS[ev.tipo].color}
+              onClick={() => onEventClick(ev)}
+            >
               <DayEventIconBox $color={TIPOS[ev.tipo].color}>
                 <Icon />
               </DayEventIconBox>

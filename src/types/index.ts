@@ -202,6 +202,27 @@ export interface UserProfile {
   papel: string | null
 }
 
+// ── Team members ───────────────────────────────────────────────────────────
+
+/** Permission tier — see supabase/team-tiers.sql for the access rules. */
+export type Tier = 'admin' | 'diretoria' | 'marketing' | 'equipe' | 'membro_da_banda'
+
+/** A row from the `team_members` Supabase table */
+export interface TeamMemberRow {
+  id: string
+  email: string
+  nome: string | null
+  sobrenome: string | null
+  avatar_url: string | null
+  telefone: string | null
+  data_nascimento: string | null
+  redes_sociais: string | null
+  papel: string | null
+  tier: Tier | null
+  delete_requested_at: string | null
+  created_at?: string
+}
+
 // ── Contact form ───────────────────────────────────────────────────────────
 
 export interface ContactFormData {

@@ -1,13 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { createClient } from '@supabase/supabase-js'
-
-function adminClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } }
-  )
-}
+import type { SupabaseClient } from '@supabase/supabase-js'
+import { requireAccess } from '../../../../../lib/api-auth'
 
 const MIN_AVALIACOES = 5
 
@@ -47,16 +40,19 @@ Depois de escrever o resumo, devolva SOMENTE um JSON (sem nenhum texto antes ou 
 {"summary": "<o texto do resumo aqui, com \\n onde precisar de quebra de linha>"}`
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const auth = await requireAccess(req, res)
+  if (!auth) return
+  const { supabase } = auth
+
   const { id } = req.query
   if (typeof id !== 'string') return res.status(400).json({ error: 'ID inválido.' })
 
-  if (req.method === 'GET') return handleDigest(req, res, id)
-  if (req.method === 'POST') return handleUpload(req, res, id)
+  if (req.method === 'GET') return handleDigest(res, id, supabase)
+  if (req.method === 'POST') return handleUpload(req, res, id, supabase)
   return res.status(405).end()
 }
 
-async function handleDigest(_req: NextApiRequest, res: NextApiResponse, id: string) {
-  const supabase = adminClient()
+async function handleDigest(res: NextApiResponse, id: string, supabase: SupabaseClient) {
   const [showRes, avalsRes] = await Promise.all([
     supabase.from('shows').select('*').eq('id', id).single(),
     supabase.from('avaliacoes').select('*').eq('show_id', id),
@@ -114,13 +110,17 @@ async function handleDigest(_req: NextApiRequest, res: NextApiResponse, id: stri
   return res.status(200).json({ digest, prompt: PROMPT })
 }
 
-async function handleUpload(req: NextApiRequest, res: NextApiResponse, id: string) {
+async function handleUpload(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  id: string,
+  supabase: SupabaseClient
+) {
   const { summary } = req.body as { summary?: unknown }
   if (typeof summary !== 'string' || !summary.trim()) {
     return res.status(400).json({ error: 'Resumo inválido — campo "summary" em falta.' })
   }
 
-  const supabase = adminClient()
   const showRes = await supabase.from('shows').select('resumo_ia').eq('id', id).single()
   if (showRes.error) {
     console.error('[api/admin/avaliacoes/summary] show lookup failed', {
