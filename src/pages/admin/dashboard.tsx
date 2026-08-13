@@ -52,6 +52,7 @@ const CalWidget = styled.div`
 const CalWidgetHead = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   margin-bottom: 18px;
 
@@ -68,23 +69,23 @@ const CalWidgetHead = styled.div`
 
 const CalWidgetTitle = styled.span`
   font-family: ${({ theme }) => theme.fonts.display};
-  font-size: 16px;
+  font-size: 28px;
   color: #f5f0e8;
 `
 
 const CalStatsRow = styled.div`
   display: flex;
-  gap: 32px;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    gap: 16px;
-  }
+  align-items: center;
+  justify-content: space-evenly;
+  width: 100%;
 `
 
 const CalStat = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 2px;
+  text-align: center;
 `
 
 const CalStatValue = styled.span`
