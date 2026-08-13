@@ -72,12 +72,24 @@ const Toolbar = styled.div`
   gap: 16px;
   flex-wrap: wrap;
   row-gap: 10px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    gap: 8px;
+  }
 `
 
 const NavGroup = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
+`
+
+const PeriodBar = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-shrink: 0;
 `
 
 const IconBtn = styled.button`
@@ -128,6 +140,10 @@ const PeriodLabel = styled.div`
   color: #f5f0e8;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    font-size: 15px;
+  }
 `
 
 const Spacer = styled.div`
@@ -135,28 +151,20 @@ const Spacer = styled.div`
   min-width: 8px;
 `
 
-const ViewSwitch = styled.div`
-  display: flex;
+const ViewSelect = styled.select`
+  height: 30px;
+  padding: 0 8px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
-  padding: 2px;
-  gap: 2px;
-`
-
-const ViewBtn = styled.button<{ $active: boolean }>`
-  border: none;
-  background: ${p => (p.$active ? 'rgba(200, 169, 110, 0.18)' : 'transparent')};
-  color: ${p => (p.$active ? '#f5f0e8' : 'rgba(245, 240, 232, 0.5)')};
+  color: #f5f0e8;
   font-family: 'Montserrat', sans-serif;
   font-size: 12px;
   font-weight: 600;
-  padding: 6px 12px;
-  border-radius: 4px;
   cursor: pointer;
-  transition: all 0.15s;
-  &:hover {
-    color: #f5f0e8;
+
+  option {
+    background: #111111;
   }
 `
 
@@ -232,6 +240,11 @@ const Legend = styled.div`
   gap: 18px;
   flex-wrap: wrap;
   row-gap: 6px;
+  flex-shrink: 0;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    gap: 10px 14px;
+  }
 `
 
 const LegendItem = styled.span`
@@ -261,6 +274,10 @@ const Board = styled.div`
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    min-height: 70dvh;
+  }
 `
 
 const EmptyState = styled.div`
@@ -278,6 +295,10 @@ const MonthCard = styled.div`
   flex-direction: column;
   height: 100%;
   min-height: 520px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    min-height: 0;
+  }
 `
 
 const WeekdayRow = styled.div`
@@ -1243,22 +1264,15 @@ export default function AdminCalendarioPage() {
   const isDeleteModal = modal?.type === 'delete'
 
   return (
-    <AdminLayout title="Calendário" subtitle="Agenda interna de eventos" fullHeight>
+    <AdminLayout title="Calendário" subtitle="Agenda interna de eventos" fullHeight compactHeader>
       <Wrapper>
         <Toolbar>
-          <NavGroup>
-            <IconBtn onClick={() => navigate(-1)} aria-label="Período anterior">
-              <ChevronLeft />
-            </IconBtn>
-            <IconBtn onClick={() => navigate(1)} aria-label="Próximo período">
-              <ChevronRight />
-            </IconBtn>
-            <TodayBtn onClick={() => setCurrent(new Date())}>Hoje</TodayBtn>
-          </NavGroup>
-
-          <PeriodLabel>{periodLabel}</PeriodLabel>
-
-          <Spacer />
+          <ViewSelect value={view} onChange={e => setView(e.target.value as ViewType)}>
+            <option value="day">Diário</option>
+            <option value="week">Semanal</option>
+            <option value="month">Mensal</option>
+            <option value="year">Anual</option>
+          </ViewSelect>
 
           {view === 'month' && (
             <MonthStepper>
@@ -1271,20 +1285,7 @@ export default function AdminCalendarioPage() {
             </MonthStepper>
           )}
 
-          <ViewSwitch>
-            <ViewBtn $active={view === 'day'} onClick={() => setView('day')}>
-              Diário
-            </ViewBtn>
-            <ViewBtn $active={view === 'week'} onClick={() => setView('week')}>
-              Semanal
-            </ViewBtn>
-            <ViewBtn $active={view === 'month'} onClick={() => setView('month')}>
-              Mensal
-            </ViewBtn>
-            <ViewBtn $active={view === 'year'} onClick={() => setView('year')}>
-              Anual
-            </ViewBtn>
-          </ViewSwitch>
+          <Spacer />
 
           {canAddEvent && (
             <AddBtn onClick={() => openAdd()}>
@@ -1293,19 +1294,18 @@ export default function AdminCalendarioPage() {
           )}
         </Toolbar>
 
-        <Legend>
-          {TIPO_KEYS.map(tipo => {
-            const Icon = TIPOS[tipo].icon
-            return (
-              <LegendItem key={tipo}>
-                <LegendIcon $color={TIPOS[tipo].color}>
-                  <Icon />
-                </LegendIcon>
-                {TIPOS[tipo].label}
-              </LegendItem>
-            )
-          })}
-        </Legend>
+        <PeriodBar>
+          <TodayBtn onClick={() => setCurrent(new Date())}>Hoje</TodayBtn>
+          <NavGroup>
+            <IconBtn onClick={() => navigate(-1)} aria-label="Período anterior">
+              <ChevronLeft />
+            </IconBtn>
+            <PeriodLabel>{periodLabel}</PeriodLabel>
+            <IconBtn onClick={() => navigate(1)} aria-label="Próximo período">
+              <ChevronRight />
+            </IconBtn>
+          </NavGroup>
+        </PeriodBar>
 
         <Board>
           {loading ? (
@@ -1347,6 +1347,20 @@ export default function AdminCalendarioPage() {
             </MiniGridWrap>
           )}
         </Board>
+
+        <Legend>
+          {TIPO_KEYS.map(tipo => {
+            const Icon = TIPOS[tipo].icon
+            return (
+              <LegendItem key={tipo}>
+                <LegendIcon $color={TIPOS[tipo].color}>
+                  <Icon />
+                </LegendIcon>
+                {TIPOS[tipo].label}
+              </LegendItem>
+            )
+          })}
+        </Legend>
       </Wrapper>
 
       {/* ── Add / Edit modal ── */}

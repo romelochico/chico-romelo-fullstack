@@ -1,18 +1,7 @@
 import { useState, useEffect, useCallback, useRef, type ChangeEvent } from 'react'
 import Image from 'next/image'
 import styled from 'styled-components'
-import {
-  Plus,
-  Pencil,
-  Trash2,
-  Undo2,
-  Mail,
-  Phone,
-  Cake,
-  Share2,
-  Upload,
-  User as UserIcon,
-} from 'lucide-react'
+import { Plus, Mail, Phone, Cake, Share2, Upload, User as UserIcon } from 'lucide-react'
 import AdminLayout from '../../components/Admin/AdminLayout'
 import { createClient } from '../../lib/supabase/client'
 import { MONTHS } from '../../lib/calendario'
@@ -123,7 +112,8 @@ const List = styled.div`
 const MemberCard = styled.div`
   display: flex;
   align-items: center;
-  gap: 14px;
+  flex-wrap: wrap;
+  gap: 8px 12px;
   padding: 14px 16px;
   background: ${C.card};
   border: 1px solid ${C.border};
@@ -133,6 +123,22 @@ const MemberCard = styled.div`
   &:hover {
     border-color: ${C.dimmer};
   }
+`
+
+const MemberIdentity = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1 1 180px;
+  min-width: 0;
+`
+
+const MemberTags = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
 `
 
 const Avatar = styled.div`
@@ -211,36 +217,6 @@ const RequestTag = styled.span`
   background: rgba(248, 113, 113, 0.12);
   color: ${C.red};
   border: 1px solid rgba(248, 113, 113, 0.25);
-`
-
-const RowActions = styled.div`
-  display: flex;
-  gap: 4px;
-  flex-shrink: 0;
-`
-
-const IconBtn = styled.button<{ $red?: boolean }>`
-  width: 30px;
-  height: 30px;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: ${({ $red }) => ($red ? C.red : C.dim)};
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition:
-    background 0.15s,
-    color 0.15s;
-  svg {
-    width: 14px;
-    height: 14px;
-  }
-  &:hover {
-    background: ${({ $red }) => ($red ? 'rgba(248,113,113,0.1)' : 'rgba(255,255,255,0.06)')};
-    color: ${({ $red }) => ($red ? C.red : C.cream)};
-  }
 `
 
 const EmptyState = styled.div`
@@ -578,6 +554,7 @@ const ProfileInfoValue = styled.div`
 const ProfileActions = styled.div`
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
   justify-content: center;
 `
 
@@ -788,58 +765,28 @@ export default function EquipePage() {
         <List>
           {items.map(item => (
             <MemberCard key={item.id} onClick={() => openView(item)}>
-              <Avatar>
-                {item.avatar_url ? (
-                  <Image src={item.avatar_url} alt="" fill sizes="42px" />
-                ) : item.nome ? (
-                  initials(item)
-                ) : (
-                  <UserIcon />
-                )}
-              </Avatar>
-              <MemberInfo>
-                <MemberName>{fullName(item)}</MemberName>
-                <MemberMeta>
-                  <span>{item.email}</span>
-                  {item.telefone && <span>· {item.telefone}</span>}
-                </MemberMeta>
-              </MemberInfo>
-              {item.papel && <RoleTag>{item.papel}</RoleTag>}
-              {isAdmin && item.tier && <TierTag>{TIER_LABELS[item.tier]}</TierTag>}
-              {item.delete_requested_at && <RequestTag>Exclusão solicitada</RequestTag>}
-              <RowActions onClick={e => e.stopPropagation()}>
-                {canEdit(item) && (
-                  <IconBtn onClick={() => openEdit(item)} title="Editar">
-                    <Pencil />
-                  </IconBtn>
-                )}
-                {isAdmin && item.delete_requested_at && (
-                  <IconBtn
-                    onClick={() => toggleDeletionRequest(item)}
-                    title="Recusar pedido de exclusão"
-                  >
-                    <Undo2 />
-                  </IconBtn>
-                )}
-                {isAdmin && (
-                  <IconBtn $red onClick={() => setModal({ type: 'delete', item })} title="Apagar">
-                    <Trash2 />
-                  </IconBtn>
-                )}
-                {!isAdmin && item.email === currentEmail && (
-                  <IconBtn
-                    $red={!!item.delete_requested_at}
-                    onClick={() => toggleDeletionRequest(item)}
-                    title={
-                      item.delete_requested_at
-                        ? 'Cancelar solicitação de exclusão'
-                        : 'Solicitar exclusão ao admin'
-                    }
-                  >
-                    {item.delete_requested_at ? <Undo2 /> : <Trash2 />}
-                  </IconBtn>
-                )}
-              </RowActions>
+              <MemberIdentity>
+                <Avatar>
+                  {item.avatar_url ? (
+                    <Image src={item.avatar_url} alt="" fill sizes="42px" />
+                  ) : item.nome ? (
+                    initials(item)
+                  ) : (
+                    <UserIcon />
+                  )}
+                </Avatar>
+                <MemberInfo>
+                  <MemberName>{fullName(item)}</MemberName>
+                  <MemberMeta>
+                    <span>{item.email}</span>
+                  </MemberMeta>
+                </MemberInfo>
+              </MemberIdentity>
+              <MemberTags>
+                {item.papel && <RoleTag>{item.papel}</RoleTag>}
+                {isAdmin && item.tier && <TierTag>{TIER_LABELS[item.tier]}</TierTag>}
+                {item.delete_requested_at && <RequestTag>Exclusão solicitada</RequestTag>}
+              </MemberTags>
             </MemberCard>
           ))}
         </List>
@@ -1054,8 +1001,23 @@ export default function EquipePage() {
 
             <ProfileActions>
               <CancelBtn onClick={closeModal}>Fechar</CancelBtn>
+              {isAdmin && modal.item.delete_requested_at && (
+                <CancelBtn onClick={() => toggleDeletionRequest(modal.item)}>
+                  Recusar pedido
+                </CancelBtn>
+              )}
+              {!isAdmin && modal.item.email === currentEmail && (
+                <CancelBtn onClick={() => toggleDeletionRequest(modal.item)}>
+                  {modal.item.delete_requested_at ? 'Cancelar solicitação' : 'Solicitar exclusão'}
+                </CancelBtn>
+              )}
               {canEdit(modal.item) && (
                 <ConfirmBtn onClick={() => openEdit(modal.item)}>Editar</ConfirmBtn>
+              )}
+              {isAdmin && (
+                <ConfirmBtn $red onClick={() => setModal({ type: 'delete', item: modal.item })}>
+                  Apagar
+                </ConfirmBtn>
               )}
             </ProfileActions>
           </ProfileBox>

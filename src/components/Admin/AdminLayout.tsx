@@ -95,7 +95,7 @@ const Main = styled.main<{ $fullHeight?: boolean }>`
   }
 `
 
-const Header = styled.div`
+const Header = styled.div<{ $compact?: boolean }>`
   padding: 20px 32px 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   margin-bottom: 24px;
@@ -103,10 +103,18 @@ const Header = styled.div`
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     padding: 10px 16px 8px;
     margin-bottom: 10px;
+
+    ${({ $compact }) =>
+      $compact &&
+      css`
+        padding: 6px 16px 4px;
+        margin-bottom: 6px;
+        border-bottom: none;
+      `}
   }
 `
 
-const PageTitle = styled.h1`
+const PageTitle = styled.h1<{ $compact?: boolean }>`
   font-family: ${({ theme }) => theme.fonts.display};
   font-size: 24px;
   color: ${({ theme }) => theme.colors.cream};
@@ -114,15 +122,29 @@ const PageTitle = styled.h1`
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     font-size: 18px;
+
+    ${({ $compact }) =>
+      $compact &&
+      css`
+        font-size: 14px;
+      `}
   }
 `
 
-const PageSub = styled.p`
+const PageSub = styled.p<{ $compact?: boolean }>`
   font-family: ${({ theme }) => theme.fonts.body};
   font-size: 11px;
   color: rgba(255, 255, 255, 0.3);
   margin-top: 2px;
   letter-spacing: 0.04em;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    ${({ $compact }) =>
+      $compact &&
+      css`
+        display: none;
+      `}
+  }
 `
 
 const Content = styled.div<{ $fullHeight?: boolean }>`
@@ -162,9 +184,17 @@ interface AdminLayoutProps {
   subtitle?: string
   /** Makes <Main>/<Content> fill the remaining viewport height instead of growing with content — for pages that manage their own internal scrolling (e.g. the calendar). */
   fullHeight?: boolean
+  /** Shrinks the title and drops the subtitle on mobile, for pages where the header should get out of the way of the content (e.g. the calendar). */
+  compactHeader?: boolean
 }
 
-export default function AdminLayout({ children, title, subtitle, fullHeight }: AdminLayoutProps) {
+export default function AdminLayout({
+  children,
+  title,
+  subtitle,
+  fullHeight,
+  compactHeader,
+}: AdminLayoutProps) {
   const router = useRouter()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [authed, setAuthed] = useState(false)
@@ -204,9 +234,9 @@ export default function AdminLayout({ children, title, subtitle, fullHeight }: A
         <AdminSidebar isOpen={drawerOpen} onClose={() => setDrawerOpen(false)} />
         <Main $fullHeight={fullHeight}>
           {(title || subtitle) && (
-            <Header>
-              {title && <PageTitle>{title}</PageTitle>}
-              {subtitle && <PageSub>{subtitle}</PageSub>}
+            <Header $compact={compactHeader}>
+              {title && <PageTitle $compact={compactHeader}>{title}</PageTitle>}
+              {subtitle && <PageSub $compact={compactHeader}>{subtitle}</PageSub>}
             </Header>
           )}
           <Content $fullHeight={fullHeight}>{children}</Content>

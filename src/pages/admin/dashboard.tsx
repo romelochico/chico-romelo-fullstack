@@ -25,11 +25,8 @@ const Grid = styled.div`
   gap: 16px;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    --cell: calc((100dvh - 152px) / 4);
-    grid-template-columns: repeat(2, var(--cell));
-    grid-template-rows: repeat(4, var(--cell));
-    gap: 8px;
-    justify-content: center;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
 `
 
@@ -62,11 +59,11 @@ const Card = styled.div<{ $alert?: boolean }>`
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     aspect-ratio: 1;
-    padding: 12px;
-    gap: 5px;
+    padding: 18px;
+    gap: 8px;
     svg {
-      width: 16px;
-      height: 16px;
+      width: 22px;
+      height: 22px;
     }
   }
 `
@@ -80,7 +77,7 @@ const CardLabel = styled.span`
   color: rgba(245, 240, 232, 0.55);
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    font-size: 9px;
+    font-size: 11px;
     letter-spacing: 0.06em;
   }
 `
@@ -92,7 +89,7 @@ const CardValue = styled.span`
   line-height: 1;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    font-size: 24px;
+    font-size: 34px;
   }
 `
 
@@ -134,7 +131,7 @@ const SubStat = styled.span<{ $green?: boolean; $red?: boolean }>`
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    font-size: 10px;
+    font-size: 11px;
   }
 `
 
