@@ -77,6 +77,8 @@ export interface CalendarioEventoRow {
   hora_inicio: string | null
   hora_fim: string | null
   descricao: string | null
+  enviar_sms: boolean
+  sms_hours_before: number
   created_by?: string | null
   created_at?: string
 }

@@ -11,12 +11,13 @@ import { requireAccess } from '../../../../../lib/api-auth'
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const auth = await requireAccess(req, res)
   if (!auth) return
+  const { supabase } = auth
 
   const { id } = req.query as { id: string }
 
   try {
     if (req.method === 'PATCH' || req.method === 'PUT') {
-      const { nome, data_inicio, hora_inicio, hora_fim } = req.body
+      const { nome, data_inicio, hora_inicio, hora_fim, enviar_sms, sms_hours_before } = req.body
       if (!nome || !data_inicio || !hora_inicio) {
         return res.status(400).json({ error: 'Nome, data e hora inicial são obrigatórios.' })
       }
@@ -24,11 +25,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         id,
         calendarioFormToPayload({ nome, data_inicio, hora_inicio, hora_fim })
       )
-      return res.status(200).json(toCalendarioEvento(updated))
+      const enviarSms = enviar_sms !== false
+      const hoursBefore = Number(sms_hours_before) > 0 ? Number(sms_hours_before) : 5
+      await supabase.from('ensaio_sms_overrides').upsert({
+        ensaio_id: id,
+        enviar_sms: enviarSms,
+        sms_hours_before: hoursBefore,
+      })
+      return res.status(200).json(toCalendarioEvento(updated, enviarSms, hoursBefore))
     }
 
     if (req.method === 'DELETE') {
       await deleteRehearsal(id)
+      await supabase.from('ensaio_sms_overrides').delete().eq('ensaio_id', id)
       return res.status(204).end()
     }
 

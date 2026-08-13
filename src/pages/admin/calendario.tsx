@@ -37,6 +37,8 @@ interface CalendarioFormData {
   hora_inicio: string
   hora_fim: string
   descricao: string
+  enviar_sms: boolean
+  sms_hours_before: number
 }
 
 type ModalState =
@@ -52,6 +54,8 @@ const EMPTY_FORM: CalendarioFormData = {
   hora_inicio: '',
   hora_fim: '',
   descricao: '',
+  enviar_sms: true,
+  sms_hours_before: 5,
 }
 
 // ─── Layout ────────────────────────────────────────────────────────────────
@@ -866,6 +870,23 @@ const Hint = styled.span`
   margin-left: 6px;
 `
 
+const ToggleRow = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  color: rgba(245, 240, 232, 0.6);
+  margin-bottom: 14px;
+
+  input[type='checkbox'] {
+    width: 16px;
+    height: 16px;
+    accent-color: #c8a96e;
+  }
+`
+
 const inputStyles = css`
   padding: 10px 14px;
   background: rgba(255, 255, 255, 0.05);
@@ -1125,6 +1146,8 @@ export default function AdminCalendarioPage() {
       hora_inicio: item.hora_inicio ?? '',
       hora_fim: item.hora_fim ?? '',
       descricao: item.descricao ?? '',
+      enviar_sms: item.enviar_sms,
+      sms_hours_before: item.sms_hours_before,
     })
     setFormError('')
     setModal({ type: 'edit', item })
@@ -1173,6 +1196,8 @@ export default function AdminCalendarioPage() {
         data_inicio: form.data_inicio,
         hora_inicio: form.hora_inicio,
         hora_fim: form.hora_fim || null,
+        enviar_sms: form.enviar_sms,
+        sms_hours_before: form.sms_hours_before,
       })
       const res = await fetch(
         modal.type === 'add'
@@ -1203,6 +1228,8 @@ export default function AdminCalendarioPage() {
       hora_inicio: form.hora_inicio || null,
       hora_fim: form.hora_fim || null,
       descricao: form.descricao.trim() || null,
+      enviar_sms: form.enviar_sms,
+      sms_hours_before: form.sms_hours_before,
     }
 
     const client = createClient()
@@ -1443,6 +1470,28 @@ export default function AdminCalendarioPage() {
                   />
                 </Field>
               </FieldRow>
+
+              <ToggleRow>
+                <input
+                  type="checkbox"
+                  checked={form.enviar_sms}
+                  onChange={e => setField('enviar_sms', e.target.checked)}
+                />
+                Enviar lembrete por SMS
+              </ToggleRow>
+
+              {form.enviar_sms && (
+                <Field style={{ maxWidth: 180 }}>
+                  <Label>Horas antes do início</Label>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={72}
+                    value={form.sms_hours_before}
+                    onChange={e => setField('sms_hours_before', Number(e.target.value) || 5)}
+                  />
+                </Field>
+              )}
 
               <Field>
                 <Label>

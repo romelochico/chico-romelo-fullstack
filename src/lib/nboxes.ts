@@ -37,7 +37,10 @@ function config() {
   const key = process.env.NBOXES_API_KEY
   const email = process.env.NBOXES_REHEARSAL_EMAIL
   if (!base || !key || !email) {
-    throw new NboxesApiError(500, 'NBOXES_API_URL / NBOXES_API_KEY / NBOXES_REHEARSAL_EMAIL não configurados.')
+    throw new NboxesApiError(
+      500,
+      'NBOXES_API_URL / NBOXES_API_KEY / NBOXES_REHEARSAL_EMAIL não configurados.'
+    )
   }
   return { base: base.replace(/\/$/, ''), key, email }
 }
@@ -53,7 +56,11 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
   const body = await res.json().catch(() => null)
   if (!res.ok) {
-    throw new NboxesApiError(res.status, body?.error || `nboxes respondeu ${res.status}`, body?.details)
+    throw new NboxesApiError(
+      res.status,
+      body?.error || `nboxes respondeu ${res.status}`,
+      body?.details
+    )
   }
   return body as T
 }
@@ -75,9 +82,12 @@ export async function listRehearsals(from?: string, to?: string): Promise<Nboxes
 
 export async function checkAvailability(date: string, time?: string, end_time?: string) {
   const { email } = config()
-  return request<{ date: string; busy?: unknown[]; available?: boolean; conflicts?: NboxesRehearsal[] }>(
-    `/api/external/rehearsals/availability${qs({ email, date, time, end_time })}`
-  )
+  return request<{
+    date: string
+    busy?: unknown[]
+    available?: boolean
+    conflicts?: NboxesRehearsal[]
+  }>(`/api/external/rehearsals/availability${qs({ email, date, time, end_time })}`)
 }
 
 export interface RehearsalPayload {
@@ -97,7 +107,10 @@ export async function createRehearsal(payload: RehearsalPayload): Promise<Nboxes
   })
 }
 
-export async function updateRehearsal(id: string, payload: Partial<RehearsalPayload>): Promise<NboxesRehearsal> {
+export async function updateRehearsal(
+  id: string,
+  payload: Partial<RehearsalPayload>
+): Promise<NboxesRehearsal> {
   const { email } = config()
   return request<NboxesRehearsal>(`/api/external/rehearsals/${id}`, {
     method: 'PATCH',
@@ -110,7 +123,11 @@ export async function deleteRehearsal(id: string): Promise<void> {
   await request<void>(`/api/external/rehearsals/${id}${qs({ email })}`, { method: 'DELETE' })
 }
 
-export function toCalendarioEvento(r: NboxesRehearsal): CalendarioEventoRow {
+export function toCalendarioEvento(
+  r: NboxesRehearsal,
+  enviarSms = true,
+  smsHoursBefore = 5
+): CalendarioEventoRow {
   return {
     id: r.id,
     nome: r.name,
@@ -120,6 +137,8 @@ export function toCalendarioEvento(r: NboxesRehearsal): CalendarioEventoRow {
     hora_inicio: r.time,
     hora_fim: r.end_time,
     descricao: null,
+    enviar_sms: enviarSms,
+    sms_hours_before: smsHoursBefore,
     created_by: null,
     created_at: r.created_at,
   }

@@ -11,27 +11,52 @@ import { requireAccess } from '../../../../../lib/api-auth'
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const auth = await requireAccess(req, res)
   if (!auth) return
-  const { tier } = auth
+  const { tier, supabase } = auth
 
   try {
     if (req.method === 'GET') {
       const { from, to } = req.query as { from?: string; to?: string }
       const rehearsals = await listRehearsals(from, to)
-      return res.status(200).json(rehearsals.map(toCalendarioEvento))
+      const { data: overrides } = await supabase
+        .from('ensaio_sms_overrides')
+        .select('ensaio_id, enviar_sms, sms_hours_before')
+        .in(
+          'ensaio_id',
+          rehearsals.map(r => r.id)
+        )
+      const overrideMap = new Map(
+        (overrides ?? []).map(o => [
+          o.ensaio_id as string,
+          { enviar_sms: o.enviar_sms as boolean, sms_hours_before: o.sms_hours_before as number },
+        ])
+      )
+      return res.status(200).json(
+        rehearsals.map(r => {
+          const ov = overrideMap.get(r.id)
+          return toCalendarioEvento(r, ov?.enviar_sms ?? true, ov?.sms_hours_before ?? 5)
+        })
+      )
     }
 
     if (req.method === 'POST') {
       if (tier !== 'admin' && tier !== 'membro_da_banda') {
         return res.status(403).json({ error: 'Apenas membros da banda podem adicionar eventos.' })
       }
-      const { nome, data_inicio, hora_inicio, hora_fim } = req.body
+      const { nome, data_inicio, hora_inicio, hora_fim, enviar_sms, sms_hours_before } = req.body
       if (!nome || !data_inicio || !hora_inicio) {
         return res.status(400).json({ error: 'Nome, data e hora inicial são obrigatórios.' })
       }
       const created = await createRehearsal(
         calendarioFormToPayload({ nome, data_inicio, hora_inicio, hora_fim })
       )
-      return res.status(201).json(toCalendarioEvento(created))
+      const enviarSms = enviar_sms !== false
+      const hoursBefore = Number(sms_hours_before) > 0 ? Number(sms_hours_before) : 5
+      await supabase.from('ensaio_sms_overrides').upsert({
+        ensaio_id: created.id,
+        enviar_sms: enviarSms,
+        sms_hours_before: hoursBefore,
+      })
+      return res.status(201).json(toCalendarioEvento(created, enviarSms, hoursBefore))
     }
 
     return res.status(405).end()
