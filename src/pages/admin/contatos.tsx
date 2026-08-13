@@ -281,15 +281,32 @@ const Overlay = styled.div`
   justify-content: center;
   z-index: 100;
   padding: 24px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    padding: 0;
+    align-items: stretch;
+  }
 `
 
 const ConfirmBox = styled.div`
   width: 100%;
   max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
   background: #1a1a1a;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  overflow: hidden;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    max-width: 100%;
+    max-height: 100%;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 `
 
 const ConfirmBody = styled.div`

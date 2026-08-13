@@ -240,6 +240,11 @@ const Overlay = styled.div`
   align-items: center;
   justify-content: center;
   padding: 24px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    padding: 0;
+    align-items: stretch;
+  }
 `
 
 const ModalBox = styled.div`
@@ -251,6 +256,15 @@ const ModalBox = styled.div`
   max-width: 480px;
   max-height: 90vh;
   overflow-y: auto;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    max-width: 100%;
+    max-height: 100%;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+    padding: 24px 20px;
+  }
 `
 
 const ModalTitle = styled.h2`
@@ -303,6 +317,10 @@ const FieldRow = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    grid-template-columns: 1fr;
+  }
 `
 
 const Field = styled.div`

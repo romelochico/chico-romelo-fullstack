@@ -384,6 +384,11 @@ const Overlay = styled.div`
   align-items: center;
   justify-content: center;
   padding: 24px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    padding: 0;
+    align-items: stretch;
+  }
 `
 
 const Modal = styled.div`
@@ -393,6 +398,17 @@ const Modal = styled.div`
   padding: 32px;
   width: 100%;
   max-width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    max-width: 100%;
+    max-height: 100%;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+    padding: 24px 20px;
+  }
 `
 
 const ModalTitle = styled.h2`

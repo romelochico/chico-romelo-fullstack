@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import styled, { keyframes } from 'styled-components'
 import {
   Calendar,
+  CalendarDays,
   Newspaper,
   Disc3,
   Image,
@@ -17,7 +18,94 @@ import AdminLayout from '../../components/Admin/AdminLayout'
 import { createClient } from '../../lib/supabase/client'
 import { splitEvents } from '../../lib/events'
 import { avg, fmtAvg } from '../../lib/avaliacoes'
-import type { EventRow } from '../../types'
+import {
+  startOfWeek,
+  startOfMonth,
+  addDays,
+  addMonths,
+  toKey,
+  parseKey,
+} from '../../lib/calendario'
+import type { EventRow, CalendarioEventoRow } from '../../types'
+
+const CalWidget = styled.div`
+  background: rgba(200, 169, 110, 0.06);
+  border: 1px solid rgba(200, 169, 110, 0.25);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+
+  &:hover {
+    background: rgba(200, 169, 110, 0.1);
+    border-color: rgba(200, 169, 110, 0.4);
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    padding: 16px;
+  }
+`
+
+const CalWidgetHead = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    color: #c8a96e;
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    margin-bottom: 12px;
+  }
+`
+
+const CalWidgetTitle = styled.span`
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 16px;
+  color: #f5f0e8;
+`
+
+const CalStatsRow = styled.div`
+  display: flex;
+  gap: 32px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    gap: 16px;
+  }
+`
+
+const CalStat = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+`
+
+const CalStatValue = styled.span`
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 32px;
+  color: #f5f0e8;
+  line-height: 1;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    font-size: 26px;
+  }
+`
+
+const CalStatLabel = styled.span`
+  font-family: ${({ theme }) => theme.fonts.body};
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(245, 240, 232, 0.5);
+`
 
 const Grid = styled.div`
   display: grid;
@@ -166,13 +254,67 @@ interface DashStats {
   teamCount: number
 }
 
+interface CalStats {
+  today: number
+  week: number
+  month: number
+}
+
+function countInRange(events: CalendarioEventoRow[], rangeStart: Date, rangeEnd: Date): number {
+  return events.filter(ev => {
+    const start = parseKey(ev.data_inicio)
+    const end = ev.data_fim ? parseKey(ev.data_fim) : start
+    return start <= rangeEnd && end >= rangeStart
+  }).length
+}
+
 export default function DashboardPage() {
   const router = useRouter()
   const [stats, setStats] = useState<DashStats | null>(null)
+  const [calStats, setCalStats] = useState<CalStats | null>(null)
 
   useEffect(() => {
     loadStats()
+    loadCalStats()
   }, [])
+
+  async function loadCalStats() {
+    const supabase = createClient()
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const weekStart = startOfWeek(today)
+    const weekEnd = addDays(weekStart, 6)
+    const monthStart = startOfMonth(today)
+    const monthEnd = addDays(addMonths(monthStart, 1), -1)
+    const queryStart = toKey(addDays(monthStart, -10))
+    const queryEnd = toKey(monthEnd)
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+    const headers: Record<string, string> = session?.access_token
+      ? { Authorization: `Bearer ${session.access_token}` }
+      : {}
+
+    const [{ data: local }, ensaiosRes] = await Promise.all([
+      supabase
+        .from('calendario_eventos')
+        .select('*')
+        .neq('tipo', 'ensaio')
+        .gte('data_inicio', queryStart)
+        .lte('data_inicio', queryEnd),
+      fetch(`/api/admin/calendario/ensaios?from=${queryStart}&to=${queryEnd}`, { headers }),
+    ])
+
+    const ensaios = ensaiosRes.ok ? ((await ensaiosRes.json()) as CalendarioEventoRow[]) : []
+    const events = [...((local ?? []) as unknown as CalendarioEventoRow[]), ...ensaios]
+
+    setCalStats({
+      today: countInRange(events, today, today),
+      week: countInRange(events, weekStart, weekEnd),
+      month: countInRange(events, monthStart, monthEnd),
+    })
+  }
 
   async function loadStats() {
     const supabase = createClient()
@@ -394,6 +536,27 @@ export default function DashboardPage() {
 
   return (
     <AdminLayout title="Dashboard" subtitle="Bem-vindo ao painel de administração">
+      <CalWidget onClick={() => router.push('/admin/calendario')}>
+        <CalWidgetHead>
+          <CalendarDays />
+          <CalWidgetTitle>Calendário</CalWidgetTitle>
+        </CalWidgetHead>
+        <CalStatsRow>
+          <CalStat>
+            {calStats ? <CalStatValue>{calStats.today}</CalStatValue> : <Spinner />}
+            <CalStatLabel>Hoje</CalStatLabel>
+          </CalStat>
+          <CalStat>
+            {calStats ? <CalStatValue>{calStats.week}</CalStatValue> : <Spinner />}
+            <CalStatLabel>Esta Semana</CalStatLabel>
+          </CalStat>
+          <CalStat>
+            {calStats ? <CalStatValue>{calStats.month}</CalStatValue> : <Spinner />}
+            <CalStatLabel>Este Mês</CalStatLabel>
+          </CalStat>
+        </CalStatsRow>
+      </CalWidget>
+
       <Grid>
         {SECTIONS.map(({ href, label, icon: Icon, value, sub, alert }) => (
           <Card key={href} $alert={alert} onClick={() => router.push(href)}>
