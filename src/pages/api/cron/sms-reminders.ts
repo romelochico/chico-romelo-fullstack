@@ -103,11 +103,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json({ checked: candidates.length, sent: 0 })
   }
 
-  const { data: members } = await supabase
-    .from('team_members')
-    .select('telefone')
-    .not('telefone', 'is', null)
-  const phones = (members ?? []).map(m => m.telefone as string).filter(Boolean)
+  // Optional: ?test_phone=+351... sends only to that number instead of the
+  // whole team, and never writes to sms_log — lets you verify the pipeline
+  // end-to-end without texting everyone, and without consuming the
+  // one-time-send slot for the real event.
+  const testPhone = req.query.test_phone as string | undefined
+
+  let phones: string[]
+  if (testPhone) {
+    phones = [testPhone]
+  } else {
+    const { data: members } = await supabase
+      .from('team_members')
+      .select('telefone')
+      .not('telefone', 'is', null)
+    phones = (members ?? []).map(m => m.telefone as string).filter(Boolean)
+  }
 
   let sentCount = 0
   const errors: string[] = []
@@ -132,7 +143,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (anySuccess || phones.length === 0) {
-      await supabase.from('sms_log').insert({ event_key: eventKey(ev) })
+      if (!testPhone) {
+        await supabase.from('sms_log').insert({ event_key: eventKey(ev) })
+      }
       sentCount++
     }
   }
