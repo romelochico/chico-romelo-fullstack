@@ -84,14 +84,6 @@ const NavGroup = styled.div`
   gap: 6px;
 `
 
-const PeriodBar = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  flex-shrink: 0;
-`
-
 const IconBtn = styled.button`
   width: 30px;
   height: 30px;
@@ -144,11 +136,6 @@ const PeriodLabel = styled.div`
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     font-size: 15px;
   }
-`
-
-const Spacer = styled.div`
-  flex: 1;
-  min-width: 8px;
 `
 
 const ViewSelect = styled.select`
@@ -223,12 +210,20 @@ const AddBtn = styled.button`
   cursor: pointer;
   transition: opacity 0.15s;
   white-space: nowrap;
+  flex-shrink: 0;
   &:hover {
     opacity: 0.85;
   }
   svg {
     width: 15px;
     height: 15px;
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    padding: 8px;
+    span {
+      display: none;
+    }
   }
 `
 
@@ -1285,16 +1280,12 @@ export default function AdminCalendarioPage() {
             </MonthStepper>
           )}
 
-          <Spacer />
-
           {canAddEvent && (
             <AddBtn onClick={() => openAdd()}>
-              <Plus /> Novo evento
+              <Plus /> <span>Novo evento</span>
             </AddBtn>
           )}
-        </Toolbar>
 
-        <PeriodBar>
           <TodayBtn onClick={() => setCurrent(new Date())}>Hoje</TodayBtn>
           <NavGroup>
             <IconBtn onClick={() => navigate(-1)} aria-label="Período anterior">
@@ -1305,7 +1296,7 @@ export default function AdminCalendarioPage() {
               <ChevronRight />
             </IconBtn>
           </NavGroup>
-        </PeriodBar>
+        </Toolbar>
 
         <Board>
           {loading ? (
