@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import Link from 'next/link'
 import AvatarImage from 'next/image'
 import { useRouter } from 'next/router'
@@ -135,6 +135,16 @@ const Nav = styled.nav`
   overflow-y: auto;
 `
 
+const SectionLabel = styled.div`
+  font-family: ${({ theme }) => theme.fonts.body};
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.25);
+  padding: 16px 12px 6px;
+`
+
 const NavItem = styled(Link)<{ $active: boolean }>`
   display: flex;
   align-items: center;
@@ -247,20 +257,38 @@ interface NavLinkDef {
   icon: LucideIcon
 }
 
-const NAV_LINKS: NavLinkDef[] = [
-  { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/calendario', label: 'Calendário', icon: CalendarDays },
-  { href: '/admin/eventos', label: 'Eventos', icon: Calendar },
-  { href: '/admin/lugares', label: 'Lugares para tocar', icon: MapPin },
-  { href: '/admin/open-calls', label: 'Open Calls', icon: Megaphone },
-  { href: '/admin/novidades', label: 'Novidades', icon: Newspaper },
-  { href: '/admin/releases', label: 'Releases', icon: Disc3 },
-  { href: '/admin/media', label: 'Imprensa', icon: Image },
-  { href: '/admin/links', label: 'Links e Credenciais', icon: Link2 },
-  { href: '/admin/inventario', label: 'Inventário', icon: Package },
-  { href: '/admin/contatos', label: 'Contatos', icon: Mail },
-  { href: '/admin/avaliacoes', label: 'Avaliações', icon: Star },
-  { href: '/admin/equipe', label: 'Banda e Equipe', icon: Users },
+interface NavSection {
+  label: string | null
+  links: NavLinkDef[]
+}
+
+const NAV_SECTIONS: NavSection[] = [
+  {
+    label: null,
+    links: [{ href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard }],
+  },
+  {
+    label: 'Conteúdo do Site',
+    links: [
+      { href: '/admin/eventos', label: 'Eventos', icon: Calendar },
+      { href: '/admin/novidades', label: 'Novidades', icon: Newspaper },
+      { href: '/admin/releases', label: 'Releases', icon: Disc3 },
+      { href: '/admin/media', label: 'Imprensa', icon: Image },
+    ],
+  },
+  {
+    label: 'Gestão Interna',
+    links: [
+      { href: '/admin/calendario', label: 'Calendário', icon: CalendarDays },
+      { href: '/admin/links', label: 'Links e Credenciais', icon: Link2 },
+      { href: '/admin/inventario', label: 'Inventário', icon: Package },
+      { href: '/admin/contatos', label: 'Contatos', icon: Mail },
+      { href: '/admin/avaliacoes', label: 'Avaliações', icon: Star },
+      { href: '/admin/equipe', label: 'Banda e Equipe', icon: Users },
+      { href: '/admin/lugares', label: 'Lugares para tocar', icon: MapPin },
+      { href: '/admin/open-calls', label: 'Open Calls', icon: Megaphone },
+    ],
+  },
 ]
 
 function getDisplayName(user: User): string {
@@ -330,11 +358,16 @@ export default function AdminSidebar({ isOpen = false, onClose = () => {} }: Adm
         </SidebarTop>
 
         <Nav>
-          {NAV_LINKS.map(({ href, label, icon: Icon }) => (
-            <NavItem key={href} href={href} $active={router.pathname === href}>
-              <Icon />
-              {label}
-            </NavItem>
+          {NAV_SECTIONS.map(section => (
+            <Fragment key={section.label ?? 'main'}>
+              {section.label && <SectionLabel>{section.label}</SectionLabel>}
+              {section.links.map(({ href, label, icon: Icon }) => (
+                <NavItem key={href} href={href} $active={router.pathname === href}>
+                  <Icon />
+                  {label}
+                </NavItem>
+              ))}
+            </Fragment>
           ))}
         </Nav>
 

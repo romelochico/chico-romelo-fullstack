@@ -13,6 +13,7 @@ import {
   Package,
   AlertTriangle,
   Users,
+  MapPin,
 } from 'lucide-react'
 import AdminLayout from '../../components/Admin/AdminLayout'
 import { createClient } from '../../lib/supabase/client'
@@ -106,6 +107,20 @@ const CalStatLabel = styled.span`
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(245, 240, 232, 0.5);
+`
+
+const SectionTitle = styled.h2`
+  font-family: ${({ theme }) => theme.fonts.body};
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(245, 240, 232, 0.4);
+  margin: 28px 0 12px;
+
+  &:first-of-type {
+    margin-top: 0;
+  }
 `
 
 const Grid = styled.div`
@@ -253,6 +268,8 @@ interface DashStats {
   openCallsUrgent: number
   nextUrgentOpenCall: { name: string; days: number } | null
   teamCount: number
+  placesTotal: number
+  placesWithFeedback: number
 }
 
 interface CalStats {
@@ -332,6 +349,7 @@ export default function DashboardPage() {
       inventoryRes,
       openCallsRes,
       teamRes,
+      placesRes,
     ] = await Promise.all([
       supabase.from('events').select('date'),
       supabase.from('news').select('id', { count: 'exact', head: true }).eq('published', true),
@@ -344,6 +362,7 @@ export default function DashboardPage() {
       supabase.from('inventory').select('id, quantity'),
       supabase.from('open_calls').select('id, name, application_date'),
       supabase.from('team_members').select('id', { count: 'exact', head: true }),
+      supabase.from('play_venues').select('feedback'),
     ])
 
     const openCallsData = (openCallsRes.data ?? []) as {
@@ -376,6 +395,9 @@ export default function DashboardPage() {
     const contatosData = (contatosRes.data ?? []) as { read: boolean | null }[]
     const unreadCount = contatosData.filter(c => !c.read).length
 
+    const placesData = (placesRes.data ?? []) as { feedback: string | null }[]
+    const placesWithFeedback = placesData.filter(p => p.feedback).length
+
     setStats({
       upcomingCount: upcoming.length,
       pastCount: past.length,
@@ -399,6 +421,8 @@ export default function DashboardPage() {
       openCallsUrgent: urgentCalls.length,
       nextUrgentOpenCall: urgentCalls[0] ?? null,
       teamCount: teamRes.count ?? 0,
+      placesTotal: placesData.length,
+      placesWithFeedback,
     })
   }
 
@@ -410,6 +434,7 @@ export default function DashboardPage() {
         href: '/admin/eventos',
         label: 'Eventos',
         icon: Calendar,
+        group: 'public' as const,
         value: s ? s.upcomingCount + s.pastCount : undefined,
         sub: s ? (
           <CardSub>
@@ -426,6 +451,7 @@ export default function DashboardPage() {
         href: '/admin/novidades',
         label: 'Novidades',
         icon: Newspaper,
+        group: 'public' as const,
         value: s ? s.newsCount : undefined,
         sub: null,
       },
@@ -433,6 +459,7 @@ export default function DashboardPage() {
         href: '/admin/releases',
         label: 'Releases',
         icon: Disc3,
+        group: 'public' as const,
         value: s ? s.singles + s.eps + s.albums : undefined,
         sub: s ? (
           <CardSub>
@@ -449,6 +476,7 @@ export default function DashboardPage() {
         href: '/admin/avaliacoes',
         label: 'Avaliações',
         icon: Star,
+        group: 'internal' as const,
         value: s ? fmtAvg(s.avalsAvg) : undefined,
         sub: s ? (
           <CardSub>
@@ -465,6 +493,7 @@ export default function DashboardPage() {
         href: '/admin/contatos',
         label: 'Contatos',
         icon: MessageSquare,
+        group: 'internal' as const,
         value: s ? s.contatosTotal : undefined,
         sub:
           s && s.contatosUnread > 0 ? (
@@ -475,11 +504,19 @@ export default function DashboardPage() {
             </CardSub>
           ) : null,
       },
-      { href: '/admin/media', label: 'Imprensa', icon: Image, value: null, sub: null },
+      {
+        href: '/admin/media',
+        label: 'Imprensa',
+        icon: Image,
+        group: 'public' as const,
+        value: null,
+        sub: null,
+      },
       {
         href: '/admin/equipe',
         label: 'Banda e Equipe',
         icon: Users,
+        group: 'internal' as const,
         value: s ? s.teamCount : undefined,
         sub: null,
       },
@@ -487,6 +524,7 @@ export default function DashboardPage() {
         href: '/admin/inventario',
         label: 'Inventário',
         icon: Package,
+        group: 'internal' as const,
         value: s ? s.inventoryUnits : undefined,
         sub: s ? (
           <CardSub>
@@ -503,6 +541,7 @@ export default function DashboardPage() {
         href: '/admin/links',
         label: 'Links e Credenciais',
         icon: Link2,
+        group: 'internal' as const,
         value: s ? s.linksCount + s.credsCount : undefined,
         sub: s ? (
           <CardSub>
@@ -519,6 +558,7 @@ export default function DashboardPage() {
         href: '/admin/open-calls',
         label: 'Open Calls',
         icon: AlertTriangle,
+        group: 'internal' as const,
         value: s ? s.openCallsTotal : undefined,
         alert: !!s && s.openCallsUrgent > 0,
         sub:
@@ -530,6 +570,20 @@ export default function DashboardPage() {
               </SubStat>
             </CardSub>
           ) : null,
+      },
+      {
+        href: '/admin/lugares',
+        label: 'Lugares para tocar',
+        icon: MapPin,
+        group: 'internal' as const,
+        value: s ? s.placesTotal : undefined,
+        sub: s ? (
+          <CardSub>
+            <SubStat>
+              <strong>{s.placesWithFeedback}</strong> com feedback
+            </SubStat>
+          </CardSub>
+        ) : null,
       },
     ],
     [s]
@@ -558,18 +612,42 @@ export default function DashboardPage() {
         </CalStatsRow>
       </CalWidget>
 
+      <SectionTitle>Conteúdo do Site</SectionTitle>
       <Grid>
-        {SECTIONS.map(({ href, label, icon: Icon, value, sub, alert }) => (
-          <Card key={href} $alert={alert} onClick={() => router.push(href)}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <Icon />
-            </div>
-            <CardLabel>{label}</CardLabel>
-            {value === undefined && <Spinner />}
-            {value !== null && value !== undefined && <CardValue>{value}</CardValue>}
-            {sub}
-          </Card>
-        ))}
+        {SECTIONS.filter(sec => sec.group === 'public').map(
+          ({ href, label, icon: Icon, value, sub, alert }) => (
+            <Card key={href} $alert={alert} onClick={() => router.push(href)}>
+              <div
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+              >
+                <Icon />
+              </div>
+              <CardLabel>{label}</CardLabel>
+              {value === undefined && <Spinner />}
+              {value !== null && value !== undefined && <CardValue>{value}</CardValue>}
+              {sub}
+            </Card>
+          )
+        )}
+      </Grid>
+
+      <SectionTitle>Gestão Interna</SectionTitle>
+      <Grid>
+        {SECTIONS.filter(sec => sec.group === 'internal').map(
+          ({ href, label, icon: Icon, value, sub, alert }) => (
+            <Card key={href} $alert={alert} onClick={() => router.push(href)}>
+              <div
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+              >
+                <Icon />
+              </div>
+              <CardLabel>{label}</CardLabel>
+              {value === undefined && <Spinner />}
+              {value !== null && value !== undefined && <CardValue>{value}</CardValue>}
+              {sub}
+            </Card>
+          )
+        )}
       </Grid>
     </AdminLayout>
   )
