@@ -58,7 +58,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const { data: overrides } = await supabase
     .from('ensaio_sms_overrides')
-    .select('ensaio_id, enviar_sms, sms_hours_before')
+    .select('ensaio_id, enviar_sms, sms_hours_before, sms_recipients')
     .in(
       'ensaio_id',
       rehearsals.map(r => r.id)
@@ -66,13 +66,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const overrideMap = new Map(
     (overrides ?? []).map(o => [
       o.ensaio_id as string,
-      { enviar_sms: o.enviar_sms as boolean, sms_hours_before: o.sms_hours_before as number },
+      {
+        enviar_sms: o.enviar_sms as boolean,
+        sms_hours_before: o.sms_hours_before as number,
+        sms_recipients: (o.sms_recipients as string[] | null) ?? null,
+      },
     ])
   )
   const ensaios = rehearsals
     .map(r => {
       const ov = overrideMap.get(r.id)
-      return toCalendarioEvento(r, ov?.enviar_sms ?? true, ov?.sms_hours_before ?? 5)
+      return toCalendarioEvento(
+        r,
+        ov?.enviar_sms ?? true,
+        ov?.sms_hours_before ?? 5,
+        ov?.sms_recipients ?? null
+      )
     })
     .filter(ev => ev.enviar_sms)
 
@@ -109,16 +118,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // one-time-send slot for the real event.
   const testPhone = req.query.test_phone as string | undefined
 
-  let phones: string[]
-  if (testPhone) {
-    phones = [testPhone]
-  } else {
-    const { data: members } = await supabase
-      .from('team_members')
-      .select('telefone')
-      .not('telefone', 'is', null)
-    phones = (members ?? []).map(m => m.telefone as string).filter(Boolean)
-  }
+  const { data: members } = await supabase
+    .from('team_members')
+    .select('id, telefone')
+    .not('telefone', 'is', null)
+  const allPhones = (members ?? []).map(m => m.telefone as string).filter(Boolean)
+  const phoneById = new Map(
+    (members ?? []).filter(m => m.telefone).map(m => [m.id as string, m.telefone as string])
+  )
 
   let sentCount = 0
   const errors: string[] = []
@@ -131,6 +138,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // names are free text and may still contain accents; only the fixed
     // template text here is guaranteed accent-free.
     const message = `Chico Romelo: "${ev.nome}" (${TIPOS[ev.tipo].label}) as ${time}, em ${ev.sms_hours_before}h.`
+
+    // Per-event recipient override, falling back to everyone with a phone.
+    const phones = testPhone
+      ? [testPhone]
+      : ev.sms_recipients && ev.sms_recipients.length > 0
+        ? ev.sms_recipients.map(id => phoneById.get(id)).filter((p): p is string => !!p)
+        : allPhones
 
     let anySuccess = false
     for (const phone of phones) {

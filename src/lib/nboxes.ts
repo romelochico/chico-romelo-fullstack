@@ -126,7 +126,8 @@ export async function deleteRehearsal(id: string): Promise<void> {
 export function toCalendarioEvento(
   r: NboxesRehearsal,
   enviarSms = true,
-  smsHoursBefore = 5
+  smsHoursBefore = 5,
+  smsRecipients: string[] | null = null
 ): CalendarioEventoRow {
   return {
     id: r.id,
@@ -139,6 +140,7 @@ export function toCalendarioEvento(
     descricao: null,
     enviar_sms: enviarSms,
     sms_hours_before: smsHoursBefore,
+    sms_recipients: smsRecipients,
     created_by: null,
     created_at: r.created_at,
   }

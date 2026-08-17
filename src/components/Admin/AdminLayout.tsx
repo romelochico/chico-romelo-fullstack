@@ -1,11 +1,18 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
-import styled, { createGlobalStyle, css } from 'styled-components'
+import styled, { createGlobalStyle, css, keyframes } from 'styled-components'
 import { Menu } from 'lucide-react'
 import AdminSidebar from './AdminSidebar'
 import { createClient } from '../../lib/supabase/client'
+import { useTier } from '../../lib/useTier'
 import type { ReactNode } from 'react'
+
+// Minimum time the splash stays up once we start showing it, so a
+// near-instant tier fetch doesn't just flash the logo for a single frame.
+// Doesn't apply at all when the tier is already cached (see useTier) —
+// then there's nothing pending and the splash never appears.
+const MIN_SPLASH_MS = 400
 
 const Shell = styled.div`
   display: flex;
@@ -165,6 +172,35 @@ const Content = styled.div<{ $fullHeight?: boolean }>`
   }
 `
 
+/* ── Splash (auth + tier resolving) ───────────────────────────────── */
+
+const SplashShell = styled.div`
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: ${({ theme }) => theme.colors.dark};
+  z-index: 500;
+`
+
+const glow = keyframes`
+  0%, 100% {
+    filter: brightness(0) invert(1) drop-shadow(0 0 6px rgba(200, 169, 110, 0.15));
+    opacity: 0.75;
+  }
+  50% {
+    filter: brightness(0) invert(1) drop-shadow(0 0 26px rgba(200, 169, 110, 0.65));
+    opacity: 1;
+  }
+`
+
+const SplashLogo = styled.img`
+  width: 120px;
+  height: auto;
+  animation: ${glow} 1.4s ease-in-out infinite;
+`
+
 const AdminReset = createGlobalStyle`
   body { background: ${({ theme }) => theme.colors.dark} !important; }
 
@@ -198,6 +234,11 @@ export default function AdminLayout({
   const router = useRouter()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [authed, setAuthed] = useState(false)
+  const { loading: tierLoading } = useTier()
+
+  const mountedAt = useRef(Date.now())
+  const hadToWaitForTier = useRef(tierLoading)
+  const [minSplashDone, setMinSplashDone] = useState(!tierLoading)
 
   useEffect(() => {
     createClient()
@@ -212,14 +253,44 @@ export default function AdminLayout({
       })
   }, [router])
 
-  if (!authed) return null
+  useEffect(() => {
+    if (!hadToWaitForTier.current || tierLoading) return
+    const remaining = Math.max(0, MIN_SPLASH_MS - (Date.now() - mountedAt.current))
+    const t = setTimeout(() => setMinSplashDone(true), remaining)
+    return () => clearTimeout(t)
+  }, [tierLoading])
+
+  // Rendered unconditionally (before the loading gates below) so the body
+  // stays dark from the very first paint — otherwise there's a gap on every
+  // navigation where the site's default light theme shows through before
+  // this mounts, which reads as a flash/blink.
+  const reset = <AdminReset />
+
+  // Session check re-runs on every page (fresh component instance per
+  // route in the Pages Router) but reads local state, so it's effectively
+  // instant — stay invisible here rather than flashing the splash on every
+  // navigation.
+  if (!authed) return reset
+
+  // Tier is cached module-wide (see useTier), so this genuinely only
+  // blocks on the very first admin page of the session.
+  if (tierLoading || !minSplashDone) {
+    return (
+      <>
+        {reset}
+        <SplashShell>
+          <SplashLogo src="/assets/logo-mobile.png" alt="Chico Romelo" />
+        </SplashShell>
+      </>
+    )
+  }
 
   return (
     <>
       <Head>
         <title>{title ? `Admin | ${title}` : 'Admin | Chico Romelo'}</title>
       </Head>
-      <AdminReset />
+      {reset}
 
       {/* mobile top bar */}
       <TopBar>

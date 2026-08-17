@@ -4,16 +4,40 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 
 const SUPER_ADMIN_EMAIL = (process.env.SUPER_ADMIN_EMAIL ?? '').toLowerCase()
 
+// percussao_e_metais is a view-only tier: Calendário, Eventos (plus its
+// gear/staff/setlist detail page) and Banda e Equipe only. Everyone else
+// (any other assigned tier) keeps full page access, unchanged.
+const RESTRICTED_TIER = 'percussao_e_metais'
+const RESTRICTED_TIER_HOME = '/admin/calendario'
+const RESTRICTED_TIER_ALLOWED_PREFIXES = [
+  '/admin/calendario',
+  '/admin/eventos',
+  '/admin/equipe',
+  '/api/admin/calendario',
+  '/api/admin/show-gear',
+  '/api/admin/show-staff',
+  '/api/admin/setlist',
+]
+
 /**
  * The super admin's email (env var, never in source) is always allowed in,
  * regardless of the database — a bootstrap safety net so a bad row can never
  * lock the admin out. Everyone else needs a tier assigned in team_members
  * (get_my_tier() RPC); no tier means they haven't been invited yet.
  */
-async function hasAccess(supabase: SupabaseClient, email: string): Promise<boolean> {
-  if (SUPER_ADMIN_EMAIL && email === SUPER_ADMIN_EMAIL) return true
+async function resolveTier(supabase: SupabaseClient, email: string): Promise<string | null> {
+  if (SUPER_ADMIN_EMAIL && email === SUPER_ADMIN_EMAIL) return 'admin'
   const { data } = await supabase.rpc('get_my_tier')
-  return !!data
+  return (data as string | null) ?? null
+}
+
+function homeFor(tier: string): string {
+  return tier === RESTRICTED_TIER ? RESTRICTED_TIER_HOME : '/admin/dashboard'
+}
+
+function isAllowedForTier(tier: string, pathname: string): boolean {
+  if (tier !== RESTRICTED_TIER) return true
+  return RESTRICTED_TIER_ALLOWED_PREFIXES.some(p => pathname === p || pathname.startsWith(`${p}/`))
 }
 
 export async function middleware(request: NextRequest) {
@@ -43,12 +67,13 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser()
   const { pathname } = request.nextUrl
 
-  // Login page: redirect to dashboard if already authenticated
+  // Login page: redirect to the tier's home page if already authenticated
   if (pathname === '/admin/login') {
     if (user) {
       const email = user.email?.toLowerCase() ?? ''
-      if (await hasAccess(supabase, email)) {
-        return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+      const tier = await resolveTier(supabase, email)
+      if (tier) {
+        return NextResponse.redirect(new URL(homeFor(tier), request.url))
       }
     }
     return supabaseResponse
@@ -65,12 +90,19 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(loginUrl)
     }
     const email = user.email?.toLowerCase() ?? ''
-    if (!(await hasAccess(supabase, email))) {
+    const tier = await resolveTier(supabase, email)
+    if (!tier) {
       await supabase.auth.signOut()
       if (pathname.startsWith('/api/')) {
         return NextResponse.json({ error: 'Acesso negado.' }, { status: 403 })
       }
       return NextResponse.redirect(new URL('/admin/login', request.url))
+    }
+    if (!isAllowedForTier(tier, pathname)) {
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json({ error: 'Acesso negado.' }, { status: 403 })
+      }
+      return NextResponse.redirect(new URL(homeFor(tier), request.url))
     }
   }
 

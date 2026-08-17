@@ -20,6 +20,7 @@ import {
 import AdminLayout from '../../../components/Admin/AdminLayout'
 import SetlistModal from '../../../components/Admin/SetlistModal'
 import { createClient } from '../../../lib/supabase/client'
+import { useTier } from '../../../lib/useTier'
 import { CATEGORIES } from '../../../lib/inventory-categories'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -777,6 +778,9 @@ export default function ShowDetailPage() {
   const [setlist, setSetlist] = useState<SetlistBlock[]>([])
   const [showSetlistModal, setShowSetlistModal] = useState(false)
 
+  const { tier } = useTier()
+  const canManageEventos = tier !== null && tier !== 'percussao_e_metais'
+
   const supabase = createClient()
 
   const authHeaders = useCallback(async (): Promise<Record<string, string>> => {
@@ -974,9 +978,11 @@ export default function ShowDetailPage() {
         <SectionTitle>
           <PackageOpen /> O que estamos levando
         </SectionTitle>
-        <AddGearBtn onClick={openModal}>
-          <Plus /> Adicionar item
-        </AddGearBtn>
+        {canManageEventos && (
+          <AddGearBtn onClick={openModal}>
+            <Plus /> Adicionar item
+          </AddGearBtn>
+        )}
       </SectionRow>
 
       <GearList>
@@ -1006,16 +1012,20 @@ export default function ShowDetailPage() {
                     <Check /> Devolvido
                   </ReturnBtn>
                 ) : (
-                  <ReturnBtn onClick={() => markReturned(row)}>
-                    <Check /> Devolver
-                    {row.quantity_taken > 1
-                      ? ` (${row.quantity_returned + 1}/${row.quantity_taken})`
-                      : ''}
-                  </ReturnBtn>
+                  canManageEventos && (
+                    <ReturnBtn onClick={() => markReturned(row)}>
+                      <Check /> Devolver
+                      {row.quantity_taken > 1
+                        ? ` (${row.quantity_returned + 1}/${row.quantity_taken})`
+                        : ''}
+                    </ReturnBtn>
+                  )
                 )}
-                <RemoveBtn onClick={() => removeGear(row)} title="Remover">
-                  <Trash2 />
-                </RemoveBtn>
+                {canManageEventos && (
+                  <RemoveBtn onClick={() => removeGear(row)} title="Remover">
+                    <Trash2 />
+                  </RemoveBtn>
+                )}
               </GearRow>
             )
           })
@@ -1055,9 +1065,11 @@ export default function ShowDetailPage() {
         <SectionTitle>
           <Users /> Staff
         </SectionTitle>
-        <AddGearBtn onClick={openAddStaff}>
-          <Plus /> Adicionar staff
-        </AddGearBtn>
+        {canManageEventos && (
+          <AddGearBtn onClick={openAddStaff}>
+            <Plus /> Adicionar staff
+          </AddGearBtn>
+        )}
       </SectionRow>
 
       <GearList>
@@ -1070,12 +1082,16 @@ export default function ShowDetailPage() {
             <GearRow key={s.id}>
               <GearName>{s.name}</GearName>
               {s.role && <SubBadge>{s.role}</SubBadge>}
-              <EditIconBtn onClick={() => openEditStaff(s)} title="Editar">
-                <Pencil />
-              </EditIconBtn>
-              <RemoveBtn onClick={() => removeStaff(s)} title="Remover">
-                <Trash2 />
-              </RemoveBtn>
+              {canManageEventos && (
+                <>
+                  <EditIconBtn onClick={() => openEditStaff(s)} title="Editar">
+                    <Pencil />
+                  </EditIconBtn>
+                  <RemoveBtn onClick={() => removeStaff(s)} title="Remover">
+                    <Trash2 />
+                  </RemoveBtn>
+                </>
+              )}
             </GearRow>
           ))
         )}
@@ -1090,9 +1106,11 @@ export default function ShowDetailPage() {
           <GhostBtn onClick={() => router.push(`/admin/eventos/${id}/setlist`)}>
             Ver setlist completo
           </GhostBtn>
-          <AddGearBtn onClick={() => setShowSetlistModal(true)}>
-            <Pencil /> Editar setlist
-          </AddGearBtn>
+          {canManageEventos && (
+            <AddGearBtn onClick={() => setShowSetlistModal(true)}>
+              <Pencil /> Editar setlist
+            </AddGearBtn>
+          )}
         </div>
       </SectionRow>
 

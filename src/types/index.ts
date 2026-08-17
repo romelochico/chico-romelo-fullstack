@@ -79,6 +79,7 @@ export interface CalendarioEventoRow {
   descricao: string | null
   enviar_sms: boolean
   sms_hours_before: number
+  sms_recipients: string[] | null
   created_by?: string | null
   created_at?: string
 }
@@ -207,7 +208,8 @@ export interface UserProfile {
 // ── Team members ───────────────────────────────────────────────────────────
 
 /** Permission tier — see supabase/team-tiers.sql for the access rules. */
-export type Tier = 'admin' | 'diretoria' | 'marketing' | 'equipe' | 'membro_da_banda'
+export type Tier =
+  'admin' | 'diretoria' | 'marketing' | 'equipe' | 'membro_da_banda' | 'percussao_e_metais'
 
 /** A row from the `team_members` Supabase table */
 export interface TeamMemberRow {

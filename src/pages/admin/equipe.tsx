@@ -47,9 +47,16 @@ const TIER_LABELS: Record<Tier, string> = {
   marketing: 'Marketing',
   equipe: 'Equipe',
   membro_da_banda: 'Membro da Banda',
+  percussao_e_metais: 'Percussão e Metais',
 }
 
-const ASSIGNABLE_TIERS: Tier[] = ['diretoria', 'marketing', 'equipe', 'membro_da_banda']
+const ASSIGNABLE_TIERS: Tier[] = [
+  'diretoria',
+  'marketing',
+  'equipe',
+  'membro_da_banda',
+  'percussao_e_metais',
+]
 
 const EMPTY_FORM: MemberFormData = {
   email: '',

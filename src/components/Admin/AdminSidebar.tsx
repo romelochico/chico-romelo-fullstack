@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import { createClient } from '../../lib/supabase/client'
 import { syncTeamMemberFromGoogle } from '../../lib/equipe'
+import { useTier } from '../../lib/useTier'
 import type { User } from '@supabase/supabase-js'
 
 /* ── Overlay (mobile only) ────────────────────────────────────────── */
@@ -320,9 +321,14 @@ interface AdminSidebarProps {
   onClose?: () => void
 }
 
+// percussao_e_metais only sees these three pages — mirrors the allowlist
+// enforced server-side in src/middleware.ts.
+const RESTRICTED_TIER_HREFS = ['/admin/calendario', '/admin/eventos', '/admin/equipe']
+
 export default function AdminSidebar({ isOpen = false, onClose = () => {} }: AdminSidebarProps) {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
+  const { tier } = useTier()
 
   useEffect(() => {
     createClient()
@@ -332,6 +338,14 @@ export default function AdminSidebar({ isOpen = false, onClose = () => {} }: Adm
         if (data.user) syncTeamMemberFromGoogle(data.user)
       })
   }, [])
+
+  const navSections =
+    tier === 'percussao_e_metais'
+      ? NAV_SECTIONS.map(section => ({
+          ...section,
+          links: section.links.filter(l => RESTRICTED_TIER_HREFS.includes(l.href)),
+        })).filter(section => section.links.length > 0)
+      : NAV_SECTIONS
 
   // close drawer on route change
   useEffect(() => {
@@ -358,7 +372,7 @@ export default function AdminSidebar({ isOpen = false, onClose = () => {} }: Adm
         </SidebarTop>
 
         <Nav>
-          {NAV_SECTIONS.map(section => (
+          {navSections.map(section => (
             <Fragment key={section.label ?? 'main'}>
               {section.label && <SectionLabel>{section.label}</SectionLabel>}
               {section.links.map(({ href, label, icon: Icon }) => (

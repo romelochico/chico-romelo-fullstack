@@ -1,10 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { requireAccess } from '../../../../../lib/api-auth'
+import { requireAccess, canManageEventos } from '../../../../../lib/api-auth'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const auth = await requireAccess(req, res)
   if (!auth) return
-  const { supabase } = auth
+  const { tier, supabase } = auth
+
+  if (!canManageEventos(tier)) {
+    return res.status(403).json({ error: 'Acesso somente leitura a eventos.' })
+  }
 
   if (req.method === 'POST') {
     const { song_id, timing, speaker, text } = req.body

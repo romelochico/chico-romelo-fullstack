@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components'
 import { ChevronLeft, ChevronRight, Plus, X, AlertTriangle, Trash2 } from 'lucide-react'
 import AdminLayout from '../../components/Admin/AdminLayout'
 import { createClient } from '../../lib/supabase/client'
+import { useTier } from '../../lib/useTier'
 import {
   MONTHS,
   WEEKDAYS,
@@ -39,6 +40,7 @@ interface CalendarioFormData {
   descricao: string
   enviar_sms: boolean
   sms_hours_before: number
+  sms_recipients: string[]
 }
 
 type ModalState =
@@ -56,6 +58,7 @@ const EMPTY_FORM: CalendarioFormData = {
   descricao: '',
   enviar_sms: true,
   sms_hours_before: 5,
+  sms_recipients: [],
 }
 
 // ─── Layout ────────────────────────────────────────────────────────────────
@@ -816,6 +819,13 @@ const ModalBody = styled.div`
   gap: 14px;
 `
 
+const PlainFieldset = styled.fieldset`
+  display: contents;
+  border: none;
+  padding: 0;
+  margin: 0;
+`
+
 const ModalFooter = styled.div`
   padding: 16px 24px;
   border-top: 1px solid rgba(255, 255, 255, 0.07);
@@ -885,6 +895,41 @@ const ToggleRow = styled.label`
     height: 16px;
     accent-color: #c8a96e;
   }
+`
+
+const RecipientBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+`
+
+const RecipientCheckbox = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  color: rgba(245, 240, 232, 0.7);
+
+  input[type='checkbox'] {
+    width: 15px;
+    height: 15px;
+    accent-color: #c8a96e;
+    flex-shrink: 0;
+  }
+`
+
+const RecipientEmpty = styled.span`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  color: rgba(245, 240, 232, 0.3);
 `
 
 const inputStyles = css`
@@ -1090,16 +1135,30 @@ export default function AdminCalendarioPage() {
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
   const [user, setUser] = useState<{ email?: string } | null>(null)
-  const [canAddEvent, setCanAddEvent] = useState(false)
+  const { tier } = useTier()
+  const canAddEvent = tier === 'admin' || tier === 'membro_da_banda'
+  const canManageEvents = tier !== null && tier !== 'percussao_e_metais'
+  const canManageSmsRecipients = tier === 'admin' || tier === 'diretoria'
+  const [smsCandidates, setSmsCandidates] = useState<{ id: string; label: string }[]>([])
 
   useEffect(() => {
     load()
     const supabase = createClient()
-    supabase.auth.getUser().then(async ({ data }) => {
+    supabase.auth.getUser().then(({ data }) => {
       setUser(data.user)
-      const { data: tier } = await supabase.rpc('get_my_tier')
-      setCanAddEvent(tier === 'admin' || tier === 'membro_da_banda')
     })
+    supabase
+      .from('team_members')
+      .select('id, nome, sobrenome, telefone')
+      .not('telefone', 'is', null)
+      .then(({ data }) => {
+        setSmsCandidates(
+          (data ?? []).map(m => ({
+            id: m.id as string,
+            label: [m.nome, m.sobrenome].filter(Boolean).join(' ') || (m.telefone as string),
+          }))
+        )
+      })
   }, [])
 
   async function authHeaders(): Promise<Record<string, string>> {
@@ -1148,6 +1207,7 @@ export default function AdminCalendarioPage() {
       descricao: item.descricao ?? '',
       enviar_sms: item.enviar_sms,
       sms_hours_before: item.sms_hours_before,
+      sms_recipients: item.sms_recipients ?? [],
     })
     setFormError('')
     setModal({ type: 'edit', item })
@@ -1198,6 +1258,7 @@ export default function AdminCalendarioPage() {
         hora_fim: form.hora_fim || null,
         enviar_sms: form.enviar_sms,
         sms_hours_before: form.sms_hours_before,
+        sms_recipients: form.sms_recipients,
       })
       const res = await fetch(
         modal.type === 'add'
@@ -1230,6 +1291,7 @@ export default function AdminCalendarioPage() {
       descricao: form.descricao.trim() || null,
       enviar_sms: form.enviar_sms,
       sms_hours_before: form.sms_hours_before,
+      sms_recipients: form.sms_recipients.length > 0 ? form.sms_recipients : null,
     }
 
     const client = createClient()
@@ -1390,134 +1452,179 @@ export default function AdminCalendarioPage() {
         >
           <ModalBox>
             <ModalHeader>
-              <ModalTitle>{modal.type === 'add' ? 'Novo Evento' : 'Editar Evento'}</ModalTitle>
+              <ModalTitle>
+                {!canManageEvents
+                  ? 'Detalhes do Evento'
+                  : modal.type === 'add'
+                    ? 'Novo Evento'
+                    : 'Editar Evento'}
+                {!canManageEvents && <Hint>somente leitura</Hint>}
+              </ModalTitle>
               <CloseBtn onClick={closeModal}>
                 <X />
               </CloseBtn>
             </ModalHeader>
 
             <ModalBody>
-              <Field>
-                <Label>Nome do evento *</Label>
-                <Input
-                  value={form.nome}
-                  onChange={e => setField('nome', e.target.value)}
-                  placeholder="Ex.: Ensaio geral, Show na Trapiche…"
-                />
-              </Field>
-
-              <Field>
-                <Label>Tipo de evento *</Label>
-                <TypePicker>
-                  {TIPO_KEYS.map(tipo => {
-                    const Icon = TIPOS[tipo].icon
-                    return (
-                      <TypeOption
-                        key={tipo}
-                        type="button"
-                        $color={TIPOS[tipo].color}
-                        $selected={form.tipo === tipo}
-                        onClick={() => setField('tipo', tipo)}
-                      >
-                        <Icon />
-                        {TIPOS[tipo].label}
-                      </TypeOption>
-                    )
-                  })}
-                </TypePicker>
-              </Field>
-
-              <FieldRow>
+              <PlainFieldset disabled={!canManageEvents}>
                 <Field>
-                  <Label>Data de início *</Label>
+                  <Label>Nome do evento *</Label>
                   <Input
-                    type="date"
-                    value={form.data_inicio}
-                    onChange={e => setField('data_inicio', e.target.value)}
+                    value={form.nome}
+                    onChange={e => setField('nome', e.target.value)}
+                    placeholder="Ex.: Ensaio geral, Show na Trapiche…"
                   />
                 </Field>
+
+                <Field>
+                  <Label>Tipo de evento *</Label>
+                  <TypePicker>
+                    {TIPO_KEYS.map(tipo => {
+                      const Icon = TIPOS[tipo].icon
+                      return (
+                        <TypeOption
+                          key={tipo}
+                          type="button"
+                          $color={TIPOS[tipo].color}
+                          $selected={form.tipo === tipo}
+                          onClick={() => setField('tipo', tipo)}
+                        >
+                          <Icon />
+                          {TIPOS[tipo].label}
+                        </TypeOption>
+                      )
+                    })}
+                  </TypePicker>
+                </Field>
+
+                <FieldRow>
+                  <Field>
+                    <Label>Data de início *</Label>
+                    <Input
+                      type="date"
+                      value={form.data_inicio}
+                      onChange={e => setField('data_inicio', e.target.value)}
+                    />
+                  </Field>
+                  <Field>
+                    <Label>
+                      Hora de início <Hint>opcional</Hint>
+                    </Label>
+                    <Input
+                      type="time"
+                      value={form.hora_inicio}
+                      onChange={e => setField('hora_inicio', e.target.value)}
+                    />
+                  </Field>
+                </FieldRow>
+
+                <FieldRow>
+                  <Field>
+                    <Label>
+                      Data final <Hint>opcional</Hint>
+                    </Label>
+                    <Input
+                      type="date"
+                      value={form.data_fim}
+                      onChange={e => setField('data_fim', e.target.value)}
+                    />
+                  </Field>
+                  <Field>
+                    <Label>
+                      Hora final <Hint>opcional</Hint>
+                    </Label>
+                    <Input
+                      type="time"
+                      value={form.hora_fim}
+                      onChange={e => setField('hora_fim', e.target.value)}
+                    />
+                  </Field>
+                </FieldRow>
+
+                <ToggleRow>
+                  <input
+                    type="checkbox"
+                    checked={form.enviar_sms}
+                    onChange={e => setField('enviar_sms', e.target.checked)}
+                  />
+                  Enviar lembrete por SMS
+                </ToggleRow>
+
+                {form.enviar_sms && (
+                  <Field style={{ maxWidth: 180 }}>
+                    <Label>Horas antes do início</Label>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={72}
+                      value={form.sms_hours_before}
+                      onChange={e => setField('sms_hours_before', Number(e.target.value) || 5)}
+                    />
+                  </Field>
+                )}
+
+                {form.enviar_sms && canManageSmsRecipients && (
+                  <Field>
+                    <Label>
+                      Destinatários do SMS <Hint>vazio = todos com telefone</Hint>
+                    </Label>
+                    <RecipientBox>
+                      {smsCandidates.length === 0 && (
+                        <RecipientEmpty>Nenhum membro com telefone cadastrado.</RecipientEmpty>
+                      )}
+                      {smsCandidates.map(c => (
+                        <RecipientCheckbox key={c.id}>
+                          <input
+                            type="checkbox"
+                            checked={form.sms_recipients.includes(c.id)}
+                            onChange={e =>
+                              setField(
+                                'sms_recipients',
+                                e.target.checked
+                                  ? [...form.sms_recipients, c.id]
+                                  : form.sms_recipients.filter(id => id !== c.id)
+                              )
+                            }
+                          />
+                          {c.label}
+                        </RecipientCheckbox>
+                      ))}
+                    </RecipientBox>
+                  </Field>
+                )}
+
                 <Field>
                   <Label>
-                    Hora de início <Hint>opcional</Hint>
+                    Descrição <Hint>opcional</Hint>
                   </Label>
-                  <Input
-                    type="time"
-                    value={form.hora_inicio}
-                    onChange={e => setField('hora_inicio', e.target.value)}
+                  <Textarea
+                    value={form.descricao}
+                    onChange={e => setField('descricao', e.target.value)}
+                    placeholder="Detalhes, local, observações…"
                   />
                 </Field>
-              </FieldRow>
 
-              <FieldRow>
-                <Field>
-                  <Label>
-                    Data final <Hint>opcional</Hint>
-                  </Label>
-                  <Input
-                    type="date"
-                    value={form.data_fim}
-                    onChange={e => setField('data_fim', e.target.value)}
-                  />
-                </Field>
-                <Field>
-                  <Label>
-                    Hora final <Hint>opcional</Hint>
-                  </Label>
-                  <Input
-                    type="time"
-                    value={form.hora_fim}
-                    onChange={e => setField('hora_fim', e.target.value)}
-                  />
-                </Field>
-              </FieldRow>
-
-              <ToggleRow>
-                <input
-                  type="checkbox"
-                  checked={form.enviar_sms}
-                  onChange={e => setField('enviar_sms', e.target.checked)}
-                />
-                Enviar lembrete por SMS
-              </ToggleRow>
-
-              {form.enviar_sms && (
-                <Field style={{ maxWidth: 180 }}>
-                  <Label>Horas antes do início</Label>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={72}
-                    value={form.sms_hours_before}
-                    onChange={e => setField('sms_hours_before', Number(e.target.value) || 5)}
-                  />
-                </Field>
-              )}
-
-              <Field>
-                <Label>
-                  Descrição <Hint>opcional</Hint>
-                </Label>
-                <Textarea
-                  value={form.descricao}
-                  onChange={e => setField('descricao', e.target.value)}
-                  placeholder="Detalhes, local, observações…"
-                />
-              </Field>
-
-              {formError && <FormError>{formError}</FormError>}
+                {formError && <FormError>{formError}</FormError>}
+              </PlainFieldset>
             </ModalBody>
 
             <ModalFooter>
-              {modal.type === 'edit' && (
+              {canManageEvents && modal.type === 'edit' && (
                 <BtnDangerGhost onClick={() => openDelete(modal.item)}>
                   <Trash2 /> Excluir
                 </BtnDangerGhost>
               )}
               <FooterActions>
-                <BtnGhost onClick={closeModal}>Cancelar</BtnGhost>
-                <BtnPrimary onClick={handleSave} disabled={saving}>
-                  {saving ? 'Salvando...' : modal.type === 'add' ? 'Adicionar' : 'Salvar'}
-                </BtnPrimary>
+                {canManageEvents ? (
+                  <>
+                    <BtnGhost onClick={closeModal}>Cancelar</BtnGhost>
+                    <BtnPrimary onClick={handleSave} disabled={saving}>
+                      {saving ? 'Salvando...' : modal.type === 'add' ? 'Adicionar' : 'Salvar'}
+                    </BtnPrimary>
+                  </>
+                ) : (
+                  <BtnGhost onClick={closeModal}>Fechar</BtnGhost>
+                )}
               </FooterActions>
             </ModalFooter>
           </ModalBox>

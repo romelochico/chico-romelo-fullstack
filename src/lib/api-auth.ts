@@ -1,7 +1,8 @@
 import { createClient, type SupabaseClient, type User } from '@supabase/supabase-js'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-export type Tier = 'admin' | 'diretoria' | 'marketing' | 'equipe' | 'membro_da_banda'
+export type Tier =
+  'admin' | 'diretoria' | 'marketing' | 'equipe' | 'membro_da_banda' | 'percussao_e_metais'
 
 const SUPER_ADMIN_EMAIL = (process.env.SUPER_ADMIN_EMAIL ?? '').toLowerCase()
 
@@ -70,4 +71,18 @@ export async function requireAccess(
 /** Only admin/diretoria/marketing can see or manage saved site credentials. */
 export function canAccessCredentials(tier: Tier): boolean {
   return tier === 'admin' || tier === 'diretoria' || tier === 'marketing'
+}
+
+/** Only admin/diretoria can choose which team members receive an event's SMS reminder. */
+export function canManageSmsRecipients(tier: Tier): boolean {
+  return tier === 'admin' || tier === 'diretoria'
+}
+
+/**
+ * percussao_e_metais is a view-only tier for eventos/shows (list + the
+ * gear/staff/setlist detail page) — everyone else keeps today's behaviour
+ * (any authenticated admin-panel tier can manage eventos).
+ */
+export function canManageEventos(tier: Tier): boolean {
+  return tier !== 'percussao_e_metais'
 }

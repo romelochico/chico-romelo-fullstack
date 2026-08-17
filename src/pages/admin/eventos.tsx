@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { Plus, Pencil, X, AlertTriangle, Backpack } from 'lucide-react'
 import AdminLayout from '../../components/Admin/AdminLayout'
 import { createClient } from '../../lib/supabase/client'
+import { useTier } from '../../lib/useTier'
 import { splitEvents, toShowCardProps } from '../../lib/events'
 import type { EventRow } from '../../types'
 
@@ -372,6 +373,13 @@ const ModalFooter = styled.div`
   background: #1a1a1a;
 `
 
+const PlainFieldset = styled.fieldset`
+  display: contents;
+  border: none;
+  padding: 0;
+  margin: 0;
+`
+
 // ─── Form ──────────────────────────────────────────────────────────────────
 
 const Field = styled.div`
@@ -569,6 +577,8 @@ export default function AdminEventosPage() {
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
   const [user, setUser] = useState<{ email?: string } | null>(null)
+  const { tier } = useTier()
+  const canManageEventos = tier !== null && tier !== 'percussao_e_metais'
 
   useEffect(() => {
     load()
@@ -702,9 +712,11 @@ export default function AdminEventosPage() {
               {item.time ? ` · ${item.time}` : ''}
             </EventVenue>
           </CardInfo>
-          <DeleteBtn onClick={() => openDelete(item)} title="Excluir">
-            <X />
-          </DeleteBtn>
+          {canManageEventos && (
+            <DeleteBtn onClick={() => openDelete(item)} title="Excluir">
+              <X />
+            </DeleteBtn>
+          )}
         </CardTop>
         <CardBottom>
           <TagList style={{ flex: 1, marginTop: 0 }}>
@@ -725,7 +737,7 @@ export default function AdminEventosPage() {
               <Backpack /> Gear
             </EditBtn>
             <EditBtn onClick={() => openEdit(item)}>
-              <Pencil /> Editar
+              <Pencil /> {canManageEventos ? 'Editar' : 'Ver'}
             </EditBtn>
           </CardActions>
         </CardBottom>
@@ -739,9 +751,11 @@ export default function AdminEventosPage() {
         <Count>
           {items.length} evento{items.length !== 1 ? 's' : ''}
         </Count>
-        <AddBtn onClick={openAdd}>
-          <Plus /> Adicionar Evento
-        </AddBtn>
+        {canManageEventos && (
+          <AddBtn onClick={openAdd}>
+            <Plus /> Adicionar Evento
+          </AddBtn>
+        )}
       </TopBar>
 
       {loading ? (
@@ -781,126 +795,141 @@ export default function AdminEventosPage() {
         >
           <ModalBox>
             <ModalHeader>
-              <ModalTitle>{modal.type === 'add' ? 'Novo Evento' : 'Editar Evento'}</ModalTitle>
+              <ModalTitle>
+                {!canManageEventos
+                  ? 'Detalhes do Evento'
+                  : modal.type === 'add'
+                    ? 'Novo Evento'
+                    : 'Editar Evento'}
+                {!canManageEventos && <Hint>somente leitura</Hint>}
+              </ModalTitle>
               <CloseBtn onClick={closeModal}>
                 <X />
               </CloseBtn>
             </ModalHeader>
 
             <ModalBody>
-              <Field>
-                <Label>Título *</Label>
-                <Input
-                  value={form.title}
-                  onChange={e => setField('title', e.target.value)}
-                  placeholder="Final — Concurso Novos Valores"
-                />
-              </Field>
+              <PlainFieldset disabled={!canManageEventos}>
+                <Field>
+                  <Label>Título *</Label>
+                  <Input
+                    value={form.title}
+                    onChange={e => setField('title', e.target.value)}
+                    placeholder="Final — Concurso Novos Valores"
+                  />
+                </Field>
 
-              <FieldRow $cols="1fr 1fr">
-                <Field>
-                  <Label>Data *</Label>
-                  <Input
-                    type="date"
-                    value={form.date}
-                    onChange={e => setField('date', e.target.value)}
-                  />
-                </Field>
-                <Field>
-                  <Label>
-                    Hora <Hint>opcional</Hint>
-                  </Label>
-                  <Input
-                    type="time"
-                    value={form.time}
-                    onChange={e => setField('time', e.target.value)}
-                    placeholder="21:00"
-                  />
-                </Field>
-              </FieldRow>
+                <FieldRow $cols="1fr 1fr">
+                  <Field>
+                    <Label>Data *</Label>
+                    <Input
+                      type="date"
+                      value={form.date}
+                      onChange={e => setField('date', e.target.value)}
+                    />
+                  </Field>
+                  <Field>
+                    <Label>
+                      Hora <Hint>opcional</Hint>
+                    </Label>
+                    <Input
+                      type="time"
+                      value={form.time}
+                      onChange={e => setField('time', e.target.value)}
+                      placeholder="21:00"
+                    />
+                  </Field>
+                </FieldRow>
 
-              <ToggleRow>
-                <input
-                  type="checkbox"
-                  checked={form.show_day}
-                  onChange={e => setField('show_day', e.target.checked)}
-                />
-                Mostrar dia exato (desativa para mostrar só mês e ano)
-              </ToggleRow>
+                <ToggleRow>
+                  <input
+                    type="checkbox"
+                    checked={form.show_day}
+                    onChange={e => setField('show_day', e.target.checked)}
+                  />
+                  Mostrar dia exato (desativa para mostrar só mês e ano)
+                </ToggleRow>
 
-              <FieldRow>
-                <Field>
-                  <Label>Local *</Label>
-                  <Input
-                    value={form.venue}
-                    onChange={e => setField('venue', e.target.value)}
-                    placeholder="Parque da Paz"
-                  />
-                </Field>
-                <Field>
-                  <Label>Cidade *</Label>
-                  <Input
-                    value={form.city}
-                    onChange={e => setField('city', e.target.value)}
-                    placeholder="Almada"
-                  />
-                </Field>
-              </FieldRow>
+                <FieldRow>
+                  <Field>
+                    <Label>Local *</Label>
+                    <Input
+                      value={form.venue}
+                      onChange={e => setField('venue', e.target.value)}
+                      placeholder="Parque da Paz"
+                    />
+                  </Field>
+                  <Field>
+                    <Label>Cidade *</Label>
+                    <Input
+                      value={form.city}
+                      onChange={e => setField('city', e.target.value)}
+                      placeholder="Almada"
+                    />
+                  </Field>
+                </FieldRow>
 
-              <FieldRow>
-                <Field>
-                  <Label>
-                    Tags <Hint>separadas por vírgula</Hint>
-                  </Label>
-                  <Input
-                    value={form.tags}
-                    onChange={e => setField('tags', e.target.value)}
-                    placeholder="Festival, Almada"
-                  />
-                </Field>
-                <Field>
-                  <Label>
-                    Badge <Hint>opcional</Hint>
-                  </Label>
-                  <Input
-                    value={form.badge}
-                    onChange={e => setField('badge', e.target.value)}
-                    placeholder="Grátis"
-                  />
-                </Field>
-              </FieldRow>
+                <FieldRow>
+                  <Field>
+                    <Label>
+                      Tags <Hint>separadas por vírgula</Hint>
+                    </Label>
+                    <Input
+                      value={form.tags}
+                      onChange={e => setField('tags', e.target.value)}
+                      placeholder="Festival, Almada"
+                    />
+                  </Field>
+                  <Field>
+                    <Label>
+                      Badge <Hint>opcional</Hint>
+                    </Label>
+                    <Input
+                      value={form.badge}
+                      onChange={e => setField('badge', e.target.value)}
+                      placeholder="Grátis"
+                    />
+                  </Field>
+                </FieldRow>
 
-              <FieldRow>
-                <Field>
-                  <Label>
-                    Link <Hint>opcional</Hint>
-                  </Label>
-                  <Input
-                    value={form.link_url}
-                    onChange={e => setField('link_url', e.target.value)}
-                    placeholder="https://..."
-                    type="url"
-                  />
-                </Field>
-                <Field>
-                  <Label>Texto do link</Label>
-                  <Input
-                    value={form.link_label}
-                    onChange={e => setField('link_label', e.target.value)}
-                    placeholder="Ver mais →"
-                    disabled={!form.link_url}
-                  />
-                </Field>
-              </FieldRow>
+                <FieldRow>
+                  <Field>
+                    <Label>
+                      Link <Hint>opcional</Hint>
+                    </Label>
+                    <Input
+                      value={form.link_url}
+                      onChange={e => setField('link_url', e.target.value)}
+                      placeholder="https://..."
+                      type="url"
+                    />
+                  </Field>
+                  <Field>
+                    <Label>Texto do link</Label>
+                    <Input
+                      value={form.link_label}
+                      onChange={e => setField('link_label', e.target.value)}
+                      placeholder="Ver mais →"
+                      disabled={!form.link_url}
+                    />
+                  </Field>
+                </FieldRow>
 
-              {formError && <FormError>{formError}</FormError>}
+                {formError && <FormError>{formError}</FormError>}
+              </PlainFieldset>
             </ModalBody>
 
             <ModalFooter>
-              <BtnGhost onClick={closeModal}>Cancelar</BtnGhost>
-              <BtnPrimary onClick={handleSave} disabled={saving}>
-                {saving ? 'Salvando...' : modal.type === 'add' ? 'Adicionar' : 'Salvar'}
-              </BtnPrimary>
+              {canManageEventos ? (
+                <>
+                  <BtnGhost onClick={closeModal}>Cancelar</BtnGhost>
+                  <BtnPrimary onClick={handleSave} disabled={saving}>
+                    {saving ? 'Salvando...' : modal.type === 'add' ? 'Adicionar' : 'Salvar'}
+                  </BtnPrimary>
+                </>
+              ) : (
+                <BtnGhost onClick={closeModal}>Fechar</BtnGhost>
+              )}
             </ModalFooter>
           </ModalBox>
         </Overlay>
