@@ -19,6 +19,7 @@ interface MemberFormData {
   papel: string
   avatar_url: string
   tier: Tier | ''
+  is_band_member: boolean
 }
 
 type Modal =
@@ -68,6 +69,7 @@ const EMPTY_FORM: MemberFormData = {
   papel: '',
   avatar_url: '',
   tier: '',
+  is_band_member: true,
 }
 
 // ─── Styled components ────────────────────────────────────────────────────
@@ -114,6 +116,20 @@ const List = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+`
+
+const SectionTitle = styled.h2`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: ${C.dim};
+  margin: 28px 0 12px;
+
+  &:first-of-type {
+    margin-top: 0;
+  }
 `
 
 const MemberCard = styled.div`
@@ -344,6 +360,23 @@ const Label = styled.label`
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: ${C.dim};
+`
+
+const ToggleRow = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  color: ${C.cream2};
+  margin-bottom: 16px;
+
+  input[type='checkbox'] {
+    width: 16px;
+    height: 16px;
+    accent-color: ${C.gold};
+  }
 `
 
 const Input = styled.input`
@@ -664,6 +697,7 @@ export default function EquipePage() {
       papel: item.papel ?? '',
       avatar_url: item.avatar_url ?? '',
       tier: item.tier ?? '',
+      is_band_member: item.is_band_member,
     })
     setFormError('')
     setModal({ type: 'edit', item })
@@ -675,7 +709,7 @@ export default function EquipePage() {
     setSaving(false)
   }
 
-  function setField(key: keyof MemberFormData, val: string) {
+  function setField<K extends keyof MemberFormData>(key: K, val: MemberFormData[K]) {
     setForm(prev => ({ ...prev, [key]: val }))
   }
 
@@ -725,6 +759,7 @@ export default function EquipePage() {
       papel: form.papel.trim() || null,
       avatar_url: form.avatar_url.trim() || null,
       tier: form.tier || null,
+      is_band_member: form.is_band_member,
     }
 
     const { error } =
@@ -759,6 +794,37 @@ export default function EquipePage() {
 
   const isFormModal = modal?.type === 'add' || modal?.type === 'edit'
   const pendingCount = items.filter(i => i.delete_requested_at).length
+  const bandMembers = items.filter(i => i.is_band_member)
+  const crewMembers = items.filter(i => !i.is_band_member)
+
+  function renderMemberCard(item: TeamMemberRow) {
+    return (
+      <MemberCard key={item.id} onClick={() => openView(item)}>
+        <MemberIdentity>
+          <Avatar>
+            {item.avatar_url ? (
+              <Image src={item.avatar_url} alt="" fill sizes="42px" />
+            ) : item.nome ? (
+              initials(item)
+            ) : (
+              <UserIcon />
+            )}
+          </Avatar>
+          <MemberInfo>
+            <MemberName>{fullName(item)}</MemberName>
+            <MemberMeta>
+              <span>{item.email}</span>
+            </MemberMeta>
+          </MemberInfo>
+        </MemberIdentity>
+        <MemberTags>
+          {item.papel && <RoleTag>{item.papel}</RoleTag>}
+          {isAdmin && item.tier && <TierTag>{TIER_LABELS[item.tier]}</TierTag>}
+          {item.delete_requested_at && <RequestTag>Exclusão solicitada</RequestTag>}
+        </MemberTags>
+      </MemberCard>
+    )
+  }
 
   return (
     <AdminLayout title="Banda e Equipe" subtitle="Perfis da banda e da equipe">
@@ -787,34 +853,20 @@ export default function EquipePage() {
       ) : items.length === 0 ? (
         <EmptyState>Nenhum membro cadastrado ainda.</EmptyState>
       ) : (
-        <List>
-          {items.map(item => (
-            <MemberCard key={item.id} onClick={() => openView(item)}>
-              <MemberIdentity>
-                <Avatar>
-                  {item.avatar_url ? (
-                    <Image src={item.avatar_url} alt="" fill sizes="42px" />
-                  ) : item.nome ? (
-                    initials(item)
-                  ) : (
-                    <UserIcon />
-                  )}
-                </Avatar>
-                <MemberInfo>
-                  <MemberName>{fullName(item)}</MemberName>
-                  <MemberMeta>
-                    <span>{item.email}</span>
-                  </MemberMeta>
-                </MemberInfo>
-              </MemberIdentity>
-              <MemberTags>
-                {item.papel && <RoleTag>{item.papel}</RoleTag>}
-                {isAdmin && item.tier && <TierTag>{TIER_LABELS[item.tier]}</TierTag>}
-                {item.delete_requested_at && <RequestTag>Exclusão solicitada</RequestTag>}
-              </MemberTags>
-            </MemberCard>
-          ))}
-        </List>
+        <>
+          {bandMembers.length > 0 && (
+            <>
+              <SectionTitle>Banda</SectionTitle>
+              <List>{bandMembers.map(renderMemberCard)}</List>
+            </>
+          )}
+          {crewMembers.length > 0 && (
+            <>
+              <SectionTitle>Equipe</SectionTitle>
+              <List>{crewMembers.map(renderMemberCard)}</List>
+            </>
+          )}
+        </>
       )}
 
       {/* ── Add / Edit modal ── */}
@@ -895,10 +947,24 @@ export default function EquipePage() {
               />
             </Field>
 
+            {isAdmin && (
+              <ToggleRow>
+                <input
+                  type="checkbox"
+                  checked={form.is_band_member}
+                  onChange={e => setField('is_band_member', e.target.checked)}
+                />
+                Membro da banda
+              </ToggleRow>
+            )}
+
             {isAdmin && !(modal.type === 'edit' && modal.item.tier === 'admin') && (
               <Field>
                 <Label>Tier {modal.type === 'add' ? '*' : ''}</Label>
-                <Select value={form.tier} onChange={e => setField('tier', e.target.value)}>
+                <Select
+                  value={form.tier}
+                  onChange={e => setField('tier', e.target.value as Tier | '')}
+                >
                   <option value="">
                     {modal.type === 'add' ? 'Selecione um tier...' : 'Sem acesso (revogado)'}
                   </option>

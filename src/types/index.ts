@@ -223,6 +223,7 @@ export interface TeamMemberRow {
   redes_sociais: string | null
   papel: string | null
   tier: Tier | null
+  is_band_member: boolean
   delete_requested_at: string | null
   created_at?: string
 }
