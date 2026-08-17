@@ -287,6 +287,8 @@ const ModalBox = styled.div`
     border-radius: 0;
     border: none;
     padding: 24px 20px;
+    /* clears the fixed mobile TopBar (56px) so content isn't hidden behind it */
+    padding-top: 80px;
   }
 `
 
