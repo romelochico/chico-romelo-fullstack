@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
+import { useRouter } from 'next/router'
 import styled, { css } from 'styled-components'
 import {
   ChevronLeft,
@@ -11,6 +12,8 @@ import {
   CalendarDays,
   MessageSquare,
   FileText,
+  Link2,
+  Check,
 } from 'lucide-react'
 import AdminLayout from '../../components/Admin/AdminLayout'
 import { createClient } from '../../lib/supabase/client'
@@ -34,6 +37,7 @@ import {
   formatShort,
   formatTimeRange,
   todayStr,
+  eventShareUrl,
 } from '../../lib/calendario'
 import type { CalendarioEventoRow, CalendarioTipo } from '../../types'
 
@@ -1203,6 +1207,7 @@ const TIPO_KEYS = Object.keys(TIPOS) as CalendarioTipo[]
 // ─── Page ──────────────────────────────────────────────────────────────────
 
 export default function AdminCalendarioPage() {
+  const router = useRouter()
   const [events, setEvents] = useState<CalendarioEventoRow[]>([])
   const [loading, setLoading] = useState(true)
   const [current, setCurrent] = useState(new Date())
@@ -1218,6 +1223,22 @@ export default function AdminCalendarioPage() {
   const canManageEvents = tier !== null && tier !== 'percussao_e_metais'
   const canManageSmsRecipients = tier === 'admin' || tier === 'diretoria'
   const [smsCandidates, setSmsCandidates] = useState<{ id: string; label: string }[]>([])
+  const [copiedLink, setCopiedLink] = useState(false)
+  const openedFromLink = useRef(false)
+
+  // Opens straight to an event's details when arriving via a /e/<id> share
+  // link (?ev=<id>) — only once, so closing the modal doesn't reopen it.
+  useEffect(() => {
+    if (openedFromLink.current) return
+    const evId = router.query.ev
+    if (typeof evId !== 'string' || events.length === 0) return
+    const match = events.find(e => e.id === evId)
+    if (match) {
+      openedFromLink.current = true
+      openView(match)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [events, router.query.ev])
 
   useEffect(() => {
     load()
@@ -1276,6 +1297,12 @@ export default function AdminCalendarioPage() {
 
   function openView(item: CalendarioEventoRow) {
     setModal({ type: 'view', item })
+  }
+
+  async function handleCopyLink(item: CalendarioEventoRow) {
+    await navigator.clipboard.writeText(eventShareUrl(item))
+    setCopiedLink(true)
+    setTimeout(() => setCopiedLink(false), 1500)
   }
 
   function openEdit(item: CalendarioEventoRow) {
@@ -1601,6 +1628,20 @@ export default function AdminCalendarioPage() {
             </ModalBody>
 
             <ModalFooter>
+              <BtnGhost
+                onClick={() => handleCopyLink(modal.item)}
+                style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+              >
+                {copiedLink ? (
+                  <>
+                    <Check size={13} /> Copiado!
+                  </>
+                ) : (
+                  <>
+                    <Link2 size={13} /> Copiar link
+                  </>
+                )}
+              </BtnGhost>
               <FooterActions>
                 <BtnGhost onClick={closeModal}>Fechar</BtnGhost>
                 {canManageEvents && (

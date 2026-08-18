@@ -14,7 +14,7 @@ import { createClient } from '@supabase/supabase-js'
 import { listRehearsals, toCalendarioEvento } from '../../../lib/nboxes'
 import { sendSms } from '../../../lib/sms'
 import { lisbonDateTimeToUtc } from '../../../lib/timezone'
-import { toKey, addDays, TIPOS } from '../../../lib/calendario'
+import { toKey, addDays, TIPOS, eventShareUrl } from '../../../lib/calendario'
 import type { CalendarioEventoRow } from '../../../types'
 
 const WINDOW_MINUTES = 20
@@ -137,7 +137,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // chars — often doubling the cost for a message this length. Event
     // names are free text and may still contain accents; only the fixed
     // template text here is guaranteed accent-free.
-    const message = `Chico Romelo: "${ev.nome}" (${TIPOS[ev.tipo].label}) as ${time}, em ${ev.sms_hours_before}h.`
+    const message = `Chico Romelo: "${ev.nome}" (${TIPOS[ev.tipo].label}) as ${time}, em ${ev.sms_hours_before}h. ${eventShareUrl(ev, true)}`
 
     // Per-event recipient override, falling back to everyone with a phone.
     const phones = testPhone

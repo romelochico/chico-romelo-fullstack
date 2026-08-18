@@ -50,7 +50,11 @@ export function parseKey(key: string): Date {
 }
 
 export function sameDay(a: Date, b: Date): boolean {
-  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate()
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  )
 }
 
 export function addDays(d: Date, n: number): Date {
@@ -115,4 +119,14 @@ export function formatTimeRange(ev: CalendarioEventoRow): string | null {
   const end = ev.hora_fim ? ev.hora_fim.slice(0, 5) : null
   if (start && end) return `${start} – ${end}`
   return start
+}
+
+// /e/[id] is a short redirect to /admin/calendario?ev=<id> — kept as short
+// as possible because the SMS variant (forSms) rides inside a GSM-7 segment
+// (160 chars). No scheme there either: phone messaging apps linkify a bare
+// domain+path fine, and every character saved matters for segment count.
+// The copy-to-clipboard variant keeps https:// since it may get pasted
+// anywhere, not just tapped inside Messages.
+export function eventShareUrl(ev: CalendarioEventoRow, forSms = false): string {
+  return `${forSms ? '' : 'https://'}chicoromelo.com/e/${ev.id}`
 }
