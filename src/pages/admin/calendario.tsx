@@ -387,6 +387,7 @@ const DayNum = styled.div<{ $today?: boolean }>`
 `
 
 const ChipList = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -395,33 +396,46 @@ const ChipList = styled.div`
 `
 
 const Chip = styled.div<{ $color: string }>`
+  flex: 1;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 5px;
+  min-height: 0;
   font-family: 'Montserrat', sans-serif;
   font-size: 10.5px;
   font-weight: 600;
   color: #f5f0e8;
   background: rgba(255, 255, 255, 0.05);
   border-left: 2px solid ${p => p.$color};
-  padding: 2px 5px;
+  padding: 3px 5px;
   border-radius: 3px;
-  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
   cursor: pointer;
   &:hover {
     background: rgba(255, 255, 255, 0.1);
   }
 `
 
+const ChipBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  overflow: hidden;
+`
+
 const ChipIcon = styled.span<{ $color: string }>`
   display: flex;
   color: ${p => p.$color};
   flex-shrink: 0;
+  margin-top: 1px;
   svg {
     width: 10px;
     height: 10px;
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    display: none;
   }
 `
 
@@ -429,6 +443,12 @@ const ChipTime = styled.span`
   font-variant-numeric: tabular-nums;
   color: rgba(245, 240, 232, 0.55);
   flex-shrink: 0;
+`
+
+const ChipName = styled.span`
+  white-space: normal;
+  word-break: break-word;
+  overflow: hidden;
 `
 
 const ChipMore = styled.div`
@@ -631,6 +651,18 @@ const WeekChipIcon = styled.span<{ $color: string }>`
     width: 12px;
     height: 12px;
   }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    display: none;
+  }
+`
+
+const WeekChipTime = styled.div`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #f5f0e8;
 `
 
 const WeekChipName = styled.div`
@@ -638,6 +670,9 @@ const WeekChipName = styled.div`
   font-size: 11.5px;
   font-weight: 600;
   color: #f5f0e8;
+  white-space: normal;
+  word-break: break-word;
+  margin-top: 1px;
 `
 
 const WeekChipType = styled.span<{ $color: string }>`
@@ -715,12 +750,27 @@ const DayEventIconBox = styled.div<{ $color: string }>`
     width: 16px;
     height: 16px;
   }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    display: none;
+  }
+`
+
+const DayEventTime = styled.div`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #c8a96e;
 `
 
 const DayEventName = styled.div`
   font-family: 'Special Elite', serif;
   font-size: 15px;
   color: #f5f0e8;
+  white-space: normal;
+  word-break: break-word;
+  margin-top: 2px;
 `
 
 const DayEventMeta = styled.div<{ $color: string }>`
@@ -1924,8 +1974,10 @@ function MonthSingle({
                       <ChipIcon $color={TIPOS[ev.tipo].color}>
                         <Icon />
                       </ChipIcon>
-                      {time && <ChipTime>{time}</ChipTime>}
-                      {ev.nome}
+                      <ChipBody>
+                        {time && <ChipTime>{time}</ChipTime>}
+                        <ChipName>{ev.nome}</ChipName>
+                      </ChipBody>
                     </Chip>
                   )
                 })}
@@ -2028,10 +2080,11 @@ function WeekView({
                       <WeekChipIcon $color={TIPOS[ev.tipo].color}>
                         <Icon />
                       </WeekChipIcon>
-                      <div>
+                      <div style={{ minWidth: 0 }}>
+                        {time && <WeekChipTime>{time}</WeekChipTime>}
                         <WeekChipName>{ev.nome}</WeekChipName>
                         <WeekChipType $color={TIPOS[ev.tipo].color}>
-                          {time ? `${time} · ${TIPOS[ev.tipo].label}` : TIPOS[ev.tipo].label}
+                          {TIPOS[ev.tipo].label}
                         </WeekChipType>
                       </div>
                     </WeekChip>
@@ -2087,11 +2140,11 @@ function DayViewPanel({
               <DayEventIconBox $color={TIPOS[ev.tipo].color}>
                 <Icon />
               </DayEventIconBox>
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                {time && <DayEventTime>{time}</DayEventTime>}
                 <DayEventName>{ev.nome}</DayEventName>
                 <DayEventMeta $color={TIPOS[ev.tipo].color}>
                   {TIPOS[ev.tipo].label} · {range}
-                  {time ? ` · ${time}` : ''}
                 </DayEventMeta>
                 {ev.descricao && <DayEventDesc>{ev.descricao}</DayEventDesc>}
               </div>
