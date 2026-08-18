@@ -1,6 +1,17 @@
 import { useState, useEffect, useMemo } from 'react'
 import styled, { css } from 'styled-components'
-import { ChevronLeft, ChevronRight, Plus, X, AlertTriangle, Trash2 } from 'lucide-react'
+import {
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  X,
+  AlertTriangle,
+  Trash2,
+  Pencil,
+  CalendarDays,
+  MessageSquare,
+  FileText,
+} from 'lucide-react'
 import AdminLayout from '../../components/Admin/AdminLayout'
 import { createClient } from '../../lib/supabase/client'
 import { useTier } from '../../lib/useTier'
@@ -45,6 +56,7 @@ interface CalendarioFormData {
 
 type ModalState =
   | { type: 'add' }
+  | { type: 'view'; item: CalendarioEventoRow }
   | { type: 'edit'; item: CalendarioEventoRow }
   | { type: 'delete'; item: CalendarioEventoRow }
 
@@ -826,6 +838,72 @@ const PlainFieldset = styled.fieldset`
   margin: 0;
 `
 
+// ─── Event view (read-only details) ─────────────────────────────────────────
+
+const TypeBadge = styled.span<{ $color: string }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  align-self: flex-start;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid ${p => p.$color};
+  background: ${p => `${p.$color}22`};
+  color: #f5f0e8;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    color: ${p => p.$color};
+    flex-shrink: 0;
+  }
+`
+
+const DetailList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+`
+
+const DetailRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    color: rgba(245, 240, 232, 0.35);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+`
+
+const DetailText = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+`
+
+const DetailValue = styled.span`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13.5px;
+  color: #f5f0e8;
+  line-height: 1.5;
+  white-space: pre-wrap;
+`
+
+const DetailSub = styled.span`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  color: rgba(245, 240, 232, 0.45);
+  line-height: 1.4;
+`
+
 const ModalFooter = styled.div`
   padding: 16px 24px;
   border-top: 1px solid rgba(255, 255, 255, 0.07);
@@ -1196,6 +1274,10 @@ export default function AdminCalendarioPage() {
     setModal({ type: 'add' })
   }
 
+  function openView(item: CalendarioEventoRow) {
+    setModal({ type: 'view', item })
+  }
+
   function openEdit(item: CalendarioEventoRow) {
     setForm({
       nome: item.nome,
@@ -1259,6 +1341,7 @@ export default function AdminCalendarioPage() {
         enviar_sms: form.enviar_sms,
         sms_hours_before: form.sms_hours_before,
         sms_recipients: form.sms_recipients,
+        descricao: form.descricao.trim() || null,
       })
       const res = await fetch(
         modal.type === 'add'
@@ -1345,7 +1428,12 @@ export default function AdminCalendarioPage() {
     [view, current, monthCount]
   )
   const isFormModal = modal?.type === 'add' || modal?.type === 'edit'
+  const isViewModal = modal?.type === 'view'
   const isDeleteModal = modal?.type === 'delete'
+
+  function recipientLabel(id: string): string {
+    return smsCandidates.find(c => c.id === id)?.label ?? 'Membro removido'
+  }
 
   return (
     <AdminLayout title="Calendário" subtitle="Agenda interna de eventos" fullHeight compactHeader>
@@ -1396,7 +1484,7 @@ export default function AdminCalendarioPage() {
                 monthRef={current}
                 events={events}
                 onCellClick={openAdd}
-                onEventClick={openEdit}
+                onEventClick={openView}
                 onMore={goToDay}
               />
             ) : (
@@ -1413,10 +1501,10 @@ export default function AdminCalendarioPage() {
               start={startOfWeek(current)}
               events={events}
               onCellClick={openAdd}
-              onEventClick={openEdit}
+              onEventClick={openView}
             />
           ) : view === 'day' ? (
-            <DayViewPanel date={current} events={events} onEventClick={openEdit} />
+            <DayViewPanel date={current} events={events} onEventClick={openView} />
           ) : (
             <MiniGridWrap>
               {Array.from({ length: 12 }, (_, i) => new Date(current.getFullYear(), i, 1)).map(
@@ -1442,6 +1530,92 @@ export default function AdminCalendarioPage() {
           })}
         </Legend>
       </Wrapper>
+
+      {/* ── Event details (view) ── */}
+      {isViewModal && modal && modal.type === 'view' && (
+        <Overlay
+          onClick={e => {
+            if (e.target === e.currentTarget) closeModal()
+          }}
+        >
+          <ModalBox>
+            <ModalHeader>
+              <ModalTitle>{modal.item.nome}</ModalTitle>
+              <CloseBtn onClick={closeModal}>
+                <X />
+              </CloseBtn>
+            </ModalHeader>
+
+            <ModalBody>
+              <DetailList>
+                <TypeBadge $color={TIPOS[modal.item.tipo].color}>
+                  {(() => {
+                    const Icon = TIPOS[modal.item.tipo].icon
+                    return <Icon />
+                  })()}
+                  {TIPOS[modal.item.tipo].label}
+                </TypeBadge>
+
+                <DetailRow>
+                  <CalendarDays />
+                  <DetailText>
+                    <DetailValue>
+                      {formatDatePt(parseKey(modal.item.data_inicio))}
+                      {modal.item.data_fim && modal.item.data_fim !== modal.item.data_inicio
+                        ? ` – ${formatDatePt(parseKey(modal.item.data_fim))}`
+                        : ''}
+                    </DetailValue>
+                    {formatTimeRange(modal.item) && (
+                      <DetailSub>{formatTimeRange(modal.item)}</DetailSub>
+                    )}
+                  </DetailText>
+                </DetailRow>
+
+                {modal.item.descricao && (
+                  <DetailRow>
+                    <FileText />
+                    <DetailText>
+                      <DetailValue>{modal.item.descricao}</DetailValue>
+                    </DetailText>
+                  </DetailRow>
+                )}
+
+                <DetailRow>
+                  <MessageSquare />
+                  <DetailText>
+                    <DetailValue>
+                      {modal.item.enviar_sms
+                        ? `Lembrete por SMS, ${modal.item.sms_hours_before}h antes`
+                        : 'Sem lembrete por SMS'}
+                    </DetailValue>
+                    {modal.item.enviar_sms && (
+                      <DetailSub>
+                        {modal.item.sms_recipients && modal.item.sms_recipients.length > 0
+                          ? modal.item.sms_recipients.map(recipientLabel).join(', ')
+                          : 'Todos os membros com telefone'}
+                      </DetailSub>
+                    )}
+                  </DetailText>
+                </DetailRow>
+              </DetailList>
+            </ModalBody>
+
+            <ModalFooter>
+              <FooterActions>
+                <BtnGhost onClick={closeModal}>Fechar</BtnGhost>
+                {canManageEvents && (
+                  <BtnPrimary
+                    onClick={() => openEdit(modal.item)}
+                    style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+                  >
+                    <Pencil size={13} /> Editar
+                  </BtnPrimary>
+                )}
+              </FooterActions>
+            </ModalFooter>
+          </ModalBox>
+        </Overlay>
+      )}
 
       {/* ── Add / Edit modal ── */}
       {isFormModal && modal && (

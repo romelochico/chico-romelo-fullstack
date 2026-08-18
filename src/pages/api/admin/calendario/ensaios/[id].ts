@@ -32,6 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         enviar_sms,
         sms_hours_before,
         sms_recipients,
+        descricao,
       } = req.body
       if (!nome || !data_inicio || !hora_inicio) {
         return res.status(400).json({ error: 'Nome, data e hora inicial são obrigatórios.' })
@@ -42,6 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       )
       const enviarSms = enviar_sms !== false
       const hoursBefore = Number(sms_hours_before) > 0 ? Number(sms_hours_before) : 5
+      const desc = typeof descricao === 'string' && descricao.trim() ? descricao.trim() : null
 
       let recipients: string[] | null
       if (canManageSmsRecipients(tier)) {
@@ -63,8 +65,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         enviar_sms: enviarSms,
         sms_hours_before: hoursBefore,
         sms_recipients: recipients,
+        descricao: desc,
       })
-      return res.status(200).json(toCalendarioEvento(updated, enviarSms, hoursBefore, recipients))
+      return res
+        .status(200)
+        .json(toCalendarioEvento(updated, enviarSms, hoursBefore, recipients, desc))
     }
 
     if (req.method === 'DELETE') {

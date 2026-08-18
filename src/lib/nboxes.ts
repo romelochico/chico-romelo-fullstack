@@ -127,7 +127,8 @@ export function toCalendarioEvento(
   r: NboxesRehearsal,
   enviarSms = true,
   smsHoursBefore = 5,
-  smsRecipients: string[] | null = null
+  smsRecipients: string[] | null = null,
+  descricao: string | null = null
 ): CalendarioEventoRow {
   return {
     id: r.id,
@@ -137,7 +138,7 @@ export function toCalendarioEvento(
     data_fim: null,
     hora_inicio: r.time,
     hora_fim: r.end_time,
-    descricao: null,
+    descricao,
     enviar_sms: enviarSms,
     sms_hours_before: smsHoursBefore,
     sms_recipients: smsRecipients,
