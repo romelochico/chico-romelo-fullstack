@@ -735,8 +735,12 @@ export const OutroCard = styled.div`
 export const NovidadesSection = styled.section`
   ${paperNoise}
   background: ${({ theme }) => theme.colors.cream3};
-  padding: 120px 5vw;
+  padding: 72px 5vw 120px;
   overflow: hidden;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.small}) {
+    padding: 48px 5vw 80px;
+  }
 `
 
 export const NewsHead = styled.div`

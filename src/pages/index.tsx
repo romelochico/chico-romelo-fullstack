@@ -9,11 +9,12 @@ import SectionLabel from '../components/SectionLabel/SectionLabel'
 import StreamBtn from '../components/StreamBtn/StreamBtn'
 import StreamingModal from '../components/StreamingModal/StreamingModal'
 import TrackList from '../components/TrackList/TrackList'
+import LiveVideos from '../components/LiveVideos/LiveVideos'
 import Clipping from '../components/Clipping/Clipping'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 import { useEffect, useState } from 'react'
 import { useStreamingModal } from '../hooks/useStreamingModal'
-import { EP, SINGLES } from '../lib/data'
+import { EP, SINGLES, LIVE_SESSION } from '../lib/data'
 import { supabase } from '../lib/supabase/public'
 import { toClippingProps } from '../lib/novidades'
 import DecoStamp from '../components/DecoStamp/DecoStamp'
@@ -497,6 +498,9 @@ export default function HomePage({ novidades = [] }: HomePageProps) {
       </MusicasSection>
 
       <Marquee items={MARQUEE_3} />
+
+      {/* ── AO VIVO ── */}
+      <LiveVideos session={LIVE_SESSION} label="03 · Ao Vivo" id="ao-vivo" flush />
 
       {/* ── NOVIDADES ── */}
       <NovidadesSection id="novidades">

@@ -8,10 +8,11 @@ import SectionLabel from '../components/SectionLabel/SectionLabel'
 import StreamBtn from '../components/StreamBtn/StreamBtn'
 import StreamingModal from '../components/StreamingModal/StreamingModal'
 import TrackList from '../components/TrackList/TrackList'
+import LiveVideos from '../components/LiveVideos/LiveVideos'
 import { IconSpotify, IconAppleMusic } from '../components/Icons/Icons'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 import { useStreamingModal } from '../hooks/useStreamingModal'
-import { EP, SINGLES } from '../lib/data'
+import { EP, SINGLES, LIVE_SESSION } from '../lib/data'
 import DecoStamp from '../components/DecoStamp/DecoStamp'
 import {
   EpSection,
@@ -154,6 +155,8 @@ export default function LancamentosPage() {
           </EpDetail>
         </EpInner>
       </EpSection>
+
+      <LiveVideos session={LIVE_SESSION} label="02 · Ao Vivo" id="ao-vivo" />
 
       <EyeMarqueeGroup items={MARQUEE_2} />
 

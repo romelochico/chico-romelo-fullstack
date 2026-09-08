@@ -3,6 +3,7 @@ import type {
   Member,
   EP as EPType,
   Single,
+  LiveSession,
   Show,
   PressPhoto,
   LivePhoto,
@@ -155,6 +156,19 @@ export const SINGLES: Single[] = [
     youtube: 'https://www.youtube.com/watch?v=WwQSOBaKPWc',
   },
 ]
+
+// ── Live videos ────────────────────────────────────────────────────────────
+// Official live videos from Está Tudo em Festa, playing songs off the EP.
+export const LIVE_SESSION: LiveSession = {
+  event: 'Está Tudo em Festa',
+  venue: 'Parque da Paz · Almada',
+  date: '24 JUN · 2026',
+  videos: [
+    { id: '0xukM6mLKyA', song: '2 de Fevereiro' },
+    { id: 'brJz_DQVOSk', song: 'Teste Drive' },
+    { id: 'mn6zo1ZT0Ec', song: 'Passatempo' },
+  ],
+}
 
 // ── Shows ──────────────────────────────────────────────────────────────────
 export const UPCOMING_SHOWS: Show[] = [

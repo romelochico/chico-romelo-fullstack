@@ -161,6 +161,22 @@ export interface Single {
   youtube: string
 }
 
+// ── Live videos ────────────────────────────────────────────────────────────
+
+export interface LiveVideo {
+  /** YouTube video id (the v= part, or the /embed/ path segment). */
+  id: string
+  /** Song being performed. */
+  song: string
+}
+
+export interface LiveSession {
+  event: string
+  venue: string
+  date: string
+  videos: LiveVideo[]
+}
+
 // ── Streaming modal ────────────────────────────────────────────────────────
 
 export interface StreamingModalData {
