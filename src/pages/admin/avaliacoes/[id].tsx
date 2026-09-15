@@ -106,6 +106,13 @@ interface ShowRow {
 
 const MIN_AVALIACOES_PARA_RESUMO = 5
 const ACOES_HEADER = 'Ações para o próximo show'
+
+// Manual re-opens for the evaluation window (normally 24h–10 dias after the
+// show — see canEvaluate below). Add { [showId]: ISO deadline } here to give
+// a specific show extra time to be rated; remove the entry once it's past.
+const REOPENED_UNTIL: Record<string, string> = {
+  '70448b68-2675-4457-a009-f2808a18be86': '2026-09-17T19:14:10+01:00', // Festa do Avante — reopened for 48h on 2026-09-15
+}
 const RECLAMACOES_HEADER = 'Reclamações recorrentes'
 
 function splitSummary(text: string): { reclamacoes: string; acoes: string } | null {
@@ -439,7 +446,10 @@ export default function AvaliacoesShowPage() {
 
   const eventDate = new Date(show.data_show + 'T00:00:00')
   const hoursElapsed = (Date.now() - eventDate.getTime()) / 36e5
-  const canEvaluate = hoursElapsed >= 24 && hoursElapsed < 24 * 10
+  const reopenedUntil = REOPENED_UNTIL[show.id]
+  const canEvaluate =
+    (hoursElapsed >= 24 && hoursElapsed < 24 * 10) ||
+    (!!reopenedUntil && Date.now() < new Date(reopenedUntil).getTime())
 
   return (
     <AdminLayout
