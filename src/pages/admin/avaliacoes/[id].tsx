@@ -111,7 +111,7 @@ const ACOES_HEADER = 'Ações para o próximo show'
 // show — see canEvaluate below). Add { [showId]: ISO deadline } here to give
 // a specific show extra time to be rated; remove the entry once it's past.
 const REOPENED_UNTIL: Record<string, string> = {
-  '70448b68-2675-4457-a009-f2808a18be86': '2026-09-17T19:14:10+01:00', // Festa do Avante — reopened for 48h on 2026-09-15
+  '70448b68-2675-4457-a009-f2808a18be86': '2026-09-19T15:41:53+01:00', // Festa do Avante — extended 2 more days on 2026-09-17
 }
 const RECLAMACOES_HEADER = 'Reclamações recorrentes'
 
