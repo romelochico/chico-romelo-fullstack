@@ -321,11 +321,24 @@ export default function AvaliacoesShowPage() {
     URL.revokeObjectURL(url)
   }
 
+  // The summary API validates a Bearer token (requireAccess), not the cookie.
+  async function authHeaders(): Promise<Record<string, string>> {
+    const {
+      data: { session },
+    } = await createClient().auth.getSession()
+    return {
+      'Content-Type': 'application/json',
+      ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+    }
+  }
+
   async function handleDownloadResumo() {
     setLoadingSummary(true)
     setSummaryError('')
     try {
-      const res = await fetch(`/api/admin/avaliacoes/${id}/summary`)
+      const res = await fetch(`/api/admin/avaliacoes/${id}/summary`, {
+        headers: await authHeaders(),
+      })
       const body = await res.json()
       if (!res.ok) throw new Error(body.error ?? 'Erro ao gerar arquivos.')
       downloadFile(`resumo-${id}.json`, JSON.stringify(body.digest, null, 2), 'application/json')
@@ -355,7 +368,7 @@ export default function AvaliacoesShowPage() {
       }
       const res = await fetch(`/api/admin/avaliacoes/${id}/summary`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await authHeaders(),
         body: JSON.stringify({ summary: parsed.summary }),
       })
       const body = await res.json()
