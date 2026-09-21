@@ -300,7 +300,8 @@ export const LIVE_PHOTOS: LivePhoto[] = [
 
 // ── Venues ─────────────────────────────────────────────────────────────────
 export const VENUES: Venue[] = [
-  { name: 'mySpot', loc: 'Oeiras' },
+  { name: 'Festa do Avante', loc: 'Seixal' },
+  { name: 'Está Tudo em Festa', loc: 'Almada' },
   { name: 'Titanic', loc: 'Lisboa' },
   { name: 'Hollywood Spot', loc: 'Almada' },
   { name: 'Rock à Margem', loc: 'Almada' },

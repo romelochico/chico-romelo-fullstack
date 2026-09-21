@@ -187,7 +187,7 @@ export default function SobrePage() {
             <h3>
               Palcos
               <br />
-              de Lisboa
+              de Portugal
             </h3>
             <p>
               Atuações intensas, próximas e cheias de troca com o público. A energia ao vivo é a
