@@ -1287,7 +1287,6 @@ export default function AdminCalendarioPage() {
       openedFromLink.current = true
       openView(match)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [events, router.query.ev])
 
   useEffect(() => {
@@ -1308,6 +1307,8 @@ export default function AdminCalendarioPage() {
           }))
         )
       })
+    // mount-only: `load` is a fresh function every render, so listing it would loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function authHeaders(): Promise<Record<string, string>> {

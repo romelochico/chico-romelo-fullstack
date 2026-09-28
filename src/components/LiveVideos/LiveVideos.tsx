@@ -98,6 +98,8 @@ export default function LiveVideos({
               const v = videos[i]
               return (
                 <SideItem key={v.id} type="button" onClick={() => select(i)}>
+                  {/* plain <img>: external YouTube thumbnail, not configured for next/image */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`}
                     alt={`${v.song} — ao vivo`}
