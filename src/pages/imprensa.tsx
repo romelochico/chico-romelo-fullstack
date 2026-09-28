@@ -246,12 +246,7 @@ export default function ImprensaPage() {
               <span>Logo completo · Dark</span>
             </LogoCard>
             <LogoCard $olive data-reveal>
-              <Image
-                src="/assets/logo-full.png"
-                alt="Logo — fundo olive"
-                width={464}
-                height={50}
-              />
+              <Image src="/assets/logo-full.png" alt="Logo — fundo olive" width={464} height={50} />
               <span>Logo completo · Olive</span>
             </LogoCard>
             <LogoCard $dark data-reveal>

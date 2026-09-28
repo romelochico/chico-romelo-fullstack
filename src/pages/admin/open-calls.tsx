@@ -1,6 +1,16 @@
 import { useState, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
-import { Plus, Pencil, Trash2, ExternalLink, FileText, Award, AlertTriangle, X, Search } from 'lucide-react'
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  ExternalLink,
+  FileText,
+  Award,
+  AlertTriangle,
+  X,
+  Search,
+} from 'lucide-react'
 import AdminLayout from '../../components/Admin/AdminLayout'
 import { createClient } from '../../lib/supabase/client'
 
@@ -27,21 +37,19 @@ interface OpenCallFormData {
 }
 
 type ModalState =
-  | { type: 'add' }
-  | { type: 'edit'; item: OpenCallRow }
-  | { type: 'delete'; item: OpenCallRow }
+  { type: 'add' } | { type: 'edit'; item: OpenCallRow } | { type: 'delete'; item: OpenCallRow }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const C = {
-  gold:   '#c8a96e',
-  sage:   '#878766',
-  cream:  '#f5f0e8',
+  gold: '#c8a96e',
+  sage: '#878766',
+  cream: '#f5f0e8',
   cream2: 'rgba(245,240,232,0.6)',
-  dim:    'rgba(245,240,232,0.3)',
+  dim: 'rgba(245,240,232,0.3)',
   border: 'rgba(255,255,255,0.07)',
-  card:   'rgba(255,255,255,0.03)',
-  red:    '#f87171',
+  card: 'rgba(255,255,255,0.03)',
+  red: '#f87171',
   orange: '#fb923c',
 }
 
@@ -69,223 +77,391 @@ function daysUntil(dateStr: string): number {
 
 function formatDate(dateStr: string): string {
   const [year, month, day] = dateStr.split('-')
-  const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
+  const months = [
+    'Jan',
+    'Fev',
+    'Mar',
+    'Abr',
+    'Mai',
+    'Jun',
+    'Jul',
+    'Ago',
+    'Set',
+    'Out',
+    'Nov',
+    'Dez',
+  ]
   return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`
 }
 
 // ─── Styled components ───────────────────────────────────────────────────────
 
 const TopBar = styled.div`
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 24px;
 `
 
 const Count = styled.span`
   font-family: 'Montserrat', sans-serif;
-  font-size: 12px; color: ${C.dim};
+  font-size: 12px;
+  color: ${C.dim};
 `
 
 const AddBtn = styled.button`
-  display: flex; align-items: center; gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 10px 18px;
-  background: ${C.gold}; color: #0d0d0d;
+  background: ${C.gold};
+  color: #0d0d0d;
   font-family: 'Montserrat', sans-serif;
-  font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-  border: none; border-radius: 6px; cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
   transition: opacity 0.15s;
-  &:hover { opacity: 0.85; }
-  svg { width: 15px; height: 15px; }
+  &:hover {
+    opacity: 0.85;
+  }
+  svg {
+    width: 15px;
+    height: 15px;
+  }
 `
 
 const SearchBar = styled.div`
   position: relative;
   margin-bottom: 20px;
-  svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: ${C.dim}; }
+  svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 15px;
+    color: ${C.dim};
+  }
 `
 
 const SearchInput = styled.input`
-  width: 100%; padding: 10px 14px 10px 40px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  width: 100%;
+  padding: 10px 14px 10px 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  color: ${C.cream}; font-family: 'Montserrat', sans-serif; font-size: 13px;
+  color: ${C.cream};
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
   outline: none;
-  &:focus { border-color: ${C.gold}; }
-  &::placeholder { color: ${C.dim}; }
+  &:focus {
+    border-color: ${C.gold};
+  }
+  &::placeholder {
+    color: ${C.dim};
+  }
 `
 
 const AlertBanner = styled.div`
-  display: flex; align-items: center; gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 14px 18px;
-  background: rgba(248,113,113,0.08);
-  border: 1px solid rgba(248,113,113,0.3);
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.3);
   border-radius: 10px;
   color: ${C.red};
-  font-family: 'Montserrat', sans-serif; font-size: 13px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
   margin-bottom: 20px;
-  svg { width: 18px; height: 18px; flex-shrink: 0; }
+  svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
 `
 
 const List = styled.div`
-  display: flex; flex-direction: column; gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `
 
 const Card = styled.div<{ $urgent?: boolean }>`
-  background: ${({ $urgent }) => $urgent ? 'rgba(248,113,113,0.05)' : C.card};
-  border: 1px solid ${({ $urgent }) => $urgent ? 'rgba(248,113,113,0.25)' : C.border};
+  background: ${({ $urgent }) => ($urgent ? 'rgba(248,113,113,0.05)' : C.card)};
+  border: 1px solid ${({ $urgent }) => ($urgent ? 'rgba(248,113,113,0.25)' : C.border)};
   border-radius: 10px;
   padding: 16px 18px;
   transition: border-color 0.15s;
-  &:hover { border-color: ${({ $urgent }) => $urgent ? 'rgba(248,113,113,0.4)' : 'rgba(255,255,255,0.13)'}; }
+  &:hover {
+    border-color: ${({ $urgent }) => ($urgent ? 'rgba(248,113,113,0.4)' : 'rgba(255,255,255,0.13)')};
+  }
 `
 
 const CardTop = styled.div`
-  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
 `
 
 const NameRow = styled.div`
-  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 `
 
 const CallName = styled.h3`
   font-family: 'Special Elite', serif;
-  font-size: 17px; color: ${C.cream}; margin: 0;
+  font-size: 17px;
+  color: ${C.cream};
+  margin: 0;
 `
 
 const DateBadge = styled.span<{ $tone: 'urgent' | 'past' | 'normal' }>`
   font-family: 'Montserrat', sans-serif;
-  font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
-  padding: 3px 9px; border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 20px;
   ${({ $tone }) => {
-    if ($tone === 'urgent') return `background: rgba(248,113,113,0.15); border: 1px solid rgba(248,113,113,0.4); color: ${C.red};`
-    if ($tone === 'past') return `background: rgba(255,255,255,0.05); border: 1px solid ${C.border}; color: ${C.dim};`
+    if ($tone === 'urgent')
+      return `background: rgba(248,113,113,0.15); border: 1px solid rgba(248,113,113,0.4); color: ${C.red};`
+    if ($tone === 'past')
+      return `background: rgba(255,255,255,0.05); border: 1px solid ${C.border}; color: ${C.dim};`
     return `background: rgba(135,135,102,0.15); border: 1px solid rgba(135,135,102,0.3); color: ${C.sage};`
   }}
 `
 
 const CardActions = styled.div`
-  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
 `
 
 const EditBtn = styled.button`
-  display: flex; align-items: center; gap: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
   padding: 6px 10px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 5px;
   color: ${C.cream2};
-  font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 600;
-  cursor: pointer; transition: all 0.15s;
-  &:hover { background: rgba(255,255,255,0.1); color: ${C.cream}; }
-  svg { width: 11px; height: 11px; }
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: ${C.cream};
+  }
+  svg {
+    width: 11px;
+    height: 11px;
+  }
 `
 
 const DeleteBtn = styled.button`
-  display: flex; align-items: center; justify-content: center;
-  width: 28px; height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 5px;
-  color: ${C.dim}; cursor: pointer; transition: all 0.15s;
-  &:hover { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.3); color: ${C.red}; }
-  svg { width: 12px; height: 12px; }
+  color: ${C.dim};
+  cursor: pointer;
+  transition: all 0.15s;
+  &:hover {
+    background: rgba(248, 113, 113, 0.1);
+    border-color: rgba(248, 113, 113, 0.3);
+    color: ${C.red};
+  }
+  svg {
+    width: 12px;
+    height: 12px;
+  }
 `
 
 const MetaRow = styled.div`
-  display: flex; flex-wrap: wrap; gap: 8px 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
   margin-top: 10px;
 `
 
 const MetaItem = styled.div`
-  display: flex; align-items: center; gap: 6px;
-  font-family: 'Montserrat', sans-serif; font-size: 12px; color: ${C.cream2};
-  svg { width: 12px; height: 12px; color: ${C.sage}; flex-shrink: 0; }
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  color: ${C.cream2};
+  svg {
+    width: 12px;
+    height: 12px;
+    color: ${C.sage};
+    flex-shrink: 0;
+  }
 `
 
 const MetaLink = styled.a`
-  display: flex; align-items: center; gap: 6px;
-  font-family: 'Montserrat', sans-serif; font-size: 12px; color: ${C.gold};
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  color: ${C.gold};
   text-decoration: none;
-  svg { width: 12px; height: 12px; flex-shrink: 0; }
-  &:hover { text-decoration: underline; }
+  svg {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+  }
+  &:hover {
+    text-decoration: underline;
+  }
 `
 
 const NoteText = styled.p`
   font-family: 'Montserrat', sans-serif;
-  font-size: 12px; color: ${C.dim}; line-height: 1.5;
+  font-size: 12px;
+  color: ${C.dim};
+  line-height: 1.5;
   margin: 10px 0 0;
 `
 
 const NoteLabel = styled.span`
-  font-weight: 700; color: ${C.sage};
-  text-transform: uppercase; font-size: 10px; letter-spacing: 0.06em;
+  font-weight: 700;
+  color: ${C.sage};
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.06em;
   margin-right: 6px;
 `
 
 const EmptyState = styled.div`
-  text-align: center; padding: 40px 24px;
-  color: ${C.dim}; font-family: 'Montserrat', sans-serif; font-size: 13px;
-  border: 1px dashed ${C.border}; border-radius: 8px;
+  text-align: center;
+  padding: 40px 24px;
+  color: ${C.dim};
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  border: 1px dashed ${C.border};
+  border-radius: 8px;
 `
 
 // ─── Modal styled ─────────────────────────────────────────────────────────────
 
 const Overlay = styled.div`
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.7);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 100; padding: 24px;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 24px;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    padding: 0; align-items: stretch;
+    padding: 0;
+    align-items: stretch;
   }
 `
 
 const ModalBox = styled.div`
-  width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
   background: #1a1a1a;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  display: flex; flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    max-width: 100%; max-height: 100%; height: 100%; border-radius: 0; border: none;
+    max-width: 100%;
+    max-height: 100%;
+    height: 100%;
+    border-radius: 0;
+    border: none;
   }
 `
 
 const ModalHeader = styled.div`
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 20px 24px;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
-  position: sticky; top: 0; background: #1a1a1a; z-index: 1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  position: sticky;
+  top: 0;
+  background: #1a1a1a;
+  z-index: 1;
 `
 
 const ModalTitle = styled.h2`
   font-family: 'Special Elite', serif;
-  font-size: 18px; color: ${C.cream}; font-weight: 400;
+  font-size: 18px;
+  color: ${C.cream};
+  font-weight: 400;
 `
 
 const CloseBtn = styled.button`
-  width: 32px; height: 32px;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(255,255,255,0.05); border: none; border-radius: 6px;
-  color: ${C.cream2}; cursor: pointer;
-  &:hover { background: rgba(255,255,255,0.1); color: ${C.cream}; }
-  svg { width: 16px; height: 16px; }
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  border-radius: 6px;
+  color: ${C.cream2};
+  cursor: pointer;
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: ${C.cream};
+  }
+  svg {
+    width: 16px;
+    height: 16px;
+  }
 `
 
 const ModalBody = styled.div`
-  padding: 24px; display: flex; flex-direction: column; gap: 14px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 `
 
 const ModalFooter = styled.div`
-  padding: 16px 24px; border-top: 1px solid rgba(255,255,255,0.07);
-  display: flex; align-items: center; justify-content: flex-end; gap: 10px;
-  position: sticky; bottom: 0; background: #1a1a1a;
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  position: sticky;
+  bottom: 0;
+  background: #1a1a1a;
 `
 
 const Field = styled.div`
-  display: flex; flex-direction: column; gap: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 `
 
 const FieldRow = styled.div<{ $cols?: string }>`
@@ -300,86 +476,145 @@ const FieldRow = styled.div<{ $cols?: string }>`
 
 const Label = styled.label`
   font-family: 'Montserrat', sans-serif;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: ${C.cream2};
 `
 
 const Hint = styled.span`
   font-family: 'Montserrat', sans-serif;
-  font-size: 10px; color: ${C.dim};
-  font-weight: 400; letter-spacing: 0; text-transform: none;
+  font-size: 10px;
+  color: ${C.dim};
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
   margin-left: 6px;
 `
 
 const Input = styled.input`
   padding: 10px 14px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
-  color: ${C.cream}; font-family: 'Montserrat', sans-serif; font-size: 14px;
-  outline: none; transition: border-color 0.15s;
-  &:focus { border-color: ${C.gold}; }
-  &::placeholder { color: ${C.dim}; }
+  color: ${C.cream};
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+  &:focus {
+    border-color: ${C.gold};
+  }
+  &::placeholder {
+    color: ${C.dim};
+  }
 `
 
 const Textarea = styled.textarea`
   padding: 10px 14px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
-  color: ${C.cream}; font-family: 'Montserrat', sans-serif; font-size: 14px;
-  outline: none; resize: vertical; min-height: 64px;
+  color: ${C.cream};
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  outline: none;
+  resize: vertical;
+  min-height: 64px;
   transition: border-color 0.15s;
-  &:focus { border-color: ${C.gold}; }
-  &::placeholder { color: ${C.dim}; }
+  &:focus {
+    border-color: ${C.gold};
+  }
+  &::placeholder {
+    color: ${C.dim};
+  }
 `
 
 const BtnPrimary = styled.button`
   padding: 10px 20px;
-  background: ${C.gold}; color: #0d0d0d;
-  font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-  border: none; border-radius: 6px; cursor: pointer; transition: opacity 0.15s;
-  &:hover { opacity: 0.85; }
-  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  background: ${C.gold};
+  color: #0d0d0d;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  &:hover {
+    opacity: 0.85;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `
 
 const BtnGhost = styled.button`
   padding: 10px 20px;
-  background: transparent; color: ${C.cream2};
-  font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 600;
-  border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; cursor: pointer;
-  &:hover { color: ${C.cream}; border-color: rgba(255,255,255,0.2); }
+  background: transparent;
+  color: ${C.cream2};
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  cursor: pointer;
+  &:hover {
+    color: ${C.cream};
+    border-color: rgba(255, 255, 255, 0.2);
+  }
 `
 
 const BtnDanger = styled(BtnPrimary)`
-  background: ${C.red}; color: #fff;
+  background: ${C.red};
+  color: #fff;
 `
 
-const ConfirmBox = styled(ModalBox)`max-width: 400px;`
+const ConfirmBox = styled(ModalBox)`
+  max-width: 400px;
+`
 
 const ConfirmBody = styled.div`
-  padding: 28px 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
-  svg { width: 36px; height: 36px; color: ${C.red}; }
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  svg {
+    width: 36px;
+    height: 36px;
+    color: ${C.red};
+  }
 `
 
 const ConfirmTitle = styled.h3`
-  font-family: 'Special Elite', serif; font-size: 18px; color: ${C.cream};
+  font-family: 'Special Elite', serif;
+  font-size: 18px;
+  color: ${C.cream};
 `
 
 const ConfirmText = styled.p`
-  font-family: 'Montserrat', sans-serif; font-size: 13px; color: ${C.cream2}; line-height: 1.5;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  color: ${C.cream2};
+  line-height: 1.5;
 `
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function AdminOpenCallsPage() {
-  const [items, setItems]     = useState<OpenCallRow[]>([])
+  const [items, setItems] = useState<OpenCallRow[]>([])
   const [loading, setLoading] = useState(true)
-  const [modal, setModal]     = useState<ModalState | null>(null)
-  const [form, setForm]       = useState<OpenCallFormData>(EMPTY_FORM)
-  const [saving, setSaving]   = useState(false)
+  const [modal, setModal] = useState<ModalState | null>(null)
+  const [form, setForm] = useState<OpenCallFormData>(EMPTY_FORM)
+  const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
-  const [search, setSearch]   = useState('')
+  const [search, setSearch] = useState('')
 
   const supabase = createClient()
 
@@ -394,7 +629,9 @@ export default function AdminOpenCallsPage() {
     setLoading(false)
   }, [supabase])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    load()
+  }, [load])
 
   function openAdd() {
     setForm({ ...EMPTY_FORM })
@@ -488,16 +725,28 @@ export default function AdminOpenCallsPage() {
       {urgentItems.length > 0 && (
         <AlertBanner>
           <AlertTriangle />
-          {urgentItems.length === 1
-            ? <span><strong>{urgentItems[0].name}</strong> fecha em {daysUntil(urgentItems[0].application_date)} dia{daysUntil(urgentItems[0].application_date) !== 1 ? 's' : ''} — não perca o prazo!</span>
-            : <span><strong>{urgentItems.length} open calls</strong> fecham nos próximos {ALERT_WINDOW_DAYS} dias — confira os prazos abaixo.</span>
-          }
+          {urgentItems.length === 1 ? (
+            <span>
+              <strong>{urgentItems[0].name}</strong> fecha em{' '}
+              {daysUntil(urgentItems[0].application_date)} dia
+              {daysUntil(urgentItems[0].application_date) !== 1 ? 's' : ''} — não perca o prazo!
+            </span>
+          ) : (
+            <span>
+              <strong>{urgentItems.length} open calls</strong> fecham nos próximos{' '}
+              {ALERT_WINDOW_DAYS} dias — confira os prazos abaixo.
+            </span>
+          )}
         </AlertBanner>
       )}
 
       <TopBar>
-        <Count>{filteredItems.length} open call{filteredItems.length !== 1 ? 's' : ''}</Count>
-        <AddBtn onClick={openAdd}><Plus /> Adicionar open call</AddBtn>
+        <Count>
+          {filteredItems.length} open call{filteredItems.length !== 1 ? 's' : ''}
+        </Count>
+        <AddBtn onClick={openAdd}>
+          <Plus /> Adicionar open call
+        </AddBtn>
       </TopBar>
 
       <SearchBar>
@@ -519,37 +768,54 @@ export default function AdminOpenCallsPage() {
         <List>
           {filteredItems.map(item => {
             const d = daysUntil(item.application_date)
-            const tone: 'urgent' | 'past' | 'normal' = d < 0 ? 'past' : d <= ALERT_WINDOW_DAYS ? 'urgent' : 'normal'
+            const tone: 'urgent' | 'past' | 'normal' =
+              d < 0 ? 'past' : d <= ALERT_WINDOW_DAYS ? 'urgent' : 'normal'
             return (
               <Card key={item.id} $urgent={tone === 'urgent'}>
                 <CardTop>
                   <NameRow>
                     <CallName>{item.name}</CallName>
                     <DateBadge $tone={tone}>
-                      {tone === 'past' ? 'Encerrado' : tone === 'urgent' ? `Fecha em ${d} dia${d !== 1 ? 's' : ''}` : formatDate(item.application_date)}
+                      {tone === 'past'
+                        ? 'Encerrado'
+                        : tone === 'urgent'
+                          ? `Fecha em ${d} dia${d !== 1 ? 's' : ''}`
+                          : formatDate(item.application_date)}
                     </DateBadge>
                   </NameRow>
                   <CardActions>
-                    <EditBtn onClick={() => openEdit(item)}><Pencil /> Editar</EditBtn>
-                    <DeleteBtn onClick={() => openDelete(item)} title="Excluir"><Trash2 /></DeleteBtn>
+                    <EditBtn onClick={() => openEdit(item)}>
+                      <Pencil /> Editar
+                    </EditBtn>
+                    <DeleteBtn onClick={() => openDelete(item)} title="Excluir">
+                      <Trash2 />
+                    </DeleteBtn>
                   </CardActions>
                 </CardTop>
 
                 <MetaRow>
-                  {item.application_period && (
-                    <MetaItem>{item.application_period}</MetaItem>
-                  )}
+                  {item.application_period && <MetaItem>{item.application_period}</MetaItem>}
                   <MetaItem>Data limite: {formatDate(item.application_date)}</MetaItem>
                   {item.website_url && (
-                    <MetaLink href={item.website_url} target="_blank" rel="noreferrer"><ExternalLink /> Site</MetaLink>
+                    <MetaLink href={item.website_url} target="_blank" rel="noreferrer">
+                      <ExternalLink /> Site
+                    </MetaLink>
                   )}
                   {item.form_url && (
-                    <MetaLink href={item.form_url} target="_blank" rel="noreferrer"><FileText /> Formulário</MetaLink>
+                    <MetaLink href={item.form_url} target="_blank" rel="noreferrer">
+                      <FileText /> Formulário
+                    </MetaLink>
                   )}
                 </MetaRow>
 
                 {item.prizes && (
-                  <NoteText><NoteLabel><Award size={10} style={{ marginRight: 4, verticalAlign: -1 }} />Premiação</NoteLabel>{item.prizes}</NoteText>
+                  <NoteText>
+                    <NoteLabel>
+                      <Award size={10} style={{ marginRight: 4, verticalAlign: -1 }} />
+                      Premiação
+                    </NoteLabel>
+                    {item.prizes}
+                  </NoteText>
                 )}
               </Card>
             )
@@ -559,11 +825,19 @@ export default function AdminOpenCallsPage() {
 
       {/* ── Add / Edit modal ── */}
       {isFormModal && modal && (
-        <Overlay onClick={e => { if (e.target === e.currentTarget) closeModal() }}>
+        <Overlay
+          onClick={e => {
+            if (e.target === e.currentTarget) closeModal()
+          }}
+        >
           <ModalBox>
             <ModalHeader>
-              <ModalTitle>{modal.type === 'add' ? 'Nova Open Call' : 'Editar Open Call'}</ModalTitle>
-              <CloseBtn onClick={closeModal}><X /></CloseBtn>
+              <ModalTitle>
+                {modal.type === 'add' ? 'Nova Open Call' : 'Editar Open Call'}
+              </ModalTitle>
+              <CloseBtn onClick={closeModal}>
+                <X />
+              </CloseBtn>
             </ModalHeader>
 
             <ModalBody>
@@ -587,7 +861,9 @@ export default function AdminOpenCallsPage() {
                   />
                 </Field>
                 <Field>
-                  <Label>Link do formulário <Hint>opcional</Hint></Label>
+                  <Label>
+                    Link do formulário <Hint>opcional</Hint>
+                  </Label>
                   <Input
                     value={form.form_url}
                     onChange={e => setField('form_url', e.target.value)}
@@ -599,7 +875,9 @@ export default function AdminOpenCallsPage() {
 
               <FieldRow>
                 <Field>
-                  <Label>Época para aplicação <Hint>opcional</Hint></Label>
+                  <Label>
+                    Época para aplicação <Hint>opcional</Hint>
+                  </Label>
                   <Input
                     value={form.application_period}
                     onChange={e => setField('application_period', e.target.value)}
@@ -640,14 +918,18 @@ export default function AdminOpenCallsPage() {
 
       {/* ── Delete confirm ── */}
       {isDeleteModal && modal && modal.type === 'delete' && (
-        <Overlay onClick={e => { if (e.target === e.currentTarget) closeModal() }}>
+        <Overlay
+          onClick={e => {
+            if (e.target === e.currentTarget) closeModal()
+          }}
+        >
           <ConfirmBox>
             <ConfirmBody>
               <AlertTriangle />
               <ConfirmTitle>Excluir open call?</ConfirmTitle>
               <ConfirmText>
-                Tem certeza que quer excluir <strong>&quot;{modal.item.name}&quot;</strong>?
-                Esta ação não pode ser desfeita.
+                Tem certeza que quer excluir <strong>&quot;{modal.item.name}&quot;</strong>? Esta
+                ação não pode ser desfeita.
               </ConfirmText>
             </ConfirmBody>
             <ModalFooter>

@@ -37,9 +37,7 @@ export default function StreamingModal({ isOpen, onClose, modal }: StreamingModa
         </CloseBtn>
 
         <CoverWrap>
-          {modal?.cover && (
-            <Image src={modal.cover} alt={modal.title} fill sizes="180px" />
-          )}
+          {modal?.cover && <Image src={modal.cover} alt={modal.title} fill sizes="180px" />}
         </CoverWrap>
 
         <Title>{modal?.title}</Title>
