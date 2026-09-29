@@ -121,7 +121,7 @@ export default function ImprensaPage() {
             <p className="lead">
               Chico Romelo é uma banda formada por músicos brasileiros e portugueses radicados em
               Lisboa, misturando pop rock com fortes influências da música brasileira,
-              latino-americana e cabo-verdiana.
+              latino-americana e portuguesa.
             </p>
             <p>
               Nascida do cruzamento entre a canção brasileira, o pop-rock e os ritmos latinos que
@@ -130,7 +130,8 @@ export default function ImprensaPage() {
             </p>
             <p>
               Nos palcos, essa energia já passou por espaços marcantes da cidade como o Titanic, o
-              mySpot (Nirvana Studios) e o Hollywood Spot.
+              mySpot (Nirvana Studios) e o Hollywood Spot. Também se apresentou em festivais de
+              música como a Festa do Avante e o Rock à Margem.
             </p>
             <p>
               O grupo é composto por Marcus Quintela (guitarra e voz principal), Gabriel Almeida
@@ -210,7 +211,7 @@ export default function ImprensaPage() {
           </VideoHeader>
           <VideoWrap data-reveal>
             <iframe
-              src="https://www.youtube.com/embed/4n8EmuvIurw"
+              src="https://www.youtube.com/embed/tlSvmRaRrPo"
               title="Chico Romelo — Ao Vivo"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
