@@ -36,7 +36,7 @@ const MARQUEE_1 = [
   'Lisboa · Salvador · Santos',
   'Cinco vozes, uma batida',
 ]
-const MARQUEE_2 = ['Pop Rock · MPB · Funaná · Afrobeat', 'Lisboa — Salvador — Santos']
+const MARQUEE_2 = ['Pop Rock · MPB · Ska', 'Lisboa — Salvador — Santos']
 
 export default function SobrePage() {
   useScrollReveal()
@@ -115,8 +115,9 @@ export default function SobrePage() {
             </p>
             <p>
               Nos palcos, essa energia já passou por espaços marcantes da cidade como o Titanic, o
-              mySpot (Nirvana Studios) e o Hollywood Spot, sempre com atuações intensas, próximas e
-              cheias de troca com o público.
+              mySpot (Nirvana Studios) e o Hollywood Spot. Também se apresentou em festivais de
+              música como a Festa do Avante e o Rock à Margem. Sempre com atuações intensas,
+              próximas e cheias de troca com o público.
             </p>
             <p>
               Fora do palco, Chico Romelo se mistura ao próprio público: gente dos blocos de

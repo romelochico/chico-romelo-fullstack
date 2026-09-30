@@ -25,7 +25,7 @@ import {
 } from '../styles/pages/Agenda.styles'
 
 const MARQUEE_1 = ['Ao vivo em Lisboa e Portugal', '2026', 'Próximos shows']
-const MARQUEE_2 = ['Pop Rock · MPB · Funaná · Afrobeat', 'Lisboa — Salvador — Santos']
+const MARQUEE_2 = ['Pop Rock · MPB · Ska', 'Lisboa — Salvador — Santos']
 
 interface AgendaPageProps {
   upcoming: EventRow[]
