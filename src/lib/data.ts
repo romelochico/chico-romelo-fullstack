@@ -320,10 +320,10 @@ export const PRESS_PHOTOS: PressPhoto[] = [
     download: 'Chico-Romelo-gabriel-almeida-avante.jpg',
   },
   {
-    src: '/uploads/gisela_avante.webp',
-    jpg: '/uploads/gisela_avante.jpg',
-    alt: 'Gisela na Festa do Avante',
-    cap: 'gisela · Festa do Avante',
+    src: '/uploads/gisella_avante.webp',
+    jpg: '/uploads/gisella_avante.jpg',
+    alt: 'Gisella na Festa do Avante',
+    cap: 'gisella · Festa do Avante',
     download: 'Chico-Romelo-gisela-avante.jpg',
   },
   {
@@ -337,7 +337,7 @@ export const PRESS_PHOTOS: PressPhoto[] = [
     src: '/uploads/percussao_avante.webp',
     jpg: '/uploads/percussao_avante.jpg',
     alt: 'Percussão na Festa do Avante',
-    cap: 'percussão · Festa do Avante',
+    cap: 'marian e tuila · Festa do Avante',
     download: 'Chico-Romelo-percussao-avante.jpg',
   },
   {
@@ -358,7 +358,7 @@ export const PRESS_PHOTOS: PressPhoto[] = [
     src: '/uploads/sopros_avante.webp',
     jpg: '/uploads/sopros_avante.jpg',
     alt: 'Instrumentos de sopro na Festa do Avante',
-    cap: 'sopros · Festa do Avante',
+    cap: 'isis e matt · Festa do Avante',
     download: 'Chico-Romelo-sopros-avante.jpg',
   },
 ]
