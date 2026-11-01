@@ -155,7 +155,7 @@ export default function ImprensaPage() {
               <h4>Download</h4>
               <p>Bio completa, fotos em alta resolução e logotipos para uso editorial.</p>
               <DownloadBtn
-                href="https://github.com/romelochico/chico-romelo-site/releases/download/press-kit-v1/Chico.Comelo.Preskit.zip"
+                href="https://github.com/romelochico/chico-romelo-site/releases/download/press-kit-v2/Chico.Romelo.Presskit.zip"
                 target="_blank"
                 rel="noopener noreferrer"
               >
