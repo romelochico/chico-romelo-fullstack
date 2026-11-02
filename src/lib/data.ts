@@ -26,7 +26,7 @@ export const NAV_ALL: NavLink[] = [...NAV_LEFT, ...NAV_RIGHT]
 
 // ── Social links ───────────────────────────────────────────────────────────
 export const SOCIALS: Record<string, string> = {
-  instagram: 'https://www.instagram.com/chicoromelo',
+  instagram: 'https://www.instagram.com/romelochicobanda/',
   spotify: 'https://open.spotify.com/artist/36kAOthCGAS4uOla6Sa4BF',
   youtube: 'https://www.youtube.com/@ChicoRomelo',
   appleMusic: 'https://music.apple.com/pt/artist/chico-romelo/1727802157',
